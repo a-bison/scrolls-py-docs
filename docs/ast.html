@@ -1,0 +1,3595 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>scrolls.ast API documentation</title>
+<meta name="description" content="The parser implementation …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scrolls.ast</code></h1>
+</header>
+<section id="section-intro">
+<p>The parser implementation.</p>
+<h1 id="using-the-parser">Using The Parser</h1>
+<h2 id="quickstart">Quickstart</h2>
+<p>Often, all you need to do is parse a script and get the syntax tree. To do this:</p>
+<pre><code class="language-py">import scrolls
+
+script = &quot;...&quot;
+tokenizer = scrolls.Tokenizer(script)
+ast = scrolls.parse_scroll(tokenizer)
+</code></pre>
+<p>The <code><a title="scrolls.ast.AST" href="#scrolls.ast.AST">AST</a></code> (<a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">Abstract Syntax Tree</a>) is a generic structure
+that represents the semantic content of a script. This structure is what is actually interpreted by
+the Scrolls interpreter. See <code><a title="scrolls.interpreter" href="interpreter.html">scrolls.interpreter</a></code> for more detail on <code><a title="scrolls.ast.AST" href="#scrolls.ast.AST">AST</a></code> interpretation. See the following
+sections for a more detailed description of the parsing process.</p>
+<h2 id="tokenizing">Tokenizing</h2>
+<p>Parsing is done in two stages, tokenizing, and parsing. First, the
+<code><a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a></code> is used to break a script into a list of pieces, assigning
+meaning to each. These pieces are called tokens (see <code><a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a></code>).</p>
+<pre><code class="language-pycon">&gt;&gt;&gt; import scrolls
+&gt;&gt;&gt; script = &quot;&quot;&quot;
+... !repeat(4) {
+...     print &quot;Hello, world!&quot;
+... }
+... &quot;&quot;&quot;
+&gt;&gt;&gt; tokenizer = scrolls.Tokenizer(script)
+&gt;&gt;&gt; tokens = tokenizer.get_all_tokens()
+&gt;&gt;&gt; for tok in tokens:
+...     print(tok)
+...
+CONTROL_SIGIL:'!'
+STRING_LITERAL:'repeat'
+OPEN_PAREN:'('
+STRING_LITERAL:'4'
+CLOSE_PAREN:')'
+OPEN_BLOCK:'{'
+COMMAND_SEP:'\n'
+STRING_LITERAL:'print'
+STRING_LITERAL:'Hello, world!'
+COMMAND_SEP:'\n'
+CLOSE_BLOCK:'}'
+EOF:''
+&gt;&gt;&gt;
+</code></pre>
+<p>Each token represents a <code><a title="scrolls.ast.TokenType" href="#scrolls.ast.TokenType">TokenType</a></code> and an associated value. For instance,
+the second token shown above, <code>STRING_LITERAL:'repeat'</code> is a string literal token, with the value <code>repeat</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Typically, you won't need to pull tokens from the <code><a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a></code>, just configure it. It's just
+helpful to understand what it actually does.</p>
+</div>
+<h2 id="parsing">Parsing</h2>
+<p>The tokens are then passed to the parser, the entry point of which is <code><a title="scrolls.ast.parse_scroll" href="#scrolls.ast.parse_scroll">parse_scroll()</a></code>. This function will
+automatically pull tokens from a <code><a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a></code> object, and generate the corresponding <code><a title="scrolls.ast.AST" href="#scrolls.ast.AST">AST</a></code>. </p>
+<pre><code class="language-pycon">&gt;&gt;&gt; import scrolls
+&gt;&gt;&gt; script = &quot;&quot;&quot;
+... !repeat(4) {
+...     print &quot;Hello, world!&quot;
+... }
+... &quot;&quot;&quot;
+&gt;&gt;&gt; tokenizer = scrolls.Tokenizer(script)
+&gt;&gt;&gt; ast = scrolls.parse_scroll(tokenizer)
+&gt;&gt;&gt; print(ast.prettify())
+{
+    &quot;_tok&quot;: &quot;None&quot;,
+    &quot;_type&quot;: &quot;ROOT&quot;,
+    &quot;children&quot;: [
+        {
+            &quot;_tok&quot;: &quot;CONTROL_SIGIL:'!'&quot;,
+            &quot;_type&quot;: &quot;CONTROL_CALL&quot;,
+            &quot;children&quot;: [
+                {
+                    &quot;_tok&quot;: &quot;STRING_LITERAL:'repeat'&quot;,
+                    &quot;_type&quot;: &quot;STRING&quot;,
+                    &quot;children&quot;: []
+                },
+                {
+                    &quot;_tok&quot;: &quot;OPEN_PAREN:'('&quot;,
+                    &quot;_type&quot;: &quot;CONTROL_ARGUMENTS&quot;,
+                    &quot;children&quot;: [
+                        {
+                            &quot;_tok&quot;: &quot;STRING_LITERAL:'4'&quot;,
+                            &quot;_type&quot;: &quot;STRING&quot;,
+                            &quot;children&quot;: []
+                        }
+                    ]
+                },
+                {
+                    &quot;_tok&quot;: &quot;OPEN_BLOCK:'{'&quot;,
+                    &quot;_type&quot;: &quot;BLOCK&quot;,
+                    &quot;children&quot;: [
+                        {
+                            &quot;_tok&quot;: &quot;STRING_LITERAL:'print'&quot;,
+                            &quot;_type&quot;: &quot;COMMAND_CALL&quot;,
+                            &quot;children&quot;: [
+                                {
+                                    &quot;_tok&quot;: &quot;STRING_LITERAL:'print'&quot;,
+                                    &quot;_type&quot;: &quot;STRING&quot;,
+                                    &quot;children&quot;: []
+                                },
+                                {
+                                    &quot;_tok&quot;: &quot;STRING_LITERAL:'Hello, world!'&quot;,
+                                    &quot;_type&quot;: &quot;COMMAND_ARGUMENTS&quot;,
+                                    &quot;children&quot;: [
+                                        {
+                                            &quot;_tok&quot;: &quot;STRING_LITERAL:'Hello, world!'&quot;,
+                                            &quot;_type&quot;: &quot;STRING&quot;,
+                                            &quot;children&quot;: []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+</code></pre>
+<p>AST instances consist of a tree of <code><a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a></code> objects. Each node keeps track of the token that triggered
+its generation. This is used primarily for informative display of errors during interpreter runtime.</p>
+<p>Scrolls uses a <a href="https://en.wikipedia.org/wiki/Recursive_descent_parser">recursive descent</a>
+approach, implemented with <a href="https://en.wikipedia.org/wiki/Parser_combinator">parser combinators</a>.
+The parsing scheme of Scrolls is intentionally barebones, and does not include any control structures
+at all. Instead, all identifiers are <code><a title="scrolls.ast.ASTNodeType.STRING" href="#scrolls.ast.ASTNodeType.STRING">ASTNodeType.STRING</a></code>, which are interpreted at runtime based on
+their location in the syntax tree.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+The parser implementation.
+
+.. include:: ./pdoc/ast.md
+&#34;&#34;&#34;
+# Note for those reading the source code: some of the docstrings in this module refer to the above
+# included markdown file.
+
+import dataclasses
+import enum
+import json
+import logging
+import types
+import typing as t
+
+from . import errors
+
+__all__ = (
+    &#34;AST&#34;,
+    &#34;ASTNode&#34;,
+    &#34;ASTNodeType&#34;,
+    &#34;ASTStateError&#34;,
+    &#34;Token&#34;,
+    &#34;Tokenizer&#34;,
+    &#34;TokenType&#34;,
+    &#34;parse_scroll&#34;
+)
+
+logger = logging.getLogger(__name__)
+
+ParserT = t.Callable[[&#39;ParseContext&#39;], &#39;ASTNode&#39;]
+
+EOF = &#34;&#34;
+COMMAND_SEP = [&#34;;&#34;, &#34;\n&#34;]
+BLOCK_OPEN = &#34;{&#34;
+BLOCK_CLOSE = &#34;}&#34;
+OPEN_PAREN = &#34;(&#34;
+CLOSE_PAREN = &#34;)&#34;
+CONTROL_SIGIL = &#34;!&#34;
+EXPANSION_SIGIL = &#34;$&#34;
+MULTI_SIGIL = &#34;^&#34;
+COMMENT_SIGIL = &#34;#&#34;
+QUOTE = &#34;\&#34;&#34;
+ESCAPE_SIGIL = &#34;\\&#34;
+
+
+class TokenType(enum.Enum):
+    &#34;&#34;&#34;
+    All possible token types generated by `Tokenizer`.
+    &#34;&#34;&#34;
+
+    OPEN_PAREN = 1
+    CLOSE_PAREN = 2
+    OPEN_BLOCK = 3
+    CLOSE_BLOCK = 4
+    EXPANSION_SIGIL = 5
+    MULTI_SIGIL = 6
+    CONTROL_SIGIL = 7
+    COMMAND_SEP = 8
+    STRING_LITERAL = 9
+    EOF = 10
+    WHITESPACE = 11
+    COMMENT = 12
+
+
+class TokenizeConsumeRestState(enum.Enum):
+    &#34;&#34;&#34;
+    Internal `Tokenizer` state for the CONSUME_REST feature.
+    &#34;&#34;&#34;
+
+    OFF = 0
+    COUNTING = 1
+    CONSUME = 2
+
+
+class ASTNodeType(enum.Enum):
+    &#34;&#34;&#34;
+    All possible AST node types.
+    &#34;&#34;&#34;
+
+    NONE = 0
+    &#34;&#34;&#34;AST nodes with this type should be ignored.&#34;&#34;&#34;
+
+    EOF = 1
+    &#34;&#34;&#34;A node representing EOF.&#34;&#34;&#34;
+
+    ROOT = 2
+    &#34;&#34;&#34;The root AST node.&#34;&#34;&#34;
+
+    STRING = 3
+    &#34;&#34;&#34;A string literal.&#34;&#34;&#34;
+
+    COMMAND_CALL = 4
+    &#34;&#34;&#34;The parent node for a command call.&#34;&#34;&#34;
+
+    COMMAND_ARGUMENTS = 5
+    &#34;&#34;&#34;The parent node for a list of command arguments.&#34;&#34;&#34;
+
+    BLOCK = 6
+    &#34;&#34;&#34;A block of statements.&#34;&#34;&#34;
+
+    CONTROL_CALL = 7
+    &#34;&#34;&#34;The parent node for a control call.&#34;&#34;&#34;
+
+    CONTROL_ARGUMENTS = 8
+    &#34;&#34;&#34;The parent node for a list of control arguments.&#34;&#34;&#34;
+
+    EXPANSION = 9
+    &#34;&#34;&#34;The parent node for an expansion, either variable or call.&#34;&#34;&#34;
+
+    EXPANSION_SINGLE = 10
+    &#34;&#34;&#34;Indicates an expansion should use normal expansion.&#34;&#34;&#34;
+
+    EXPANSION_MULTI = 11
+    &#34;&#34;&#34;Indicates an expansion should use vector expansion.&#34;&#34;&#34;
+
+    EXPANSION_VAR = 12
+    &#34;&#34;&#34;Parent node for a variable expansion.&#34;&#34;&#34;
+
+    EXPANSION_CALL = 13
+    &#34;&#34;&#34;Parent node for an expansion call.&#34;&#34;&#34;
+
+    EXPANSION_ARGUMENTS = 14
+    &#34;&#34;&#34;Parent node for a list of expansion arguments. Applies only to calls.&#34;&#34;&#34;
+
+
+# TODO: Add slots=True for python 3.10
+@dataclasses.dataclass
+class Token:
+    &#34;&#34;&#34;A token. See [Tokenizing](#tokenizing).&#34;&#34;&#34;
+
+    type: TokenType
+    &#34;&#34;&#34;The type of this token.&#34;&#34;&#34;
+
+    value: str
+    &#34;&#34;&#34;The value of this token.&#34;&#34;&#34;
+
+    line: int
+    &#34;&#34;&#34;The line this token *started* generating on. Some tokens may span multiple lines.&#34;&#34;&#34;
+
+    position: int
+    &#34;&#34;&#34;The column along the line that this token *started* generating on. &#34;&#34;&#34;
+
+    consume_rest: bool = False
+    &#34;&#34;&#34;Sets whether this token was generated by CONSUME_REST.&#34;&#34;&#34;
+
+    def __str__(self) -&gt; str:
+        return f&#34;{self.type.name}:{repr(self.value)}&#34;
+
+
+class AST:
+    &#34;&#34;&#34;An Abstract Syntax Tree.
+
+    Represents the semantic structure of a script, without the specific syntax.
+    &#34;&#34;&#34;
+
+    def __init__(self, root: &#39;ASTNode&#39;, script: str):
+        self.root: ASTNode = root
+        &#34;&#34;&#34;The root `ASTNode` of this AST.&#34;&#34;&#34;
+
+        self.script: str = script
+        &#34;&#34;&#34;The script that generated this AST.&#34;&#34;&#34;
+
+    def prettify(self) -&gt; str:
+        &#34;&#34;&#34;Returns a JSON-formatted string showing the full structure of this AST.
+
+        .. WARNING::
+            For debugging and demonstration purposes only.
+        &#34;&#34;&#34;
+        return self.root.prettify()
+
+    def __repr__(self) -&gt; str:
+        return f&#34;ScrollAST({repr(self.root)}&#34;
+
+
+class ASTStateError(errors.ScrollError):
+    &#34;&#34;&#34;Generic tokenizer/parser error that includes an entire AST node.
+
+    Raised by ASTNode functions on invalid state.
+
+    Generally internal to the scrolls module. If one of these errors makes it out,
+    something is probably wrong.
+    &#34;&#34;&#34;
+    def __init__(self, node: &#39;ASTNode&#39;, message: str):
+        self.node = node
+        self.message = message
+
+    def __str__(self) -&gt; str:
+        return self.message
+
+
+class ASTNode:
+    &#34;&#34;&#34;
+    A node within an `AST`.
+    &#34;&#34;&#34;
+    __slots__ = (
+        &#34;children&#34;,
+        &#34;type&#34;,
+        &#34;_tok&#34;
+    )
+
+    def __init__(self, type: ASTNodeType, token: t.Optional[Token]):
+        self.children: t.MutableSequence[&#39;ASTNode&#39;] = []
+        &#34;&#34;&#34;The child `ASTNode` objects of this node.&#34;&#34;&#34;
+
+        self.type = type
+        &#34;&#34;&#34;The `ASTNodeType` of this node.&#34;&#34;&#34;
+
+        self._tok: t.Optional[Token] = token
+
+    def to_dict(self) -&gt; t.Mapping[str, t.Any]:
+        &#34;&#34;&#34;
+        Converts this object into a dict demonstrating its structure.
+
+        Returns:
+            A dictionary of the following form:
+
+            ```json
+            {
+                &#34;_type&#34;: &#34;TYPENAME&#34;,
+                &#34;_tok&#34;: &#34;TOKTYPE:&#39;TOKVALUE&#39;&#34;,
+                &#34;children&#34;: [...]
+            }
+            ```
+
+            .. WARNING::
+                This dictionary cannot be converted 1-1 back to a `ASTNode`. It is mainly meant for display
+                purposes. See `ASTNode.prettify`.
+        &#34;&#34;&#34;
+
+        mapping = {
+            &#34;_type&#34;: self.type.name,
+            &#34;_tok&#34;: str(self._tok),
+            &#34;children&#34;: [child.to_dict() for child in self.children]
+        }
+
+        return mapping
+
+    def prettify(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns a JSON-formatted string showing the full structure of this `ASTNode`.
+
+        .. WARNING::
+            For debugging and demonstration purposes only.
+        &#34;&#34;&#34;
+
+        s = json.dumps(self.to_dict(), sort_keys=True, indent=4)
+        return s
+
+    @property
+    def tok(self) -&gt; Token:
+        &#34;&#34;&#34;
+        The token that generated this node. This should always be populated by `parse_scroll` under normal
+        circumstances.
+
+        Raises:
+            ASTStateError: On get, if the token was never assigned.
+        &#34;&#34;&#34;
+
+        if self._tok is None:
+            raise ASTStateError(self, &#34;cannot get token, is None&#34;)
+
+        return self._tok
+
+    @tok.setter
+    def tok(self, token: Token) -&gt; None:
+        self._tok = token
+
+    def has_token(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Checks whether this node has a token assigned to it.
+        &#34;&#34;&#34;
+        return self._tok is not None
+
+    def wrap(self, node_type: ASTNodeType, as_child: bool = False) -&gt; &#39;ASTNode&#39;:
+        &#34;&#34;&#34;
+        Create a new node, and assign this node&#39;s token to the new node.
+
+        .. WARNING::
+            This is used internally by the parser during parsing and should generally not be called on finished ASTs.
+
+        Args:
+            node_type: The type of the new node.
+            as_child: If `True`, add this node as a child of the new wrapper node.
+
+        Returns:
+            The newly created wrapper node.
+        &#34;&#34;&#34;
+        new_node = ASTNode(
+            node_type,
+            self.tok
+        )
+
+        if as_child:
+            new_node.children.append(self)
+
+        return new_node
+
+    def str_content(self) -&gt; str:
+        &#34;&#34;&#34;
+        Gets the string value of a `ASTNodeType.STRING` node.
+
+        Raises:
+            ASTStateError: If this node is not `ASTNodeType.STRING`.
+        &#34;&#34;&#34;
+        if self.type != ASTNodeType.STRING:
+            raise ASTStateError(self, &#34;str_content requires STRING type node&#34;)
+
+        assert self._tok is not None
+        return self._tok.value
+
+    def find_all(self, func: t.Callable[[&#39;ASTNode&#39;], bool]) -&gt; t.Sequence[&#39;ASTNode&#39;]:
+        &#34;&#34;&#34;
+        Find all nodes in this tree for which `func` returns true.
+
+        Args:
+            func: A predicate which takes an `ASTNode` as input.
+
+        Returns:
+            A sequence of matching nodes.
+        &#34;&#34;&#34;
+
+        found = []
+
+        if func(self):
+            found.append(self)
+
+        for child in self.children:
+            found.extend(child.find_all(func))
+
+        return found
+
+    def __str__(self) -&gt; str:
+        return repr(self)
+
+    def __repr__(self) -&gt; str:
+        if self.type is ASTNodeType.STRING:
+            return f&#34;ScrollASTNode({self.type.name}, &#39;{str(self._tok)}&#39;)&#34;
+        else:
+            return f&#34;ScrollASTNode({self.type.name}, {repr(self.children)})&#34;
+
+
+def str_ensure(s: str, ensure: str) -&gt; str:
+    if ensure not in s:
+        return s + ensure
+    else:
+        return s
+
+
+def str_remove(s: str, remove: str) -&gt; str:
+    return s.replace(remove, &#34;&#34;)
+
+
+def str_switch(s: str, switch: str, en: bool) -&gt; str:
+    &#34;&#34;&#34;
+    Utility function for enabling/disabling detection of certain characters.
+    &#34;&#34;&#34;
+
+    if en:
+        return str_ensure(s, switch)
+    else:
+        return str_remove(s, switch)
+
+
+class Tokenizer:
+    &#34;&#34;&#34;
+    The tokenizer. This class is responsible for identifying meaningful pieces of scripts
+    (such as string literals, block open and close, etc.), and tagging them.
+
+    .. WARNING::
+        Tokenizers are **single use**. Once the string passed into the constructor has been exhasted, a new
+        Tokenizer must be constructed.
+
+    Args:
+        string: The script to tokenize.
+        consume_rest_triggers: Triggers for CONSUME_REST.
+
+    Related:
+        `Token`, [Tokenizing](#tokenizing)
+    &#34;&#34;&#34;
+    def __init__(
+        self,
+        string: str,
+        consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({})
+    ):
+        self.current_line = 0
+        self.current_pos = 0
+        self.string = string.replace(&#34;\r&#34;, &#34;&#34;).strip()
+        self.stringlen = len(self.string)
+        self.char = 0
+        self.consume_rest_triggers = consume_rest_triggers
+        self.consume_rest_state = TokenizeConsumeRestState.OFF
+        self.consume_rest_count = 0
+        self.previous_token_was_sep = True
+        self.whitespace = &#34;\t &#34;
+
+        # Map of single characters to token types
+        self.charmap = {
+            &#34;\n&#34;: TokenType.COMMAND_SEP,
+            &#34;;&#34;: TokenType.COMMAND_SEP,
+            OPEN_PAREN: TokenType.OPEN_PAREN,
+            CLOSE_PAREN: TokenType.CLOSE_PAREN,
+            BLOCK_OPEN: TokenType.OPEN_BLOCK,
+            BLOCK_CLOSE: TokenType.CLOSE_BLOCK,
+            EXPANSION_SIGIL: TokenType.EXPANSION_SIGIL,
+            CONTROL_SIGIL: TokenType.CONTROL_SIGIL,
+            MULTI_SIGIL: TokenType.MULTI_SIGIL
+        }
+
+        self.escape_sequences: t.MutableMapping[
+            str,
+            t.Union[str, t.Callable[[Tokenizer], str]]
+        ] = {
+            &#34;n&#34;: &#34;\n&#34;,
+            &#34;t&#34;: &#34;\t&#34;,
+            &#34;r&#34;: &#34;\r&#34;,
+            ESCAPE_SIGIL: ESCAPE_SIGIL,
+            QUOTE: QUOTE,
+            &#34;u&#34;: Tokenizer._unicode_escape
+        }
+
+        # Set up stop chars for unquoted string literals.
+        self._string_literal_always_stop = self.whitespace + COMMENT_SIGIL
+        self._string_literal_stop_single_char = &#34;&#34;.join(self.charmap.keys())
+        self._string_literal_stop_quoted = QUOTE
+
+        self.string_literal_stop: str = self._string_literal_always_stop
+        self.single_char_token_enable = True
+        self.set_single_char_token_enable(True)
+
+        # Set up stop chars for CONSUME_REST.
+        self._consume_rest_stop_switch: str = &#34;&#34;.join(COMMAND_SEP + [BLOCK_CLOSE, BLOCK_OPEN])
+        self.consume_rest_stop: str = &#34;&#34;
+        self.set_consume_rest_all(False)
+
+        # Set up stop chars for quoted literals.
+        self.quoted_literal_stop: str = QUOTE  # For now, quoted literals ONLY stop on another quote.
+        self.quoted_literal_enable = True
+        self.set_quoted_literals_enable(True)
+
+    def _unicode_escape(self) -&gt; str:
+        code_point = &#34;&#34;  # Initialization not needed, just satisfies some linters.
+        try:
+            code_point = self.next_n_chars(4)
+        except errors.TokenizeEofError:
+            self.error(
+                errors.TokenizeEofError,
+                &#34;Ran off end of script trying to parse unicode escape.&#34;
+            )
+
+        if QUOTE in code_point:
+            self.current_pos -= 4
+            self.error(
+                errors.TokenizeError,
+                f&#34;Encountered {QUOTE} while consuming unicode escape.&#34;
+            )
+
+        char = &#34;&#34;
+        try:
+            char = chr(int(code_point, 16))
+        except ValueError:
+            self.current_pos -= 4
+            self.error(
+                errors.TokenizeError,
+                f&#34;Bad hex number {code_point}.&#34;
+            )
+
+        return char
+
+    def set_consume_rest_all(self, consume_all: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Set whether CONSUME_REST consumes until EOF. Defaults to `False`.
+
+        If `False`, CONSUME_REST will stop on block open/close, and command separators.
+
+        If `True`, CONSUME_REST will not stop until EOF.
+        &#34;&#34;&#34;
+        self.consume_rest_stop = str_switch(
+            self.consume_rest_stop,
+            self._consume_rest_stop_switch,
+            not consume_all
+        )
+
+    def set_single_char_token_enable(self, en: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Set whether single character tokens should be parsed. This includes ALL token types except for
+        `TokenType.STRING_LITERAL` and `TokenType.COMMENT`. Defaults to `True`.
+
+        If `False`, then all special characters that would otherwise be their own token will be rolled
+        into string literals.
+        &#34;&#34;&#34;
+        self.single_char_token_enable = en
+        self.string_literal_stop = str_switch(
+            self.string_literal_stop,
+            self._string_literal_stop_single_char,
+            en
+        )
+
+    def set_quoted_literals_enable(self, en: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Set whether quoted string literals are enabled. If disabled, quotes will be rolled into normal string token
+        parsing.
+
+        For instance, if quoted literals are disabled, `&#34;Hello World&#34;` would be interpreted as `&#34;Hello`, `World&#34;`.
+        &#34;&#34;&#34;
+        self.quoted_literal_enable = en
+        self.string_literal_stop = str_switch(
+            self.string_literal_stop,
+            self._string_literal_stop_quoted,
+            en
+        )
+
+    def error(self, err_type: t.Type[errors.PositionalError], message: str) -&gt; t.NoReturn:
+        raise err_type(
+            self.current_line,
+            self.current_pos,
+            self.string,
+            message
+        )
+
+    def at_eof(self) -&gt; bool:
+        return self.char &gt;= self.stringlen
+
+    def forbid_eof(self, msg: str = &#34;&#34;, *args: t.Any, **kwargs: t.Any) -&gt; None:
+        if not msg:
+            msg = &#34;Unexpected EOF while parsing script.&#34;
+
+        if self.at_eof():
+            self.error(errors.TokenizeEofError, msg.format(*args, **kwargs))
+
+    def get_char(self) -&gt; str:
+        &#34;&#34;&#34;
+        Get the current character.
+        &#34;&#34;&#34;
+        return self.string[self.char]
+
+    def next_char(self) -&gt; None:
+        &#34;&#34;&#34;
+        Advance the tokenizer to the next character.
+        &#34;&#34;&#34;
+        char = self.get_char()
+        if char == &#34;\n&#34;:
+            self.current_line += 1
+            self.current_pos = 0
+        else:
+            self.current_pos += 1
+
+        self.char += 1
+
+    def next_n_chars(self, n: int) -&gt; str:
+        &#34;&#34;&#34;
+        Unconditionally consume N characters and return them.
+        &#34;&#34;&#34;
+        chars: t.MutableSequence[str] = []
+        for _ in range(n):
+            self.forbid_eof(
+                &#34;Ran into EOF while consuming characters. Got {}, wanted {}.&#34;,
+                len(chars), n
+            )
+
+            chars.append(self.get_char())
+            self.next_char()
+
+        return &#34;&#34;.join(chars)
+
+    # Get a single char token.
+    def accept_single_char(self) -&gt; t.Optional[Token]:
+        if not self.single_char_token_enable:
+            return None
+
+        char = self.get_char()
+
+        if char in self.charmap:
+            tok = Token(
+                self.charmap[char],
+                char,
+                self.current_line,
+                self.current_pos
+            )
+            self.next_char()
+            return tok
+
+        return None
+
+    def accept_eof(self) -&gt; t.Optional[Token]:
+        if self.at_eof():
+            return Token(
+                TokenType.EOF,
+                EOF,
+                self.current_line,
+                self.current_pos
+            )
+        else:
+            return None
+
+    def accept_whitespace(self) -&gt; t.Optional[Token]:
+        char = self.get_char()
+        if char in self.whitespace:
+            self.next_char()
+            return Token(
+                TokenType.WHITESPACE,
+                char,
+                self.current_line,
+                self.current_pos
+            )
+
+        return None
+
+    def try_consume_escape(self) -&gt; t.Optional[str]:
+        if self.get_char() != ESCAPE_SIGIL:
+            return None
+
+        self.next_char()
+        self.forbid_eof()
+
+        escape_char = self.get_char()
+        if escape_char not in self.escape_sequences:
+            self.error(errors.TokenizeError, f&#34;Invalid escape &#39;{escape_char}&#39;&#34;)
+
+        self.next_char()
+        self.forbid_eof()
+
+        replacement = self.escape_sequences[escape_char]
+        if isinstance(replacement, str):
+            return replacement
+        elif callable(replacement):
+            return replacement(self)
+        else:
+            raise TypeError(f&#34;Bad type for escape sequence {escape_char}, &#34;
+                            &#34;must be &#39;str&#39; or &#39;(Tokenizer) -&gt; str&#39;&#34;)
+
+    def accept_string_literal(
+        self,
+        stop_chars: t.Sequence[str] = (),
+        error_on_eof: bool = False,
+        allow_escapes: bool = False
+    ) -&gt; t.Optional[Token]:
+        self.forbid_eof(&#34;String literal should not start on EOF&#34;)
+
+        char = self.get_char()
+        pos = self.current_pos
+        line = self.current_line
+        chars = []
+
+        while char not in stop_chars:
+            if allow_escapes:
+                escape = self.try_consume_escape()
+                if escape is not None:
+                    chars.append(escape)
+                    char = self.get_char()
+                    continue
+
+            chars.append(char)
+            self.next_char()
+            if self.at_eof():
+                if error_on_eof:
+                    self.error(
+                        errors.TokenizeEofError,
+                        &#34;Unexpected EOF while parsing string literal.&#34;
+                    )
+                else:
+                    break
+
+            char = self.get_char()
+
+        return Token(
+            TokenType.STRING_LITERAL,
+            &#34;&#34;.join(chars),
+            line,
+            pos
+        )
+
+    def accept_comment(self) -&gt; t.Optional[Token]:
+        char = self.get_char()
+        pos = self.current_pos
+        line = self.current_line
+        chars = []
+
+        if char != COMMENT_SIGIL:
+            return None
+
+        self.next_char()
+        while char != &#34;\n&#34;:
+            chars.append(char)
+            self.next_char()
+
+            if self.at_eof():
+                break
+
+            char = self.get_char()
+
+        return Token(
+            TokenType.COMMENT,
+            &#34;&#34;.join(chars),
+            line,
+            pos
+        )
+
+    # Accepts a normal string literal. No CONSUME_REST, not quoted.
+    def accept_string_literal_normal(self) -&gt; t.Optional[Token]:
+        return self.accept_string_literal(
+            stop_chars=self.string_literal_stop,
+            error_on_eof=False  # Just stop on EOF, no errors.
+        )
+
+    # Accept a CONSUME_REST literal.
+    def accept_string_literal_consume_rest(self) -&gt; t.Optional[Token]:
+        return self.accept_string_literal(
+            stop_chars=self.consume_rest_stop,
+            error_on_eof=False  # Stop on EOF. No errors.
+        )
+
+    # Accept a quoted string literal.
+    def accept_string_literal_quoted(self) -&gt; t.Optional[Token]:
+        if self.get_char() != QUOTE:
+            return None
+        else:
+            self.next_char()
+
+        literal = self.accept_string_literal(
+            stop_chars=self.quoted_literal_stop,
+            error_on_eof=True,  # Quoted literals must be closed.
+            allow_escapes=True  # Escapes only allowed in quoted literals.
+        )
+
+        if literal is None:
+            self.error(
+                errors.TokenizeError,
+                &#34;internal: Got None from accept_string_literal, shouldn&#39;t have.&#34;
+            )
+
+        if self.get_char() != QUOTE:
+            self.error(
+                errors.TokenizeError,
+                &#34;internal: Missing end quote, should have resulted in EOF error.&#34;
+            )
+        else:
+            self.next_char()
+
+        return literal
+
+    @staticmethod
+    def accept_any_of(*f: t.Callable[[], t.Optional[Token]]) -&gt; t.Optional[Token]:
+        for fun in f:
+            tok = fun()
+            if tok is not None:
+                return tok
+
+        return None
+
+    def handle_consume_rest_off(self, tok: Token) -&gt; None:
+        if tok.type in (TokenType.COMMAND_SEP, TokenType.CLOSE_BLOCK, TokenType.CLOSE_PAREN):
+            self.previous_token_was_sep = True
+            return
+
+        # Test to see if we should enter CONSUME_REST state.
+        # Only trigger CONSUME_REST if the previous token was a command separator.
+        should_enter_consume_rest = (
+                self.previous_token_was_sep and
+                tok.type == TokenType.STRING_LITERAL and
+                tok.value in self.consume_rest_triggers
+        )
+        self.previous_token_was_sep = False
+        if should_enter_consume_rest:
+            count = self.consume_rest_triggers[tok.value]
+
+            if count == 0:
+                self.consume_rest_state = TokenizeConsumeRestState.CONSUME
+            else:
+                self.consume_rest_state = TokenizeConsumeRestState.COUNTING
+                self.consume_rest_count = count
+
+    def handle_consume_rest_counting(self, tok: Token) -&gt; None:
+        self.previous_token_was_sep = False
+
+        # Only count down on string literals.
+        if tok.type == TokenType.STRING_LITERAL:
+            self.consume_rest_count -= 1
+
+            # Once countdown is over, CONSUME_REST on next token.
+            if self.consume_rest_count == 0:
+                self.consume_rest_state = TokenizeConsumeRestState.CONSUME
+
+        # If we get any other token type, then cancel CONSUME_REST
+        else:
+            self.consume_rest_state = TokenizeConsumeRestState.OFF
+            self.consume_rest_count = 0
+
+    def handle_consume_rest_consume(self, tok: Token) -&gt; None:
+        # This function runs AFTER a CONSUME_REST consumption. So, just set consume_rest back to OFF.
+        self.consume_rest_state = TokenizeConsumeRestState.OFF
+        self.consume_rest_count = 0
+
+    # TODO
+    # Consume rest state handler. All this code is pretty ugly, and does not account
+    # for more advanced usage.
+    def handle_consume_rest(self, tok: Token) -&gt; None:
+        f_map: t.Mapping[TokenizeConsumeRestState, t.Callable[[Token], None]] = {
+            TokenizeConsumeRestState.OFF: self.handle_consume_rest_off,
+            TokenizeConsumeRestState.COUNTING: self.handle_consume_rest_counting,
+            TokenizeConsumeRestState.CONSUME: self.handle_consume_rest_consume
+        }
+
+        f_map[self.consume_rest_state](tok)
+
+    def next_token(self) -&gt; Token:
+        &#34;&#34;&#34;
+        Extract the next token. If the tokenizing is finished, this will return a `Token` of type `TokenType.EOF`
+
+        Raises:
+            scrolls.errors.TokenizeEofError: If EOF was hit unexpectedly.
+            scrolls.errors.TokenizeError: If a generic issue happened while tokenizing.
+        &#34;&#34;&#34;
+        if self.consume_rest_state == TokenizeConsumeRestState.CONSUME:
+            while True:
+                tok = self.accept_any_of(
+                    self.accept_whitespace
+                )
+
+                if tok is None:
+                    break
+
+                if tok.type == TokenType.WHITESPACE:
+                    continue
+
+            tok = self.accept_string_literal_consume_rest()
+            if tok is None:
+                self.error(
+                    errors.TokenizeError,
+                    &#34;Got bad string literal during consume_rest&#34;
+                )
+            logger.debug(f&#34;tokenize: Got token {tok.type.name}:{repr(tok.value)}&#34;)
+            tok.consume_rest = True  # Signal we got this token using CONSUME_REST
+
+            self.handle_consume_rest(tok)
+            return tok
+        else:
+            while True:
+                tok = self.accept_any_of(
+                    self.accept_eof,
+                    self.accept_whitespace,
+                    self.accept_comment,
+                    self.accept_single_char,
+                    self.accept_string_literal_quoted,
+                    self.accept_string_literal_normal
+                )
+
+                if tok is None:
+                    self.error(
+                        errors.TokenizeError,
+                        &#34;Unexpectedly rejected all tokenizing functions.&#34;
+                    )
+
+                # Loop until we get a non-whitespace, non-comment token.
+                if tok.type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+                    logger.debug(f&#34;tokenize: Got token {tok.type.name}:{repr(tok.value)}&#34;)
+                    self.handle_consume_rest(tok)
+                    return tok
+
+    def get_all_tokens(self) -&gt; t.Sequence[Token]:
+        &#34;&#34;&#34;
+        Extracts all tokens at once, until the end of the script. A sequence of tokens obtained this way
+        will always end with a token of type `TokenType.EOF`.
+
+        Raises:
+            scrolls.errors.TokenizeEofError: If EOF was hit unexpectedly.
+            scrolls.errors.TokenizeError: If a generic issue happened while tokenizing.
+        &#34;&#34;&#34;
+        tokens: t.MutableSequence[Token] = []
+
+        while True:
+            tok = self.next_token()
+            tokens.append(tok)
+            if tok.type == TokenType.EOF:
+                return tokens
+
+
+class ParseContext:
+    def __init__(self, tokenizer: Tokenizer):
+        self.tokenizer = tokenizer
+        self.lines = self.tokenizer.string.splitlines()
+        self.input_tokens = self.tokenizer.get_all_tokens()
+        self.tokens: t.MutableSequence[Token] = list(self.input_tokens)
+        self.token: Token = Token(TokenType.WHITESPACE, &#34;&#34;, 0, 0)
+
+        self.next_token()
+
+    def current_token(self) -&gt; Token:
+        return self.token
+
+    def get_line(self) -&gt; str:
+        return self.lines[self.token.line]
+
+    def next_token(self) -&gt; None:
+        if not self.tokens:
+            logger.debug(&#34;End of tokens.&#34;)
+            parse_error(
+                self,
+                errors.ParseEofError,
+                &#34;Unexpected end of script.&#34;
+            )
+        else:
+            prev_token = self.token
+            self.token = self.tokens.pop(0)
+
+            logger.debug(f&#34;Advance token: {str(prev_token)}-&gt;{str(self.token)}&#34;)
+
+
+def parse_error(
+    ctx: ParseContext,
+    error: t.Type[errors.ParseError],
+    message: str,
+    fatal: bool = False
+) -&gt; t.NoReturn:
+    e = error(
+        ctx.token.line,
+        ctx.token.position,
+        ctx.tokenizer.string,
+        message
+    )
+
+    e.fatal = fatal
+
+    if not fatal:
+        logger.debug(&#34;error&#34;)
+    else:
+        logger.debug(&#34;fatal error&#34;)
+
+    raise e
+
+
+def parse_get(
+    ctx: ParseContext,
+    type: TokenType
+) -&gt; t.Optional[Token]:
+    token = ctx.current_token()
+
+    logger.debug(f&#34;parse_get: want {type.name}&#34;)
+
+    if token.type == type:
+        ctx.next_token()
+        logger.debug(f&#34;parse_get: accepted {str(token)}&#34;)
+        return token
+    else:
+        logger.debug(f&#34;parse_get: rejected {str(token)}&#34;)
+        return None
+
+
+def parse_expect(
+    ctx: ParseContext,
+    type: TokenType,
+    fatal_on_error: bool = False
+) -&gt; Token:
+    tok = parse_get(ctx, type)
+
+    if tok is None:
+        parse_error(
+            ctx,
+            errors.ParseExpectError,
+            f&#34;expected {type.name} here, but got {ctx.token.type.name}({ctx.token.value})&#34;,
+            fatal=fatal_on_error
+        )
+
+    else:
+        return tok
+
+
+def parse_strtok(
+    ctx: ParseContext
+) -&gt; ASTNode:
+    node = ASTNode(
+        ASTNodeType.STRING,
+        parse_expect(ctx, TokenType.STRING_LITERAL)
+    )
+
+    return node
+
+
+def parse_greedy(
+    parser: ParserT
+) -&gt; t.Callable[[ParseContext], t.Sequence[ASTNode]]:
+    def _(ctx: ParseContext) -&gt; t.Sequence[ASTNode]:
+        nodes: t.MutableSequence[ASTNode] = []
+
+        while True:
+            try:
+                nodes.append(parser(ctx))
+                logger.debug(&#34;parse_greedy: append success&#34;)
+            except errors.ParseError as e:
+                if e.fatal:
+                    raise
+
+                logger.debug(&#34;parse_greedy: append fail, return&#34;)
+                return nodes
+
+    return _
+
+
+def parse_choice(
+    *parsers: ParserT
+) -&gt; ParserT:
+    def _(ctx: ParseContext) -&gt; ASTNode:
+        last_exc: t.Optional[errors.ParseError] = None
+
+        for parser in parsers:
+            try:
+                node = parser(ctx)
+                return node
+            except errors.ParseError as e:
+                last_exc = e
+
+                if e.fatal:
+                    break
+
+        if last_exc is None:
+            parse_error(
+                ctx,
+                errors.ParseError,
+                &#34;internal: no parsers provided for parse_choice&#34;
+            )
+        else:
+            raise last_exc
+
+    return _
+
+
+def expect(
+    t_type: TokenType,
+    fatal_on_error: bool = False
+) -&gt; ParserT:
+    def _(ctx: ParseContext) -&gt; ASTNode:
+        node = ASTNode(
+            ASTNodeType.NONE,
+            parse_expect(ctx, t_type, fatal_on_error)
+        )
+
+        return node
+
+    return _
+
+
+def parse_try(
+    parser: ParserT
+) -&gt; t.Callable[[ParseContext], bool]:
+    def _(ctx: ParseContext) -&gt; bool:
+        try:
+            parser(ctx)
+            return True
+        except errors.ParseError:
+            return False
+
+    return _
+
+
+def expect_eof(ctx: ParseContext) -&gt; ASTNode:
+    try:
+        parse_expect(ctx, TokenType.EOF)
+    except errors.ParseEofError:
+        pass
+
+    return ASTNode(
+        ASTNodeType.EOF,
+        ctx.token
+    )
+
+
+expect_command_separator = expect(TokenType.COMMAND_SEP)
+
+
+def parse_expansion_var(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_expansion_var&#34;)
+    var_name_node = parse_eventual_string(ctx).wrap(
+        ASTNodeType.EXPANSION_VAR, as_child=True
+    )
+
+    return var_name_node
+
+
+def parse_expansion_call_args(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_expansion_call_args&#34;)
+
+    args = parse_greedy(parse_eventual_string)(ctx)
+    first_tok: t.Optional[Token] = None
+
+    if args:
+        first_tok = args[0].tok
+
+    args_node = ASTNode(
+        ASTNodeType.EXPANSION_ARGUMENTS,
+        first_tok
+    )
+    args_node.children.extend(args)
+
+    return args_node
+
+
+def parse_expansion_call(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_expansion_call&#34;)
+    call_node = expect(TokenType.OPEN_PAREN)(ctx).wrap(
+        ASTNodeType.EXPANSION_CALL
+    )
+
+    call_node.children.append(parse_eventual_string(ctx))  # Expansion name
+    call_node.children.append(parse_expansion_call_args(ctx))
+
+    expect(TokenType.CLOSE_PAREN, fatal_on_error=True)(ctx)
+
+    return call_node
+
+
+def parse_expansion(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_expansion&#34;)
+
+    expansion_node = expect(TokenType.EXPANSION_SIGIL)(ctx).wrap(
+        ASTNodeType.EXPANSION
+    )
+
+    multi_tok = parse_get(ctx, TokenType.MULTI_SIGIL)
+    if multi_tok is None:
+        expansion_node.children.append(
+            ASTNode(ASTNodeType.EXPANSION_SINGLE, None)
+        )
+    else:
+        expansion_node.children.append(
+            ASTNode(ASTNodeType.EXPANSION_MULTI, multi_tok)
+        )
+
+    expansion_node.children.append(
+        parse_choice(parse_expansion_call, parse_expansion_var)(ctx)
+    )
+
+    return expansion_node
+
+
+parse_eventual_string = parse_choice(
+    parse_expansion,
+    parse_strtok
+)
+
+
+def parse_command_args(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_command_args&#34;)
+    args_node = ASTNode(ASTNodeType.COMMAND_ARGUMENTS, None)
+    args_node.children.extend(parse_greedy(parse_eventual_string)(ctx))
+
+    if args_node.children:
+        args_node.tok = args_node.children[0].tok
+
+    return args_node
+
+
+def parse_command(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_command&#34;)
+
+    command_node = parse_eventual_string(ctx).wrap(
+        ASTNodeType.COMMAND_CALL,
+        as_child=True
+    )
+    command_node.children.append(parse_command_args(ctx))
+
+    return command_node
+
+
+def parse_control_args(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_control_args&#34;)
+    args_node = expect(TokenType.OPEN_PAREN)(ctx).wrap(
+        ASTNodeType.CONTROL_ARGUMENTS
+    )
+    args_node.children.extend(parse_greedy(parse_eventual_string)(ctx))
+    expect(
+        TokenType.CLOSE_PAREN,
+        fatal_on_error=True
+    )(ctx)
+
+    return args_node
+
+
+def parse_control(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_control&#34;)
+
+    control_node = expect(TokenType.CONTROL_SIGIL)(ctx).wrap(
+        ASTNodeType.CONTROL_CALL
+    )
+    control_node.children.append(parse_strtok(ctx))
+    control_node.children.append(parse_control_args(ctx))
+    control_node.children.append(parse_statement(ctx))
+
+    return control_node
+
+
+def parse_block_body(ctx: ParseContext, top_level: bool = False) -&gt; t.Sequence[ASTNode]:
+    logger.debug(&#34;parse_block_body&#34;)
+
+    nodes: t.MutableSequence[ASTNode] = []
+
+    while True:
+        if ctx.token.type == TokenType.CLOSE_BLOCK:
+            if top_level:
+                parse_error(
+                    ctx,
+                    errors.ParseError,
+                    &#34;Unexpected block close.&#34;,
+                    fatal=True
+                )
+            else:
+                return nodes
+
+        if ctx.token.type == TokenType.EOF:
+            if top_level:
+                return nodes
+            else:
+                parse_error(
+                    ctx,
+                    errors.ParseEofError,
+                    &#34;Unexpected end of script while parsing block.&#34;,
+                    fatal=True
+                )
+
+        # If we hit a command separator, just consume it and continue.
+        if parse_try(expect_command_separator)(ctx):
+            continue
+
+        # Actually try to parse the next statement. If that fails, it means we found some non-statement
+        # structure inside a block, which is not legal. Error out with something more descriptive.
+        try:
+            node = parse_statement(ctx)
+        except errors.ParseError:
+            parse_error(
+                ctx,
+                errors.ParseError,
+                &#34;Expected statement or block here.&#34;,
+                fatal=True
+            )
+            raise  # Not necessary, but satisfies linters.
+
+        nodes.append(node)
+
+
+def parse_block(ctx: ParseContext) -&gt; ASTNode:
+    node = expect(TokenType.OPEN_BLOCK)(ctx).wrap(
+        ASTNodeType.BLOCK
+    )
+    node.children.extend(parse_block_body(ctx))
+    expect(
+        TokenType.CLOSE_BLOCK,
+        fatal_on_error=True
+    )(ctx)
+
+    return node
+
+
+parse_statement = parse_choice(
+    parse_block,
+    parse_control,
+    parse_command
+)
+
+
+def parse_root(tokenizer: Tokenizer) -&gt; ASTNode:
+    ctx = ParseContext(tokenizer)
+    root_node = ASTNode(ASTNodeType.ROOT, None)
+    root_node.children.extend(parse_block_body(ctx, top_level=True))
+
+    return root_node
+
+
+def parse_scroll(tokenizer: Tokenizer) -&gt; AST:
+    &#34;&#34;&#34;
+    Parse a script (wrapped in a `Tokenizer`) and convert it to an `AST`. See [Using The Parser](#using-the-parser).
+    &#34;&#34;&#34;
+    return AST(parse_root(tokenizer), tokenizer.string)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="scrolls.ast.parse_scroll"><code class="name flex">
+<span>def <span class="ident">parse_scroll</span></span>(<span>tokenizer: <a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a>) ‑> <a title="scrolls.ast.AST" href="#scrolls.ast.AST">AST</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse a script (wrapped in a <code><a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a></code>) and convert it to an <code><a title="scrolls.ast.AST" href="#scrolls.ast.AST">AST</a></code>. See <a href="#using-the-parser">Using The Parser</a>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_scroll(tokenizer: Tokenizer) -&gt; AST:
+    &#34;&#34;&#34;
+    Parse a script (wrapped in a `Tokenizer`) and convert it to an `AST`. See [Using The Parser](#using-the-parser).
+    &#34;&#34;&#34;
+    return AST(parse_root(tokenizer), tokenizer.string)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="scrolls.ast.AST"><code class="flex name class">
+<span>class <span class="ident">AST</span></span>
+<span>(</span><span>root: <a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a>, script: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An Abstract Syntax Tree.</p>
+<p>Represents the semantic structure of a script, without the specific syntax.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AST:
+    &#34;&#34;&#34;An Abstract Syntax Tree.
+
+    Represents the semantic structure of a script, without the specific syntax.
+    &#34;&#34;&#34;
+
+    def __init__(self, root: &#39;ASTNode&#39;, script: str):
+        self.root: ASTNode = root
+        &#34;&#34;&#34;The root `ASTNode` of this AST.&#34;&#34;&#34;
+
+        self.script: str = script
+        &#34;&#34;&#34;The script that generated this AST.&#34;&#34;&#34;
+
+    def prettify(self) -&gt; str:
+        &#34;&#34;&#34;Returns a JSON-formatted string showing the full structure of this AST.
+
+        .. WARNING::
+            For debugging and demonstration purposes only.
+        &#34;&#34;&#34;
+        return self.root.prettify()
+
+    def __repr__(self) -&gt; str:
+        return f&#34;ScrollAST({repr(self.root)}&#34;</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="scrolls.ast.AST.root"><code class="name">var <span class="ident">root</span></code></dt>
+<dd>
+<div class="desc"><p>The root <code><a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a></code> of this AST.</p></div>
+</dd>
+<dt id="scrolls.ast.AST.script"><code class="name">var <span class="ident">script</span></code></dt>
+<dd>
+<div class="desc"><p>The script that generated this AST.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.ast.AST.prettify"><code class="name flex">
+<span>def <span class="ident">prettify</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a JSON-formatted string showing the full structure of this AST.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For debugging and demonstration purposes only.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prettify(self) -&gt; str:
+    &#34;&#34;&#34;Returns a JSON-formatted string showing the full structure of this AST.
+
+    .. WARNING::
+        For debugging and demonstration purposes only.
+    &#34;&#34;&#34;
+    return self.root.prettify()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.ast.ASTNode"><code class="flex name class">
+<span>class <span class="ident">ASTNode</span></span>
+<span>(</span><span>type: <a title="scrolls.ast.ASTNodeType" href="#scrolls.ast.ASTNodeType">ASTNodeType</a>, token: Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A node within an <code><a title="scrolls.ast.AST" href="#scrolls.ast.AST">AST</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ASTNode:
+    &#34;&#34;&#34;
+    A node within an `AST`.
+    &#34;&#34;&#34;
+    __slots__ = (
+        &#34;children&#34;,
+        &#34;type&#34;,
+        &#34;_tok&#34;
+    )
+
+    def __init__(self, type: ASTNodeType, token: t.Optional[Token]):
+        self.children: t.MutableSequence[&#39;ASTNode&#39;] = []
+        &#34;&#34;&#34;The child `ASTNode` objects of this node.&#34;&#34;&#34;
+
+        self.type = type
+        &#34;&#34;&#34;The `ASTNodeType` of this node.&#34;&#34;&#34;
+
+        self._tok: t.Optional[Token] = token
+
+    def to_dict(self) -&gt; t.Mapping[str, t.Any]:
+        &#34;&#34;&#34;
+        Converts this object into a dict demonstrating its structure.
+
+        Returns:
+            A dictionary of the following form:
+
+            ```json
+            {
+                &#34;_type&#34;: &#34;TYPENAME&#34;,
+                &#34;_tok&#34;: &#34;TOKTYPE:&#39;TOKVALUE&#39;&#34;,
+                &#34;children&#34;: [...]
+            }
+            ```
+
+            .. WARNING::
+                This dictionary cannot be converted 1-1 back to a `ASTNode`. It is mainly meant for display
+                purposes. See `ASTNode.prettify`.
+        &#34;&#34;&#34;
+
+        mapping = {
+            &#34;_type&#34;: self.type.name,
+            &#34;_tok&#34;: str(self._tok),
+            &#34;children&#34;: [child.to_dict() for child in self.children]
+        }
+
+        return mapping
+
+    def prettify(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns a JSON-formatted string showing the full structure of this `ASTNode`.
+
+        .. WARNING::
+            For debugging and demonstration purposes only.
+        &#34;&#34;&#34;
+
+        s = json.dumps(self.to_dict(), sort_keys=True, indent=4)
+        return s
+
+    @property
+    def tok(self) -&gt; Token:
+        &#34;&#34;&#34;
+        The token that generated this node. This should always be populated by `parse_scroll` under normal
+        circumstances.
+
+        Raises:
+            ASTStateError: On get, if the token was never assigned.
+        &#34;&#34;&#34;
+
+        if self._tok is None:
+            raise ASTStateError(self, &#34;cannot get token, is None&#34;)
+
+        return self._tok
+
+    @tok.setter
+    def tok(self, token: Token) -&gt; None:
+        self._tok = token
+
+    def has_token(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Checks whether this node has a token assigned to it.
+        &#34;&#34;&#34;
+        return self._tok is not None
+
+    def wrap(self, node_type: ASTNodeType, as_child: bool = False) -&gt; &#39;ASTNode&#39;:
+        &#34;&#34;&#34;
+        Create a new node, and assign this node&#39;s token to the new node.
+
+        .. WARNING::
+            This is used internally by the parser during parsing and should generally not be called on finished ASTs.
+
+        Args:
+            node_type: The type of the new node.
+            as_child: If `True`, add this node as a child of the new wrapper node.
+
+        Returns:
+            The newly created wrapper node.
+        &#34;&#34;&#34;
+        new_node = ASTNode(
+            node_type,
+            self.tok
+        )
+
+        if as_child:
+            new_node.children.append(self)
+
+        return new_node
+
+    def str_content(self) -&gt; str:
+        &#34;&#34;&#34;
+        Gets the string value of a `ASTNodeType.STRING` node.
+
+        Raises:
+            ASTStateError: If this node is not `ASTNodeType.STRING`.
+        &#34;&#34;&#34;
+        if self.type != ASTNodeType.STRING:
+            raise ASTStateError(self, &#34;str_content requires STRING type node&#34;)
+
+        assert self._tok is not None
+        return self._tok.value
+
+    def find_all(self, func: t.Callable[[&#39;ASTNode&#39;], bool]) -&gt; t.Sequence[&#39;ASTNode&#39;]:
+        &#34;&#34;&#34;
+        Find all nodes in this tree for which `func` returns true.
+
+        Args:
+            func: A predicate which takes an `ASTNode` as input.
+
+        Returns:
+            A sequence of matching nodes.
+        &#34;&#34;&#34;
+
+        found = []
+
+        if func(self):
+            found.append(self)
+
+        for child in self.children:
+            found.extend(child.find_all(func))
+
+        return found
+
+    def __str__(self) -&gt; str:
+        return repr(self)
+
+    def __repr__(self) -&gt; str:
+        if self.type is ASTNodeType.STRING:
+            return f&#34;ScrollASTNode({self.type.name}, &#39;{str(self._tok)}&#39;)&#34;
+        else:
+            return f&#34;ScrollASTNode({self.type.name}, {repr(self.children)})&#34;</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="scrolls.ast.ASTNode.children"><code class="name">var <span class="ident">children</span></code></dt>
+<dd>
+<div class="desc"><p>The child <code><a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a></code> objects of this node.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNode.tok"><code class="name">var <span class="ident">tok</span> : <a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a></code></dt>
+<dd>
+<div class="desc"><p>The token that generated this node. This should always be populated by <code><a title="scrolls.ast.parse_scroll" href="#scrolls.ast.parse_scroll">parse_scroll()</a></code> under normal
+circumstances.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code><a title="scrolls.ast.ASTStateError" href="#scrolls.ast.ASTStateError">ASTStateError</a></code></dt>
+<dd>On get, if the token was never assigned.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def tok(self) -&gt; Token:
+    &#34;&#34;&#34;
+    The token that generated this node. This should always be populated by `parse_scroll` under normal
+    circumstances.
+
+    Raises:
+        ASTStateError: On get, if the token was never assigned.
+    &#34;&#34;&#34;
+
+    if self._tok is None:
+        raise ASTStateError(self, &#34;cannot get token, is None&#34;)
+
+    return self._tok</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.ASTNode.type"><code class="name">var <span class="ident">type</span></code></dt>
+<dd>
+<div class="desc"><p>The <code><a title="scrolls.ast.ASTNodeType" href="#scrolls.ast.ASTNodeType">ASTNodeType</a></code> of this node.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.ast.ASTNode.find_all"><code class="name flex">
+<span>def <span class="ident">find_all</span></span>(<span>self, func: Callable[[ForwardRef('<a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a>')], bool]) ‑> Sequence[<a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find all nodes in this tree for which <code>func</code> returns true.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>func</code></strong></dt>
+<dd>A predicate which takes an <code><a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a></code> as input.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>A sequence of matching nodes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_all(self, func: t.Callable[[&#39;ASTNode&#39;], bool]) -&gt; t.Sequence[&#39;ASTNode&#39;]:
+    &#34;&#34;&#34;
+    Find all nodes in this tree for which `func` returns true.
+
+    Args:
+        func: A predicate which takes an `ASTNode` as input.
+
+    Returns:
+        A sequence of matching nodes.
+    &#34;&#34;&#34;
+
+    found = []
+
+    if func(self):
+        found.append(self)
+
+    for child in self.children:
+        found.extend(child.find_all(func))
+
+    return found</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.ASTNode.has_token"><code class="name flex">
+<span>def <span class="ident">has_token</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks whether this node has a token assigned to it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_token(self) -&gt; bool:
+    &#34;&#34;&#34;
+    Checks whether this node has a token assigned to it.
+    &#34;&#34;&#34;
+    return self._tok is not None</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.ASTNode.prettify"><code class="name flex">
+<span>def <span class="ident">prettify</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a JSON-formatted string showing the full structure of this <code><a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For debugging and demonstration purposes only.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prettify(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns a JSON-formatted string showing the full structure of this `ASTNode`.
+
+    .. WARNING::
+        For debugging and demonstration purposes only.
+    &#34;&#34;&#34;
+
+    s = json.dumps(self.to_dict(), sort_keys=True, indent=4)
+    return s</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.ASTNode.str_content"><code class="name flex">
+<span>def <span class="ident">str_content</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets the string value of a <code><a title="scrolls.ast.ASTNodeType.STRING" href="#scrolls.ast.ASTNodeType.STRING">ASTNodeType.STRING</a></code> node.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code><a title="scrolls.ast.ASTStateError" href="#scrolls.ast.ASTStateError">ASTStateError</a></code></dt>
+<dd>If this node is not <code><a title="scrolls.ast.ASTNodeType.STRING" href="#scrolls.ast.ASTNodeType.STRING">ASTNodeType.STRING</a></code>.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def str_content(self) -&gt; str:
+    &#34;&#34;&#34;
+    Gets the string value of a `ASTNodeType.STRING` node.
+
+    Raises:
+        ASTStateError: If this node is not `ASTNodeType.STRING`.
+    &#34;&#34;&#34;
+    if self.type != ASTNodeType.STRING:
+        raise ASTStateError(self, &#34;str_content requires STRING type node&#34;)
+
+    assert self._tok is not None
+    return self._tok.value</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.ASTNode.to_dict"><code class="name flex">
+<span>def <span class="ident">to_dict</span></span>(<span>self) ‑> Mapping[str, Any]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts this object into a dict demonstrating its structure.</p>
+<h2 id="returns">Returns</h2>
+<p>A dictionary of the following form:</p>
+<pre><code class="language-json">{
+    &quot;_type&quot;: &quot;TYPENAME&quot;,
+    &quot;_tok&quot;: &quot;TOKTYPE:'TOKVALUE'&quot;,
+    &quot;children&quot;: [...]
+}
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This dictionary cannot be converted 1-1 back to a <code><a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a></code>. It is mainly meant for display
+purposes. See <code><a title="scrolls.ast.ASTNode.prettify" href="#scrolls.ast.ASTNode.prettify">ASTNode.prettify()</a></code>.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_dict(self) -&gt; t.Mapping[str, t.Any]:
+    &#34;&#34;&#34;
+    Converts this object into a dict demonstrating its structure.
+
+    Returns:
+        A dictionary of the following form:
+
+        ```json
+        {
+            &#34;_type&#34;: &#34;TYPENAME&#34;,
+            &#34;_tok&#34;: &#34;TOKTYPE:&#39;TOKVALUE&#39;&#34;,
+            &#34;children&#34;: [...]
+        }
+        ```
+
+        .. WARNING::
+            This dictionary cannot be converted 1-1 back to a `ASTNode`. It is mainly meant for display
+            purposes. See `ASTNode.prettify`.
+    &#34;&#34;&#34;
+
+    mapping = {
+        &#34;_type&#34;: self.type.name,
+        &#34;_tok&#34;: str(self._tok),
+        &#34;children&#34;: [child.to_dict() for child in self.children]
+    }
+
+    return mapping</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.ASTNode.wrap"><code class="name flex">
+<span>def <span class="ident">wrap</span></span>(<span>self, node_type: <a title="scrolls.ast.ASTNodeType" href="#scrolls.ast.ASTNodeType">ASTNodeType</a>, as_child: bool = False) ‑> <a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a new node, and assign this node's token to the new node.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is used internally by the parser during parsing and should generally not be called on finished ASTs.</p>
+</div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>node_type</code></strong></dt>
+<dd>The type of the new node.</dd>
+<dt><strong><code>as_child</code></strong></dt>
+<dd>If <code>True</code>, add this node as a child of the new wrapper node.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>The newly created wrapper node.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wrap(self, node_type: ASTNodeType, as_child: bool = False) -&gt; &#39;ASTNode&#39;:
+    &#34;&#34;&#34;
+    Create a new node, and assign this node&#39;s token to the new node.
+
+    .. WARNING::
+        This is used internally by the parser during parsing and should generally not be called on finished ASTs.
+
+    Args:
+        node_type: The type of the new node.
+        as_child: If `True`, add this node as a child of the new wrapper node.
+
+    Returns:
+        The newly created wrapper node.
+    &#34;&#34;&#34;
+    new_node = ASTNode(
+        node_type,
+        self.tok
+    )
+
+    if as_child:
+        new_node.children.append(self)
+
+    return new_node</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.ast.ASTNodeType"><code class="flex name class">
+<span>class <span class="ident">ASTNodeType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>All possible AST node types.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ASTNodeType(enum.Enum):
+    &#34;&#34;&#34;
+    All possible AST node types.
+    &#34;&#34;&#34;
+
+    NONE = 0
+    &#34;&#34;&#34;AST nodes with this type should be ignored.&#34;&#34;&#34;
+
+    EOF = 1
+    &#34;&#34;&#34;A node representing EOF.&#34;&#34;&#34;
+
+    ROOT = 2
+    &#34;&#34;&#34;The root AST node.&#34;&#34;&#34;
+
+    STRING = 3
+    &#34;&#34;&#34;A string literal.&#34;&#34;&#34;
+
+    COMMAND_CALL = 4
+    &#34;&#34;&#34;The parent node for a command call.&#34;&#34;&#34;
+
+    COMMAND_ARGUMENTS = 5
+    &#34;&#34;&#34;The parent node for a list of command arguments.&#34;&#34;&#34;
+
+    BLOCK = 6
+    &#34;&#34;&#34;A block of statements.&#34;&#34;&#34;
+
+    CONTROL_CALL = 7
+    &#34;&#34;&#34;The parent node for a control call.&#34;&#34;&#34;
+
+    CONTROL_ARGUMENTS = 8
+    &#34;&#34;&#34;The parent node for a list of control arguments.&#34;&#34;&#34;
+
+    EXPANSION = 9
+    &#34;&#34;&#34;The parent node for an expansion, either variable or call.&#34;&#34;&#34;
+
+    EXPANSION_SINGLE = 10
+    &#34;&#34;&#34;Indicates an expansion should use normal expansion.&#34;&#34;&#34;
+
+    EXPANSION_MULTI = 11
+    &#34;&#34;&#34;Indicates an expansion should use vector expansion.&#34;&#34;&#34;
+
+    EXPANSION_VAR = 12
+    &#34;&#34;&#34;Parent node for a variable expansion.&#34;&#34;&#34;
+
+    EXPANSION_CALL = 13
+    &#34;&#34;&#34;Parent node for an expansion call.&#34;&#34;&#34;
+
+    EXPANSION_ARGUMENTS = 14
+    &#34;&#34;&#34;Parent node for a list of expansion arguments. Applies only to calls.&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="scrolls.ast.ASTNodeType.BLOCK"><code class="name">var <span class="ident">BLOCK</span></code></dt>
+<dd>
+<div class="desc"><p>A block of statements.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.COMMAND_ARGUMENTS"><code class="name">var <span class="ident">COMMAND_ARGUMENTS</span></code></dt>
+<dd>
+<div class="desc"><p>The parent node for a list of command arguments.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.COMMAND_CALL"><code class="name">var <span class="ident">COMMAND_CALL</span></code></dt>
+<dd>
+<div class="desc"><p>The parent node for a command call.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.CONTROL_ARGUMENTS"><code class="name">var <span class="ident">CONTROL_ARGUMENTS</span></code></dt>
+<dd>
+<div class="desc"><p>The parent node for a list of control arguments.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.CONTROL_CALL"><code class="name">var <span class="ident">CONTROL_CALL</span></code></dt>
+<dd>
+<div class="desc"><p>The parent node for a control call.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.EOF"><code class="name">var <span class="ident">EOF</span></code></dt>
+<dd>
+<div class="desc"><p>A node representing EOF.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.EXPANSION"><code class="name">var <span class="ident">EXPANSION</span></code></dt>
+<dd>
+<div class="desc"><p>The parent node for an expansion, either variable or call.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.EXPANSION_ARGUMENTS"><code class="name">var <span class="ident">EXPANSION_ARGUMENTS</span></code></dt>
+<dd>
+<div class="desc"><p>Parent node for a list of expansion arguments. Applies only to calls.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.EXPANSION_CALL"><code class="name">var <span class="ident">EXPANSION_CALL</span></code></dt>
+<dd>
+<div class="desc"><p>Parent node for an expansion call.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.EXPANSION_MULTI"><code class="name">var <span class="ident">EXPANSION_MULTI</span></code></dt>
+<dd>
+<div class="desc"><p>Indicates an expansion should use vector expansion.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.EXPANSION_SINGLE"><code class="name">var <span class="ident">EXPANSION_SINGLE</span></code></dt>
+<dd>
+<div class="desc"><p>Indicates an expansion should use normal expansion.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.EXPANSION_VAR"><code class="name">var <span class="ident">EXPANSION_VAR</span></code></dt>
+<dd>
+<div class="desc"><p>Parent node for a variable expansion.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.NONE"><code class="name">var <span class="ident">NONE</span></code></dt>
+<dd>
+<div class="desc"><p>AST nodes with this type should be ignored.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.ROOT"><code class="name">var <span class="ident">ROOT</span></code></dt>
+<dd>
+<div class="desc"><p>The root AST node.</p></div>
+</dd>
+<dt id="scrolls.ast.ASTNodeType.STRING"><code class="name">var <span class="ident">STRING</span></code></dt>
+<dd>
+<div class="desc"><p>A string literal.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.ast.ASTStateError"><code class="flex name class">
+<span>class <span class="ident">ASTStateError</span></span>
+<span>(</span><span>node: <a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a>, message: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generic tokenizer/parser error that includes an entire AST node.</p>
+<p>Raised by ASTNode functions on invalid state.</p>
+<p>Generally internal to the scrolls module. If one of these errors makes it out,
+something is probably wrong.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ASTStateError(errors.ScrollError):
+    &#34;&#34;&#34;Generic tokenizer/parser error that includes an entire AST node.
+
+    Raised by ASTNode functions on invalid state.
+
+    Generally internal to the scrolls module. If one of these errors makes it out,
+    something is probably wrong.
+    &#34;&#34;&#34;
+    def __init__(self, node: &#39;ASTNode&#39;, message: str):
+        self.node = node
+        self.message = message
+
+    def __str__(self) -&gt; str:
+        return self.message</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.ScrollError" href="errors.html#scrolls.errors.ScrollError">ScrollError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="scrolls.ast.Token"><code class="flex name class">
+<span>class <span class="ident">Token</span></span>
+<span>(</span><span>type: <a title="scrolls.ast.TokenType" href="#scrolls.ast.TokenType">TokenType</a>, value: str, line: int, position: int, consume_rest: bool = False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A token. See <a href="#tokenizing">Tokenizing</a>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class Token:
+    &#34;&#34;&#34;A token. See [Tokenizing](#tokenizing).&#34;&#34;&#34;
+
+    type: TokenType
+    &#34;&#34;&#34;The type of this token.&#34;&#34;&#34;
+
+    value: str
+    &#34;&#34;&#34;The value of this token.&#34;&#34;&#34;
+
+    line: int
+    &#34;&#34;&#34;The line this token *started* generating on. Some tokens may span multiple lines.&#34;&#34;&#34;
+
+    position: int
+    &#34;&#34;&#34;The column along the line that this token *started* generating on. &#34;&#34;&#34;
+
+    consume_rest: bool = False
+    &#34;&#34;&#34;Sets whether this token was generated by CONSUME_REST.&#34;&#34;&#34;
+
+    def __str__(self) -&gt; str:
+        return f&#34;{self.type.name}:{repr(self.value)}&#34;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="scrolls.ast.Token.consume_rest"><code class="name">var <span class="ident">consume_rest</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Sets whether this token was generated by CONSUME_REST.</p></div>
+</dd>
+<dt id="scrolls.ast.Token.line"><code class="name">var <span class="ident">line</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The line this token <em>started</em> generating on. Some tokens may span multiple lines.</p></div>
+</dd>
+<dt id="scrolls.ast.Token.position"><code class="name">var <span class="ident">position</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The column along the line that this token <em>started</em> generating on.</p></div>
+</dd>
+<dt id="scrolls.ast.Token.type"><code class="name">var <span class="ident">type</span> : <a title="scrolls.ast.TokenType" href="#scrolls.ast.TokenType">TokenType</a></code></dt>
+<dd>
+<div class="desc"><p>The type of this token.</p></div>
+</dd>
+<dt id="scrolls.ast.Token.value"><code class="name">var <span class="ident">value</span> : str</code></dt>
+<dd>
+<div class="desc"><p>The value of this token.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.ast.TokenType"><code class="flex name class">
+<span>class <span class="ident">TokenType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>All possible token types generated by <code><a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TokenType(enum.Enum):
+    &#34;&#34;&#34;
+    All possible token types generated by `Tokenizer`.
+    &#34;&#34;&#34;
+
+    OPEN_PAREN = 1
+    CLOSE_PAREN = 2
+    OPEN_BLOCK = 3
+    CLOSE_BLOCK = 4
+    EXPANSION_SIGIL = 5
+    MULTI_SIGIL = 6
+    CONTROL_SIGIL = 7
+    COMMAND_SEP = 8
+    STRING_LITERAL = 9
+    EOF = 10
+    WHITESPACE = 11
+    COMMENT = 12</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="scrolls.ast.TokenType.CLOSE_BLOCK"><code class="name">var <span class="ident">CLOSE_BLOCK</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.CLOSE_PAREN"><code class="name">var <span class="ident">CLOSE_PAREN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.COMMAND_SEP"><code class="name">var <span class="ident">COMMAND_SEP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.COMMENT"><code class="name">var <span class="ident">COMMENT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.CONTROL_SIGIL"><code class="name">var <span class="ident">CONTROL_SIGIL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.EOF"><code class="name">var <span class="ident">EOF</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.EXPANSION_SIGIL"><code class="name">var <span class="ident">EXPANSION_SIGIL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.MULTI_SIGIL"><code class="name">var <span class="ident">MULTI_SIGIL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.OPEN_BLOCK"><code class="name">var <span class="ident">OPEN_BLOCK</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.OPEN_PAREN"><code class="name">var <span class="ident">OPEN_PAREN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.STRING_LITERAL"><code class="name">var <span class="ident">STRING_LITERAL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.ast.TokenType.WHITESPACE"><code class="name">var <span class="ident">WHITESPACE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.ast.Tokenizer"><code class="flex name class">
+<span>class <span class="ident">Tokenizer</span></span>
+<span>(</span><span>string: str, consume_rest_triggers: Mapping[str, int] = mappingproxy({}))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The tokenizer. This class is responsible for identifying meaningful pieces of scripts
+(such as string literals, block open and close, etc.), and tagging them.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Tokenizers are <strong>single use</strong>. Once the string passed into the constructor has been exhasted, a new
+Tokenizer must be constructed.</p>
+</div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>string</code></strong></dt>
+<dd>The script to tokenize.</dd>
+<dt><strong><code>consume_rest_triggers</code></strong></dt>
+<dd>Triggers for CONSUME_REST.</dd>
+</dl>
+<h2 id="related">Related</h2>
+<p><code><a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a></code>, <a href="#tokenizing">Tokenizing</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Tokenizer:
+    &#34;&#34;&#34;
+    The tokenizer. This class is responsible for identifying meaningful pieces of scripts
+    (such as string literals, block open and close, etc.), and tagging them.
+
+    .. WARNING::
+        Tokenizers are **single use**. Once the string passed into the constructor has been exhasted, a new
+        Tokenizer must be constructed.
+
+    Args:
+        string: The script to tokenize.
+        consume_rest_triggers: Triggers for CONSUME_REST.
+
+    Related:
+        `Token`, [Tokenizing](#tokenizing)
+    &#34;&#34;&#34;
+    def __init__(
+        self,
+        string: str,
+        consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({})
+    ):
+        self.current_line = 0
+        self.current_pos = 0
+        self.string = string.replace(&#34;\r&#34;, &#34;&#34;).strip()
+        self.stringlen = len(self.string)
+        self.char = 0
+        self.consume_rest_triggers = consume_rest_triggers
+        self.consume_rest_state = TokenizeConsumeRestState.OFF
+        self.consume_rest_count = 0
+        self.previous_token_was_sep = True
+        self.whitespace = &#34;\t &#34;
+
+        # Map of single characters to token types
+        self.charmap = {
+            &#34;\n&#34;: TokenType.COMMAND_SEP,
+            &#34;;&#34;: TokenType.COMMAND_SEP,
+            OPEN_PAREN: TokenType.OPEN_PAREN,
+            CLOSE_PAREN: TokenType.CLOSE_PAREN,
+            BLOCK_OPEN: TokenType.OPEN_BLOCK,
+            BLOCK_CLOSE: TokenType.CLOSE_BLOCK,
+            EXPANSION_SIGIL: TokenType.EXPANSION_SIGIL,
+            CONTROL_SIGIL: TokenType.CONTROL_SIGIL,
+            MULTI_SIGIL: TokenType.MULTI_SIGIL
+        }
+
+        self.escape_sequences: t.MutableMapping[
+            str,
+            t.Union[str, t.Callable[[Tokenizer], str]]
+        ] = {
+            &#34;n&#34;: &#34;\n&#34;,
+            &#34;t&#34;: &#34;\t&#34;,
+            &#34;r&#34;: &#34;\r&#34;,
+            ESCAPE_SIGIL: ESCAPE_SIGIL,
+            QUOTE: QUOTE,
+            &#34;u&#34;: Tokenizer._unicode_escape
+        }
+
+        # Set up stop chars for unquoted string literals.
+        self._string_literal_always_stop = self.whitespace + COMMENT_SIGIL
+        self._string_literal_stop_single_char = &#34;&#34;.join(self.charmap.keys())
+        self._string_literal_stop_quoted = QUOTE
+
+        self.string_literal_stop: str = self._string_literal_always_stop
+        self.single_char_token_enable = True
+        self.set_single_char_token_enable(True)
+
+        # Set up stop chars for CONSUME_REST.
+        self._consume_rest_stop_switch: str = &#34;&#34;.join(COMMAND_SEP + [BLOCK_CLOSE, BLOCK_OPEN])
+        self.consume_rest_stop: str = &#34;&#34;
+        self.set_consume_rest_all(False)
+
+        # Set up stop chars for quoted literals.
+        self.quoted_literal_stop: str = QUOTE  # For now, quoted literals ONLY stop on another quote.
+        self.quoted_literal_enable = True
+        self.set_quoted_literals_enable(True)
+
+    def _unicode_escape(self) -&gt; str:
+        code_point = &#34;&#34;  # Initialization not needed, just satisfies some linters.
+        try:
+            code_point = self.next_n_chars(4)
+        except errors.TokenizeEofError:
+            self.error(
+                errors.TokenizeEofError,
+                &#34;Ran off end of script trying to parse unicode escape.&#34;
+            )
+
+        if QUOTE in code_point:
+            self.current_pos -= 4
+            self.error(
+                errors.TokenizeError,
+                f&#34;Encountered {QUOTE} while consuming unicode escape.&#34;
+            )
+
+        char = &#34;&#34;
+        try:
+            char = chr(int(code_point, 16))
+        except ValueError:
+            self.current_pos -= 4
+            self.error(
+                errors.TokenizeError,
+                f&#34;Bad hex number {code_point}.&#34;
+            )
+
+        return char
+
+    def set_consume_rest_all(self, consume_all: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Set whether CONSUME_REST consumes until EOF. Defaults to `False`.
+
+        If `False`, CONSUME_REST will stop on block open/close, and command separators.
+
+        If `True`, CONSUME_REST will not stop until EOF.
+        &#34;&#34;&#34;
+        self.consume_rest_stop = str_switch(
+            self.consume_rest_stop,
+            self._consume_rest_stop_switch,
+            not consume_all
+        )
+
+    def set_single_char_token_enable(self, en: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Set whether single character tokens should be parsed. This includes ALL token types except for
+        `TokenType.STRING_LITERAL` and `TokenType.COMMENT`. Defaults to `True`.
+
+        If `False`, then all special characters that would otherwise be their own token will be rolled
+        into string literals.
+        &#34;&#34;&#34;
+        self.single_char_token_enable = en
+        self.string_literal_stop = str_switch(
+            self.string_literal_stop,
+            self._string_literal_stop_single_char,
+            en
+        )
+
+    def set_quoted_literals_enable(self, en: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Set whether quoted string literals are enabled. If disabled, quotes will be rolled into normal string token
+        parsing.
+
+        For instance, if quoted literals are disabled, `&#34;Hello World&#34;` would be interpreted as `&#34;Hello`, `World&#34;`.
+        &#34;&#34;&#34;
+        self.quoted_literal_enable = en
+        self.string_literal_stop = str_switch(
+            self.string_literal_stop,
+            self._string_literal_stop_quoted,
+            en
+        )
+
+    def error(self, err_type: t.Type[errors.PositionalError], message: str) -&gt; t.NoReturn:
+        raise err_type(
+            self.current_line,
+            self.current_pos,
+            self.string,
+            message
+        )
+
+    def at_eof(self) -&gt; bool:
+        return self.char &gt;= self.stringlen
+
+    def forbid_eof(self, msg: str = &#34;&#34;, *args: t.Any, **kwargs: t.Any) -&gt; None:
+        if not msg:
+            msg = &#34;Unexpected EOF while parsing script.&#34;
+
+        if self.at_eof():
+            self.error(errors.TokenizeEofError, msg.format(*args, **kwargs))
+
+    def get_char(self) -&gt; str:
+        &#34;&#34;&#34;
+        Get the current character.
+        &#34;&#34;&#34;
+        return self.string[self.char]
+
+    def next_char(self) -&gt; None:
+        &#34;&#34;&#34;
+        Advance the tokenizer to the next character.
+        &#34;&#34;&#34;
+        char = self.get_char()
+        if char == &#34;\n&#34;:
+            self.current_line += 1
+            self.current_pos = 0
+        else:
+            self.current_pos += 1
+
+        self.char += 1
+
+    def next_n_chars(self, n: int) -&gt; str:
+        &#34;&#34;&#34;
+        Unconditionally consume N characters and return them.
+        &#34;&#34;&#34;
+        chars: t.MutableSequence[str] = []
+        for _ in range(n):
+            self.forbid_eof(
+                &#34;Ran into EOF while consuming characters. Got {}, wanted {}.&#34;,
+                len(chars), n
+            )
+
+            chars.append(self.get_char())
+            self.next_char()
+
+        return &#34;&#34;.join(chars)
+
+    # Get a single char token.
+    def accept_single_char(self) -&gt; t.Optional[Token]:
+        if not self.single_char_token_enable:
+            return None
+
+        char = self.get_char()
+
+        if char in self.charmap:
+            tok = Token(
+                self.charmap[char],
+                char,
+                self.current_line,
+                self.current_pos
+            )
+            self.next_char()
+            return tok
+
+        return None
+
+    def accept_eof(self) -&gt; t.Optional[Token]:
+        if self.at_eof():
+            return Token(
+                TokenType.EOF,
+                EOF,
+                self.current_line,
+                self.current_pos
+            )
+        else:
+            return None
+
+    def accept_whitespace(self) -&gt; t.Optional[Token]:
+        char = self.get_char()
+        if char in self.whitespace:
+            self.next_char()
+            return Token(
+                TokenType.WHITESPACE,
+                char,
+                self.current_line,
+                self.current_pos
+            )
+
+        return None
+
+    def try_consume_escape(self) -&gt; t.Optional[str]:
+        if self.get_char() != ESCAPE_SIGIL:
+            return None
+
+        self.next_char()
+        self.forbid_eof()
+
+        escape_char = self.get_char()
+        if escape_char not in self.escape_sequences:
+            self.error(errors.TokenizeError, f&#34;Invalid escape &#39;{escape_char}&#39;&#34;)
+
+        self.next_char()
+        self.forbid_eof()
+
+        replacement = self.escape_sequences[escape_char]
+        if isinstance(replacement, str):
+            return replacement
+        elif callable(replacement):
+            return replacement(self)
+        else:
+            raise TypeError(f&#34;Bad type for escape sequence {escape_char}, &#34;
+                            &#34;must be &#39;str&#39; or &#39;(Tokenizer) -&gt; str&#39;&#34;)
+
+    def accept_string_literal(
+        self,
+        stop_chars: t.Sequence[str] = (),
+        error_on_eof: bool = False,
+        allow_escapes: bool = False
+    ) -&gt; t.Optional[Token]:
+        self.forbid_eof(&#34;String literal should not start on EOF&#34;)
+
+        char = self.get_char()
+        pos = self.current_pos
+        line = self.current_line
+        chars = []
+
+        while char not in stop_chars:
+            if allow_escapes:
+                escape = self.try_consume_escape()
+                if escape is not None:
+                    chars.append(escape)
+                    char = self.get_char()
+                    continue
+
+            chars.append(char)
+            self.next_char()
+            if self.at_eof():
+                if error_on_eof:
+                    self.error(
+                        errors.TokenizeEofError,
+                        &#34;Unexpected EOF while parsing string literal.&#34;
+                    )
+                else:
+                    break
+
+            char = self.get_char()
+
+        return Token(
+            TokenType.STRING_LITERAL,
+            &#34;&#34;.join(chars),
+            line,
+            pos
+        )
+
+    def accept_comment(self) -&gt; t.Optional[Token]:
+        char = self.get_char()
+        pos = self.current_pos
+        line = self.current_line
+        chars = []
+
+        if char != COMMENT_SIGIL:
+            return None
+
+        self.next_char()
+        while char != &#34;\n&#34;:
+            chars.append(char)
+            self.next_char()
+
+            if self.at_eof():
+                break
+
+            char = self.get_char()
+
+        return Token(
+            TokenType.COMMENT,
+            &#34;&#34;.join(chars),
+            line,
+            pos
+        )
+
+    # Accepts a normal string literal. No CONSUME_REST, not quoted.
+    def accept_string_literal_normal(self) -&gt; t.Optional[Token]:
+        return self.accept_string_literal(
+            stop_chars=self.string_literal_stop,
+            error_on_eof=False  # Just stop on EOF, no errors.
+        )
+
+    # Accept a CONSUME_REST literal.
+    def accept_string_literal_consume_rest(self) -&gt; t.Optional[Token]:
+        return self.accept_string_literal(
+            stop_chars=self.consume_rest_stop,
+            error_on_eof=False  # Stop on EOF. No errors.
+        )
+
+    # Accept a quoted string literal.
+    def accept_string_literal_quoted(self) -&gt; t.Optional[Token]:
+        if self.get_char() != QUOTE:
+            return None
+        else:
+            self.next_char()
+
+        literal = self.accept_string_literal(
+            stop_chars=self.quoted_literal_stop,
+            error_on_eof=True,  # Quoted literals must be closed.
+            allow_escapes=True  # Escapes only allowed in quoted literals.
+        )
+
+        if literal is None:
+            self.error(
+                errors.TokenizeError,
+                &#34;internal: Got None from accept_string_literal, shouldn&#39;t have.&#34;
+            )
+
+        if self.get_char() != QUOTE:
+            self.error(
+                errors.TokenizeError,
+                &#34;internal: Missing end quote, should have resulted in EOF error.&#34;
+            )
+        else:
+            self.next_char()
+
+        return literal
+
+    @staticmethod
+    def accept_any_of(*f: t.Callable[[], t.Optional[Token]]) -&gt; t.Optional[Token]:
+        for fun in f:
+            tok = fun()
+            if tok is not None:
+                return tok
+
+        return None
+
+    def handle_consume_rest_off(self, tok: Token) -&gt; None:
+        if tok.type in (TokenType.COMMAND_SEP, TokenType.CLOSE_BLOCK, TokenType.CLOSE_PAREN):
+            self.previous_token_was_sep = True
+            return
+
+        # Test to see if we should enter CONSUME_REST state.
+        # Only trigger CONSUME_REST if the previous token was a command separator.
+        should_enter_consume_rest = (
+                self.previous_token_was_sep and
+                tok.type == TokenType.STRING_LITERAL and
+                tok.value in self.consume_rest_triggers
+        )
+        self.previous_token_was_sep = False
+        if should_enter_consume_rest:
+            count = self.consume_rest_triggers[tok.value]
+
+            if count == 0:
+                self.consume_rest_state = TokenizeConsumeRestState.CONSUME
+            else:
+                self.consume_rest_state = TokenizeConsumeRestState.COUNTING
+                self.consume_rest_count = count
+
+    def handle_consume_rest_counting(self, tok: Token) -&gt; None:
+        self.previous_token_was_sep = False
+
+        # Only count down on string literals.
+        if tok.type == TokenType.STRING_LITERAL:
+            self.consume_rest_count -= 1
+
+            # Once countdown is over, CONSUME_REST on next token.
+            if self.consume_rest_count == 0:
+                self.consume_rest_state = TokenizeConsumeRestState.CONSUME
+
+        # If we get any other token type, then cancel CONSUME_REST
+        else:
+            self.consume_rest_state = TokenizeConsumeRestState.OFF
+            self.consume_rest_count = 0
+
+    def handle_consume_rest_consume(self, tok: Token) -&gt; None:
+        # This function runs AFTER a CONSUME_REST consumption. So, just set consume_rest back to OFF.
+        self.consume_rest_state = TokenizeConsumeRestState.OFF
+        self.consume_rest_count = 0
+
+    # TODO
+    # Consume rest state handler. All this code is pretty ugly, and does not account
+    # for more advanced usage.
+    def handle_consume_rest(self, tok: Token) -&gt; None:
+        f_map: t.Mapping[TokenizeConsumeRestState, t.Callable[[Token], None]] = {
+            TokenizeConsumeRestState.OFF: self.handle_consume_rest_off,
+            TokenizeConsumeRestState.COUNTING: self.handle_consume_rest_counting,
+            TokenizeConsumeRestState.CONSUME: self.handle_consume_rest_consume
+        }
+
+        f_map[self.consume_rest_state](tok)
+
+    def next_token(self) -&gt; Token:
+        &#34;&#34;&#34;
+        Extract the next token. If the tokenizing is finished, this will return a `Token` of type `TokenType.EOF`
+
+        Raises:
+            scrolls.errors.TokenizeEofError: If EOF was hit unexpectedly.
+            scrolls.errors.TokenizeError: If a generic issue happened while tokenizing.
+        &#34;&#34;&#34;
+        if self.consume_rest_state == TokenizeConsumeRestState.CONSUME:
+            while True:
+                tok = self.accept_any_of(
+                    self.accept_whitespace
+                )
+
+                if tok is None:
+                    break
+
+                if tok.type == TokenType.WHITESPACE:
+                    continue
+
+            tok = self.accept_string_literal_consume_rest()
+            if tok is None:
+                self.error(
+                    errors.TokenizeError,
+                    &#34;Got bad string literal during consume_rest&#34;
+                )
+            logger.debug(f&#34;tokenize: Got token {tok.type.name}:{repr(tok.value)}&#34;)
+            tok.consume_rest = True  # Signal we got this token using CONSUME_REST
+
+            self.handle_consume_rest(tok)
+            return tok
+        else:
+            while True:
+                tok = self.accept_any_of(
+                    self.accept_eof,
+                    self.accept_whitespace,
+                    self.accept_comment,
+                    self.accept_single_char,
+                    self.accept_string_literal_quoted,
+                    self.accept_string_literal_normal
+                )
+
+                if tok is None:
+                    self.error(
+                        errors.TokenizeError,
+                        &#34;Unexpectedly rejected all tokenizing functions.&#34;
+                    )
+
+                # Loop until we get a non-whitespace, non-comment token.
+                if tok.type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+                    logger.debug(f&#34;tokenize: Got token {tok.type.name}:{repr(tok.value)}&#34;)
+                    self.handle_consume_rest(tok)
+                    return tok
+
+    def get_all_tokens(self) -&gt; t.Sequence[Token]:
+        &#34;&#34;&#34;
+        Extracts all tokens at once, until the end of the script. A sequence of tokens obtained this way
+        will always end with a token of type `TokenType.EOF`.
+
+        Raises:
+            scrolls.errors.TokenizeEofError: If EOF was hit unexpectedly.
+            scrolls.errors.TokenizeError: If a generic issue happened while tokenizing.
+        &#34;&#34;&#34;
+        tokens: t.MutableSequence[Token] = []
+
+        while True:
+            tok = self.next_token()
+            tokens.append(tok)
+            if tok.type == TokenType.EOF:
+                return tokens</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="scrolls.ast.Tokenizer.accept_any_of"><code class="name flex">
+<span>def <span class="ident">accept_any_of</span></span>(<span>*f: Callable[[], Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]]) ‑> Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def accept_any_of(*f: t.Callable[[], t.Optional[Token]]) -&gt; t.Optional[Token]:
+    for fun in f:
+        tok = fun()
+        if tok is not None:
+            return tok
+
+    return None</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.ast.Tokenizer.accept_comment"><code class="name flex">
+<span>def <span class="ident">accept_comment</span></span>(<span>self) ‑> Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accept_comment(self) -&gt; t.Optional[Token]:
+    char = self.get_char()
+    pos = self.current_pos
+    line = self.current_line
+    chars = []
+
+    if char != COMMENT_SIGIL:
+        return None
+
+    self.next_char()
+    while char != &#34;\n&#34;:
+        chars.append(char)
+        self.next_char()
+
+        if self.at_eof():
+            break
+
+        char = self.get_char()
+
+    return Token(
+        TokenType.COMMENT,
+        &#34;&#34;.join(chars),
+        line,
+        pos
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.accept_eof"><code class="name flex">
+<span>def <span class="ident">accept_eof</span></span>(<span>self) ‑> Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accept_eof(self) -&gt; t.Optional[Token]:
+    if self.at_eof():
+        return Token(
+            TokenType.EOF,
+            EOF,
+            self.current_line,
+            self.current_pos
+        )
+    else:
+        return None</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.accept_single_char"><code class="name flex">
+<span>def <span class="ident">accept_single_char</span></span>(<span>self) ‑> Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accept_single_char(self) -&gt; t.Optional[Token]:
+    if not self.single_char_token_enable:
+        return None
+
+    char = self.get_char()
+
+    if char in self.charmap:
+        tok = Token(
+            self.charmap[char],
+            char,
+            self.current_line,
+            self.current_pos
+        )
+        self.next_char()
+        return tok
+
+    return None</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.accept_string_literal"><code class="name flex">
+<span>def <span class="ident">accept_string_literal</span></span>(<span>self, stop_chars: Sequence[str] = (), error_on_eof: bool = False, allow_escapes: bool = False) ‑> Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accept_string_literal(
+    self,
+    stop_chars: t.Sequence[str] = (),
+    error_on_eof: bool = False,
+    allow_escapes: bool = False
+) -&gt; t.Optional[Token]:
+    self.forbid_eof(&#34;String literal should not start on EOF&#34;)
+
+    char = self.get_char()
+    pos = self.current_pos
+    line = self.current_line
+    chars = []
+
+    while char not in stop_chars:
+        if allow_escapes:
+            escape = self.try_consume_escape()
+            if escape is not None:
+                chars.append(escape)
+                char = self.get_char()
+                continue
+
+        chars.append(char)
+        self.next_char()
+        if self.at_eof():
+            if error_on_eof:
+                self.error(
+                    errors.TokenizeEofError,
+                    &#34;Unexpected EOF while parsing string literal.&#34;
+                )
+            else:
+                break
+
+        char = self.get_char()
+
+    return Token(
+        TokenType.STRING_LITERAL,
+        &#34;&#34;.join(chars),
+        line,
+        pos
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.accept_string_literal_consume_rest"><code class="name flex">
+<span>def <span class="ident">accept_string_literal_consume_rest</span></span>(<span>self) ‑> Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accept_string_literal_consume_rest(self) -&gt; t.Optional[Token]:
+    return self.accept_string_literal(
+        stop_chars=self.consume_rest_stop,
+        error_on_eof=False  # Stop on EOF. No errors.
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.accept_string_literal_normal"><code class="name flex">
+<span>def <span class="ident">accept_string_literal_normal</span></span>(<span>self) ‑> Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accept_string_literal_normal(self) -&gt; t.Optional[Token]:
+    return self.accept_string_literal(
+        stop_chars=self.string_literal_stop,
+        error_on_eof=False  # Just stop on EOF, no errors.
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.accept_string_literal_quoted"><code class="name flex">
+<span>def <span class="ident">accept_string_literal_quoted</span></span>(<span>self) ‑> Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accept_string_literal_quoted(self) -&gt; t.Optional[Token]:
+    if self.get_char() != QUOTE:
+        return None
+    else:
+        self.next_char()
+
+    literal = self.accept_string_literal(
+        stop_chars=self.quoted_literal_stop,
+        error_on_eof=True,  # Quoted literals must be closed.
+        allow_escapes=True  # Escapes only allowed in quoted literals.
+    )
+
+    if literal is None:
+        self.error(
+            errors.TokenizeError,
+            &#34;internal: Got None from accept_string_literal, shouldn&#39;t have.&#34;
+        )
+
+    if self.get_char() != QUOTE:
+        self.error(
+            errors.TokenizeError,
+            &#34;internal: Missing end quote, should have resulted in EOF error.&#34;
+        )
+    else:
+        self.next_char()
+
+    return literal</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.accept_whitespace"><code class="name flex">
+<span>def <span class="ident">accept_whitespace</span></span>(<span>self) ‑> Optional[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accept_whitespace(self) -&gt; t.Optional[Token]:
+    char = self.get_char()
+    if char in self.whitespace:
+        self.next_char()
+        return Token(
+            TokenType.WHITESPACE,
+            char,
+            self.current_line,
+            self.current_pos
+        )
+
+    return None</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.at_eof"><code class="name flex">
+<span>def <span class="ident">at_eof</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def at_eof(self) -&gt; bool:
+    return self.char &gt;= self.stringlen</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.error"><code class="name flex">
+<span>def <span class="ident">error</span></span>(<span>self, err_type: Type[<a title="scrolls.errors.PositionalError" href="errors.html#scrolls.errors.PositionalError">PositionalError</a>], message: str) ‑> NoReturn</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def error(self, err_type: t.Type[errors.PositionalError], message: str) -&gt; t.NoReturn:
+    raise err_type(
+        self.current_line,
+        self.current_pos,
+        self.string,
+        message
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.forbid_eof"><code class="name flex">
+<span>def <span class="ident">forbid_eof</span></span>(<span>self, msg: str = '', *args: Any, **kwargs: Any) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forbid_eof(self, msg: str = &#34;&#34;, *args: t.Any, **kwargs: t.Any) -&gt; None:
+    if not msg:
+        msg = &#34;Unexpected EOF while parsing script.&#34;
+
+    if self.at_eof():
+        self.error(errors.TokenizeEofError, msg.format(*args, **kwargs))</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.get_all_tokens"><code class="name flex">
+<span>def <span class="ident">get_all_tokens</span></span>(<span>self) ‑> Sequence[<a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extracts all tokens at once, until the end of the script. A sequence of tokens obtained this way
+will always end with a token of type <code><a title="scrolls.ast.TokenType.EOF" href="#scrolls.ast.TokenType.EOF">TokenType.EOF</a></code>.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code><a title="scrolls.errors.TokenizeEofError" href="errors.html#scrolls.errors.TokenizeEofError">TokenizeEofError</a></code></dt>
+<dd>If EOF was hit unexpectedly.</dd>
+<dt><code><a title="scrolls.errors.TokenizeError" href="errors.html#scrolls.errors.TokenizeError">TokenizeError</a></code></dt>
+<dd>If a generic issue happened while tokenizing.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all_tokens(self) -&gt; t.Sequence[Token]:
+    &#34;&#34;&#34;
+    Extracts all tokens at once, until the end of the script. A sequence of tokens obtained this way
+    will always end with a token of type `TokenType.EOF`.
+
+    Raises:
+        scrolls.errors.TokenizeEofError: If EOF was hit unexpectedly.
+        scrolls.errors.TokenizeError: If a generic issue happened while tokenizing.
+    &#34;&#34;&#34;
+    tokens: t.MutableSequence[Token] = []
+
+    while True:
+        tok = self.next_token()
+        tokens.append(tok)
+        if tok.type == TokenType.EOF:
+            return tokens</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.get_char"><code class="name flex">
+<span>def <span class="ident">get_char</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the current character.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_char(self) -&gt; str:
+    &#34;&#34;&#34;
+    Get the current character.
+    &#34;&#34;&#34;
+    return self.string[self.char]</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.handle_consume_rest"><code class="name flex">
+<span>def <span class="ident">handle_consume_rest</span></span>(<span>self, tok: <a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_consume_rest(self, tok: Token) -&gt; None:
+    f_map: t.Mapping[TokenizeConsumeRestState, t.Callable[[Token], None]] = {
+        TokenizeConsumeRestState.OFF: self.handle_consume_rest_off,
+        TokenizeConsumeRestState.COUNTING: self.handle_consume_rest_counting,
+        TokenizeConsumeRestState.CONSUME: self.handle_consume_rest_consume
+    }
+
+    f_map[self.consume_rest_state](tok)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.handle_consume_rest_consume"><code class="name flex">
+<span>def <span class="ident">handle_consume_rest_consume</span></span>(<span>self, tok: <a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_consume_rest_consume(self, tok: Token) -&gt; None:
+    # This function runs AFTER a CONSUME_REST consumption. So, just set consume_rest back to OFF.
+    self.consume_rest_state = TokenizeConsumeRestState.OFF
+    self.consume_rest_count = 0</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.handle_consume_rest_counting"><code class="name flex">
+<span>def <span class="ident">handle_consume_rest_counting</span></span>(<span>self, tok: <a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_consume_rest_counting(self, tok: Token) -&gt; None:
+    self.previous_token_was_sep = False
+
+    # Only count down on string literals.
+    if tok.type == TokenType.STRING_LITERAL:
+        self.consume_rest_count -= 1
+
+        # Once countdown is over, CONSUME_REST on next token.
+        if self.consume_rest_count == 0:
+            self.consume_rest_state = TokenizeConsumeRestState.CONSUME
+
+    # If we get any other token type, then cancel CONSUME_REST
+    else:
+        self.consume_rest_state = TokenizeConsumeRestState.OFF
+        self.consume_rest_count = 0</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.handle_consume_rest_off"><code class="name flex">
+<span>def <span class="ident">handle_consume_rest_off</span></span>(<span>self, tok: <a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_consume_rest_off(self, tok: Token) -&gt; None:
+    if tok.type in (TokenType.COMMAND_SEP, TokenType.CLOSE_BLOCK, TokenType.CLOSE_PAREN):
+        self.previous_token_was_sep = True
+        return
+
+    # Test to see if we should enter CONSUME_REST state.
+    # Only trigger CONSUME_REST if the previous token was a command separator.
+    should_enter_consume_rest = (
+            self.previous_token_was_sep and
+            tok.type == TokenType.STRING_LITERAL and
+            tok.value in self.consume_rest_triggers
+    )
+    self.previous_token_was_sep = False
+    if should_enter_consume_rest:
+        count = self.consume_rest_triggers[tok.value]
+
+        if count == 0:
+            self.consume_rest_state = TokenizeConsumeRestState.CONSUME
+        else:
+            self.consume_rest_state = TokenizeConsumeRestState.COUNTING
+            self.consume_rest_count = count</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.next_char"><code class="name flex">
+<span>def <span class="ident">next_char</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Advance the tokenizer to the next character.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def next_char(self) -&gt; None:
+    &#34;&#34;&#34;
+    Advance the tokenizer to the next character.
+    &#34;&#34;&#34;
+    char = self.get_char()
+    if char == &#34;\n&#34;:
+        self.current_line += 1
+        self.current_pos = 0
+    else:
+        self.current_pos += 1
+
+    self.char += 1</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.next_n_chars"><code class="name flex">
+<span>def <span class="ident">next_n_chars</span></span>(<span>self, n: int) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Unconditionally consume N characters and return them.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def next_n_chars(self, n: int) -&gt; str:
+    &#34;&#34;&#34;
+    Unconditionally consume N characters and return them.
+    &#34;&#34;&#34;
+    chars: t.MutableSequence[str] = []
+    for _ in range(n):
+        self.forbid_eof(
+            &#34;Ran into EOF while consuming characters. Got {}, wanted {}.&#34;,
+            len(chars), n
+        )
+
+        chars.append(self.get_char())
+        self.next_char()
+
+    return &#34;&#34;.join(chars)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.next_token"><code class="name flex">
+<span>def <span class="ident">next_token</span></span>(<span>self) ‑> <a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract the next token. If the tokenizing is finished, this will return a <code><a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a></code> of type <code><a title="scrolls.ast.TokenType.EOF" href="#scrolls.ast.TokenType.EOF">TokenType.EOF</a></code></p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code><a title="scrolls.errors.TokenizeEofError" href="errors.html#scrolls.errors.TokenizeEofError">TokenizeEofError</a></code></dt>
+<dd>If EOF was hit unexpectedly.</dd>
+<dt><code><a title="scrolls.errors.TokenizeError" href="errors.html#scrolls.errors.TokenizeError">TokenizeError</a></code></dt>
+<dd>If a generic issue happened while tokenizing.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def next_token(self) -&gt; Token:
+    &#34;&#34;&#34;
+    Extract the next token. If the tokenizing is finished, this will return a `Token` of type `TokenType.EOF`
+
+    Raises:
+        scrolls.errors.TokenizeEofError: If EOF was hit unexpectedly.
+        scrolls.errors.TokenizeError: If a generic issue happened while tokenizing.
+    &#34;&#34;&#34;
+    if self.consume_rest_state == TokenizeConsumeRestState.CONSUME:
+        while True:
+            tok = self.accept_any_of(
+                self.accept_whitespace
+            )
+
+            if tok is None:
+                break
+
+            if tok.type == TokenType.WHITESPACE:
+                continue
+
+        tok = self.accept_string_literal_consume_rest()
+        if tok is None:
+            self.error(
+                errors.TokenizeError,
+                &#34;Got bad string literal during consume_rest&#34;
+            )
+        logger.debug(f&#34;tokenize: Got token {tok.type.name}:{repr(tok.value)}&#34;)
+        tok.consume_rest = True  # Signal we got this token using CONSUME_REST
+
+        self.handle_consume_rest(tok)
+        return tok
+    else:
+        while True:
+            tok = self.accept_any_of(
+                self.accept_eof,
+                self.accept_whitespace,
+                self.accept_comment,
+                self.accept_single_char,
+                self.accept_string_literal_quoted,
+                self.accept_string_literal_normal
+            )
+
+            if tok is None:
+                self.error(
+                    errors.TokenizeError,
+                    &#34;Unexpectedly rejected all tokenizing functions.&#34;
+                )
+
+            # Loop until we get a non-whitespace, non-comment token.
+            if tok.type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+                logger.debug(f&#34;tokenize: Got token {tok.type.name}:{repr(tok.value)}&#34;)
+                self.handle_consume_rest(tok)
+                return tok</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.set_consume_rest_all"><code class="name flex">
+<span>def <span class="ident">set_consume_rest_all</span></span>(<span>self, consume_all: bool) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set whether CONSUME_REST consumes until EOF. Defaults to <code>False</code>.</p>
+<p>If <code>False</code>, CONSUME_REST will stop on block open/close, and command separators.</p>
+<p>If <code>True</code>, CONSUME_REST will not stop until EOF.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_consume_rest_all(self, consume_all: bool) -&gt; None:
+    &#34;&#34;&#34;
+    Set whether CONSUME_REST consumes until EOF. Defaults to `False`.
+
+    If `False`, CONSUME_REST will stop on block open/close, and command separators.
+
+    If `True`, CONSUME_REST will not stop until EOF.
+    &#34;&#34;&#34;
+    self.consume_rest_stop = str_switch(
+        self.consume_rest_stop,
+        self._consume_rest_stop_switch,
+        not consume_all
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.set_quoted_literals_enable"><code class="name flex">
+<span>def <span class="ident">set_quoted_literals_enable</span></span>(<span>self, en: bool) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set whether quoted string literals are enabled. If disabled, quotes will be rolled into normal string token
+parsing.</p>
+<p>For instance, if quoted literals are disabled, <code>"Hello World"</code> would be interpreted as <code>"Hello</code>, <code>World"</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_quoted_literals_enable(self, en: bool) -&gt; None:
+    &#34;&#34;&#34;
+    Set whether quoted string literals are enabled. If disabled, quotes will be rolled into normal string token
+    parsing.
+
+    For instance, if quoted literals are disabled, `&#34;Hello World&#34;` would be interpreted as `&#34;Hello`, `World&#34;`.
+    &#34;&#34;&#34;
+    self.quoted_literal_enable = en
+    self.string_literal_stop = str_switch(
+        self.string_literal_stop,
+        self._string_literal_stop_quoted,
+        en
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.set_single_char_token_enable"><code class="name flex">
+<span>def <span class="ident">set_single_char_token_enable</span></span>(<span>self, en: bool) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set whether single character tokens should be parsed. This includes ALL token types except for
+<code><a title="scrolls.ast.TokenType.STRING_LITERAL" href="#scrolls.ast.TokenType.STRING_LITERAL">TokenType.STRING_LITERAL</a></code> and <code><a title="scrolls.ast.TokenType.COMMENT" href="#scrolls.ast.TokenType.COMMENT">TokenType.COMMENT</a></code>. Defaults to <code>True</code>.</p>
+<p>If <code>False</code>, then all special characters that would otherwise be their own token will be rolled
+into string literals.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_single_char_token_enable(self, en: bool) -&gt; None:
+    &#34;&#34;&#34;
+    Set whether single character tokens should be parsed. This includes ALL token types except for
+    `TokenType.STRING_LITERAL` and `TokenType.COMMENT`. Defaults to `True`.
+
+    If `False`, then all special characters that would otherwise be their own token will be rolled
+    into string literals.
+    &#34;&#34;&#34;
+    self.single_char_token_enable = en
+    self.string_literal_stop = str_switch(
+        self.string_literal_stop,
+        self._string_literal_stop_single_char,
+        en
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.try_consume_escape"><code class="name flex">
+<span>def <span class="ident">try_consume_escape</span></span>(<span>self) ‑> Optional[str]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def try_consume_escape(self) -&gt; t.Optional[str]:
+    if self.get_char() != ESCAPE_SIGIL:
+        return None
+
+    self.next_char()
+    self.forbid_eof()
+
+    escape_char = self.get_char()
+    if escape_char not in self.escape_sequences:
+        self.error(errors.TokenizeError, f&#34;Invalid escape &#39;{escape_char}&#39;&#34;)
+
+    self.next_char()
+    self.forbid_eof()
+
+    replacement = self.escape_sequences[escape_char]
+    if isinstance(replacement, str):
+        return replacement
+    elif callable(replacement):
+        return replacement(self)
+    else:
+        raise TypeError(f&#34;Bad type for escape sequence {escape_char}, &#34;
+                        &#34;must be &#39;str&#39; or &#39;(Tokenizer) -&gt; str&#39;&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#using-the-parser">Using The Parser</a><ul>
+<li><a href="#quickstart">Quickstart</a></li>
+<li><a href="#tokenizing">Tokenizing</a></li>
+<li><a href="#parsing">Parsing</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scrolls" href="index.html">scrolls</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="scrolls.ast.parse_scroll" href="#scrolls.ast.parse_scroll">parse_scroll</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="scrolls.ast.AST" href="#scrolls.ast.AST">AST</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.ast.AST.prettify" href="#scrolls.ast.AST.prettify">prettify</a></code></li>
+<li><code><a title="scrolls.ast.AST.root" href="#scrolls.ast.AST.root">root</a></code></li>
+<li><code><a title="scrolls.ast.AST.script" href="#scrolls.ast.AST.script">script</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a></code></h4>
+<ul class="two-column">
+<li><code><a title="scrolls.ast.ASTNode.children" href="#scrolls.ast.ASTNode.children">children</a></code></li>
+<li><code><a title="scrolls.ast.ASTNode.find_all" href="#scrolls.ast.ASTNode.find_all">find_all</a></code></li>
+<li><code><a title="scrolls.ast.ASTNode.has_token" href="#scrolls.ast.ASTNode.has_token">has_token</a></code></li>
+<li><code><a title="scrolls.ast.ASTNode.prettify" href="#scrolls.ast.ASTNode.prettify">prettify</a></code></li>
+<li><code><a title="scrolls.ast.ASTNode.str_content" href="#scrolls.ast.ASTNode.str_content">str_content</a></code></li>
+<li><code><a title="scrolls.ast.ASTNode.to_dict" href="#scrolls.ast.ASTNode.to_dict">to_dict</a></code></li>
+<li><code><a title="scrolls.ast.ASTNode.tok" href="#scrolls.ast.ASTNode.tok">tok</a></code></li>
+<li><code><a title="scrolls.ast.ASTNode.type" href="#scrolls.ast.ASTNode.type">type</a></code></li>
+<li><code><a title="scrolls.ast.ASTNode.wrap" href="#scrolls.ast.ASTNode.wrap">wrap</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.ast.ASTNodeType" href="#scrolls.ast.ASTNodeType">ASTNodeType</a></code></h4>
+<ul class="two-column">
+<li><code><a title="scrolls.ast.ASTNodeType.BLOCK" href="#scrolls.ast.ASTNodeType.BLOCK">BLOCK</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.COMMAND_ARGUMENTS" href="#scrolls.ast.ASTNodeType.COMMAND_ARGUMENTS">COMMAND_ARGUMENTS</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.COMMAND_CALL" href="#scrolls.ast.ASTNodeType.COMMAND_CALL">COMMAND_CALL</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.CONTROL_ARGUMENTS" href="#scrolls.ast.ASTNodeType.CONTROL_ARGUMENTS">CONTROL_ARGUMENTS</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.CONTROL_CALL" href="#scrolls.ast.ASTNodeType.CONTROL_CALL">CONTROL_CALL</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.EOF" href="#scrolls.ast.ASTNodeType.EOF">EOF</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.EXPANSION" href="#scrolls.ast.ASTNodeType.EXPANSION">EXPANSION</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.EXPANSION_ARGUMENTS" href="#scrolls.ast.ASTNodeType.EXPANSION_ARGUMENTS">EXPANSION_ARGUMENTS</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.EXPANSION_CALL" href="#scrolls.ast.ASTNodeType.EXPANSION_CALL">EXPANSION_CALL</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.EXPANSION_MULTI" href="#scrolls.ast.ASTNodeType.EXPANSION_MULTI">EXPANSION_MULTI</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.EXPANSION_SINGLE" href="#scrolls.ast.ASTNodeType.EXPANSION_SINGLE">EXPANSION_SINGLE</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.EXPANSION_VAR" href="#scrolls.ast.ASTNodeType.EXPANSION_VAR">EXPANSION_VAR</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.NONE" href="#scrolls.ast.ASTNodeType.NONE">NONE</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.ROOT" href="#scrolls.ast.ASTNodeType.ROOT">ROOT</a></code></li>
+<li><code><a title="scrolls.ast.ASTNodeType.STRING" href="#scrolls.ast.ASTNodeType.STRING">STRING</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.ast.ASTStateError" href="#scrolls.ast.ASTStateError">ASTStateError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.ast.Token" href="#scrolls.ast.Token">Token</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.ast.Token.consume_rest" href="#scrolls.ast.Token.consume_rest">consume_rest</a></code></li>
+<li><code><a title="scrolls.ast.Token.line" href="#scrolls.ast.Token.line">line</a></code></li>
+<li><code><a title="scrolls.ast.Token.position" href="#scrolls.ast.Token.position">position</a></code></li>
+<li><code><a title="scrolls.ast.Token.type" href="#scrolls.ast.Token.type">type</a></code></li>
+<li><code><a title="scrolls.ast.Token.value" href="#scrolls.ast.Token.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.ast.TokenType" href="#scrolls.ast.TokenType">TokenType</a></code></h4>
+<ul class="two-column">
+<li><code><a title="scrolls.ast.TokenType.CLOSE_BLOCK" href="#scrolls.ast.TokenType.CLOSE_BLOCK">CLOSE_BLOCK</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.CLOSE_PAREN" href="#scrolls.ast.TokenType.CLOSE_PAREN">CLOSE_PAREN</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.COMMAND_SEP" href="#scrolls.ast.TokenType.COMMAND_SEP">COMMAND_SEP</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.COMMENT" href="#scrolls.ast.TokenType.COMMENT">COMMENT</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.CONTROL_SIGIL" href="#scrolls.ast.TokenType.CONTROL_SIGIL">CONTROL_SIGIL</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.EOF" href="#scrolls.ast.TokenType.EOF">EOF</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.EXPANSION_SIGIL" href="#scrolls.ast.TokenType.EXPANSION_SIGIL">EXPANSION_SIGIL</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.MULTI_SIGIL" href="#scrolls.ast.TokenType.MULTI_SIGIL">MULTI_SIGIL</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.OPEN_BLOCK" href="#scrolls.ast.TokenType.OPEN_BLOCK">OPEN_BLOCK</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.OPEN_PAREN" href="#scrolls.ast.TokenType.OPEN_PAREN">OPEN_PAREN</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.STRING_LITERAL" href="#scrolls.ast.TokenType.STRING_LITERAL">STRING_LITERAL</a></code></li>
+<li><code><a title="scrolls.ast.TokenType.WHITESPACE" href="#scrolls.ast.TokenType.WHITESPACE">WHITESPACE</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.ast.Tokenizer.accept_any_of" href="#scrolls.ast.Tokenizer.accept_any_of">accept_any_of</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.accept_comment" href="#scrolls.ast.Tokenizer.accept_comment">accept_comment</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.accept_eof" href="#scrolls.ast.Tokenizer.accept_eof">accept_eof</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.accept_single_char" href="#scrolls.ast.Tokenizer.accept_single_char">accept_single_char</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.accept_string_literal" href="#scrolls.ast.Tokenizer.accept_string_literal">accept_string_literal</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.accept_string_literal_consume_rest" href="#scrolls.ast.Tokenizer.accept_string_literal_consume_rest">accept_string_literal_consume_rest</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.accept_string_literal_normal" href="#scrolls.ast.Tokenizer.accept_string_literal_normal">accept_string_literal_normal</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.accept_string_literal_quoted" href="#scrolls.ast.Tokenizer.accept_string_literal_quoted">accept_string_literal_quoted</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.accept_whitespace" href="#scrolls.ast.Tokenizer.accept_whitespace">accept_whitespace</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.at_eof" href="#scrolls.ast.Tokenizer.at_eof">at_eof</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.error" href="#scrolls.ast.Tokenizer.error">error</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.forbid_eof" href="#scrolls.ast.Tokenizer.forbid_eof">forbid_eof</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.get_all_tokens" href="#scrolls.ast.Tokenizer.get_all_tokens">get_all_tokens</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.get_char" href="#scrolls.ast.Tokenizer.get_char">get_char</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.handle_consume_rest" href="#scrolls.ast.Tokenizer.handle_consume_rest">handle_consume_rest</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.handle_consume_rest_consume" href="#scrolls.ast.Tokenizer.handle_consume_rest_consume">handle_consume_rest_consume</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.handle_consume_rest_counting" href="#scrolls.ast.Tokenizer.handle_consume_rest_counting">handle_consume_rest_counting</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.handle_consume_rest_off" href="#scrolls.ast.Tokenizer.handle_consume_rest_off">handle_consume_rest_off</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.next_char" href="#scrolls.ast.Tokenizer.next_char">next_char</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.next_n_chars" href="#scrolls.ast.Tokenizer.next_n_chars">next_n_chars</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.next_token" href="#scrolls.ast.Tokenizer.next_token">next_token</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.set_consume_rest_all" href="#scrolls.ast.Tokenizer.set_consume_rest_all">set_consume_rest_all</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.set_quoted_literals_enable" href="#scrolls.ast.Tokenizer.set_quoted_literals_enable">set_quoted_literals_enable</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.set_single_char_token_enable" href="#scrolls.ast.Tokenizer.set_single_char_token_enable">set_single_char_token_enable</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.try_consume_escape" href="#scrolls.ast.Tokenizer.try_consume_escape">try_consume_escape</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

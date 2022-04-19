@@ -1,0 +1,1320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>scrolls.commands API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scrolls.commands</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#
+# A basic command handler implementation for scrolls.
+#
+import abc
+import dataclasses
+import enum
+import logging
+import numbers
+import typing as t
+
+from . import ast, interpreter
+
+logger = logging.getLogger(__name__)
+
+T = t.TypeVar(&#34;T&#34;, str, int, float, bool)
+CommandCallbackT = t.Callable[[interpreter.InterpreterContext, t.Sequence[t.Any]], None]
+
+
+def rangelimit(
+    node: ast.ASTNode,
+    low: t.Optional[numbers.Real],
+    val: numbers.Real,
+    high: t.Optional[numbers.Real]
+) -&gt; None:
+    &#34;&#34;&#34;Check if val is between low and high. If not, raise a RangeLimitError.&#34;&#34;&#34;
+
+    if low is None and high is None:
+        raise ValueError(&#34;low and high cannot both be None&#34;)
+
+    if not (__rangecheck_lower(low, val) and __rangecheck_upper(high, val)):
+        raise OptionRangeLimitError(node, low, val, high)
+
+
+def __rangecheck_lower(
+    low: t.Optional[numbers.Real],
+    val: numbers.Real
+) -&gt; bool:
+    if low is None:
+        return True
+
+    return low &lt;= val
+
+
+def __rangecheck_upper(
+    high: t.Optional[numbers.Real],
+    val: numbers.Real
+) -&gt; bool:
+    if high is None:
+        return True
+
+    return val &lt;= high
+
+
+class OptionError(Exception):
+    def __init__(self, node: ast.ASTNode):
+        self.node = node
+
+
+class OptionRangeLimitError(OptionError):
+    def __init__(
+        self,
+        node: ast.ASTNode,
+        low: t.Optional[numbers.Real],
+        val: numbers.Real,
+        high: t.Optional[numbers.Real]
+    ):
+        super().__init__(node)
+        self.low = low
+        self.val = val
+        self.high = high
+
+    def __str__(self) -&gt; str:
+        if self.high is None:
+            msg = f&#34;cannot go below {self.low}&#34;
+        elif self.low is None:
+            msg = f&#34;cannot exceed {self.high}&#34;
+        else:
+            msg = f&#34;must be between {self.low} and {self.high}&#34;
+
+        return msg
+
+
+class OptionChoiceError(OptionError, t.Generic[T]):
+    def __init__(
+        self,
+        node: ast.ASTNode,
+        bad_choice: T,
+        choices: t.Sequence[T]
+    ):
+        super().__init__(node)
+        self.bad_choice: T = bad_choice
+        self.choices: t.Sequence[T] = choices
+
+    def __str__(self) -&gt; str:
+        choices_str = &#34;, &#34;.join([str(choice) for choice in self.choices])
+        return f&#34;has bad value &#39;{self.bad_choice}&#39;, must be one of {choices_str}&#34;
+
+
+class OptionConversionError(OptionError):
+    def __init__(
+        self,
+        node: ast.ASTNode,
+        cause: Exception
+    ):
+        super().__init__(node)
+        self.cause = cause
+
+    def __str__(self) -&gt; str:
+        return str(self.cause)
+
+
+class OptionRequiredMissingError(Exception):
+    def __str__(self) -&gt; str:
+        return &#34;is a required argument that is missing&#34;
+
+
+class OptionModifier(enum.Enum):
+    NONE = 0
+    GREEDY = 1
+    CONSUME_REST = 2
+
+
+class GenericCommandHandler(interpreter.CallbackCallHandler[None]):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self._consume_rest_triggers: t.MutableMapping[str, int] = {}
+
+    def add_call(self, name: str, command: interpreter.ScrollCallback[None]) -&gt; None:
+        # Disallow non-command additions.
+        if not isinstance(command, Command):
+            raise TypeError(&#34;Commands added to GenericCommandHandler must be a type deriving scrolls.Command&#34;)
+
+        super().add_call(name, command)
+
+    # TODO add remove_command
+    def add_command(self, cmd: &#39;Command&#39;) -&gt; &#39;Command&#39;:
+        self.add_call(cmd.name, cmd)
+
+        for alias in cmd.aliases:
+            self.add_alias(alias, cmd.name)
+
+        # Set up consume_rest_triggers, which change the behavior of the tokenizer
+        # for commands that specify consume_rest.
+        if cmd.options and cmd.options[-1].modifier == OptionModifier.CONSUME_REST:
+            non_rest_count = len(cmd.options) - 1
+            self._consume_rest_triggers[cmd.name] = non_rest_count
+            for alias in cmd.aliases:
+                self._consume_rest_triggers[alias] = non_rest_count
+
+        return cmd
+
+    # Get all commands as Command objects
+    def all_commands(self) -&gt; t.Sequence[&#39;Command&#39;]:
+        # Safe to cast here, since adding non-command calls is not allowed.
+        return [t.cast(Command, cmd) for cmd in self.calls.values()]
+
+    @property
+    def consume_rest_triggers(self) -&gt; t.Mapping[str, int]:
+        return self._consume_rest_triggers
+
+
+class Command(abc.ABC):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        aliases: t.Sequence[str] = (),
+        hidden: bool = False
+    ):
+        self.name = name
+        self.description = description
+        self.help = &#34;&#34;
+        self.aliases = aliases
+        self.hidden = hidden
+
+        self.options: t.MutableSequence[Option] = []
+
+    def add_option(self, option: &#39;Option&#39;) -&gt; None:
+        if self.options and self.options[-1].modifier == OptionModifier.CONSUME_REST:
+            raise ValueError(&#34;Cannot add options after CONSUME_REST&#34;)
+
+        self.options.append(option)
+
+    def set_help(self, help: str) -&gt; None:
+        self.help = help
+
+    def convert_options(self, context: interpreter.InterpreterContext) -&gt; t.Sequence[t.Any]:
+        converted_opts = []
+
+        args = context.args
+        nodes = context.arg_nodes
+
+        idx = 0
+
+        for option in self.options:
+            if nodes:
+                context.current_node = nodes[idx]
+
+            try:
+                if option.modifier == OptionModifier.CONSUME_REST:
+                    if not args:
+                        raise OptionRequiredMissingError()
+
+                    converted_opts.append(args[0])
+                    break
+
+                _result, num_consumed = consume_option(option, args, nodes, idx)
+            except OptionRequiredMissingError as e:
+                raise interpreter.InterpreterError(
+                    context,
+                    f&#34;{option.name} {e}&#34;
+                )
+            except OptionError as e:
+                raise interpreter.InterpreterError(
+                    context,
+                    f&#34;{option.name}: {e}&#34;
+                )
+
+            if len(_result) == 1:
+                result = _result[0]
+            else:
+                result = _result
+
+            converted_opts.append(result)
+
+            args = args[num_consumed:]
+            idx += num_consumed
+
+        return converted_opts
+
+    @abc.abstractmethod
+    def invoke(self, context: interpreter.InterpreterContext, args: t.Sequence[t.Any]) -&gt; None: ...
+
+    def __call__(self, context: interpreter.InterpreterContext) -&gt; None:
+        self.invoke(context, self.convert_options(context))
+
+
+class CallbackCommand(Command):
+    &#34;&#34;&#34;
+    A basic command that just invokes a given callback. Used for the make_callback_command decorator.
+    &#34;&#34;&#34;
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        callback: CommandCallbackT,
+        aliases: t.Sequence[str] = (),
+        hidden: bool = False
+    ):
+        super().__init__(name, description, aliases, hidden)
+        self.callback = callback
+
+    def invoke(self, context: interpreter.InterpreterContext, args: t.Sequence[t.Any]) -&gt; None:
+        self.callback(context, args)
+
+
+def make_callback_command(
+    name: str,
+    description: str,
+    aliases: t.Sequence[str] = (),
+    hidden: bool = False
+) -&gt; t.Callable[[CommandCallbackT], CallbackCommand]:
+    def decorate(callback: CommandCallbackT) -&gt; CallbackCommand:
+        return CallbackCommand(
+            name,
+            description,
+            callback,
+            aliases,
+            hidden
+        )
+
+    return decorate
+
+
+@dataclasses.dataclass
+class Option(t.Generic[T]):
+    name: str
+    type: t.Type[T] = t.cast(t.Type[T], str)  # T is allowed to be str, but mypy complains. Cast it.
+    minimum: t.Optional[numbers.Real] = None
+    default: t.Optional[T] = None
+    maximum: t.Optional[numbers.Real] = None
+    modifier: OptionModifier = OptionModifier.NONE
+    choices: t.Sequence[T] = ()
+
+    def verify_option(self) -&gt; None:
+        bad_consume_rest = (
+            self.modifier == OptionModifier.CONSUME_REST and
+            not self.type == str
+        )
+        if bad_consume_rest:
+            raise TypeError(&#34;OptionModifier.CONSUME_REST can only be used on type str&#34;)
+
+    def __call__(self, cmd: Command) -&gt; Command:
+        &#34;&#34;&#34;Enables Options to be used as decorators directly.&#34;&#34;&#34;
+        self.verify_option()
+        cmd.add_option(self)
+        return cmd
+
+    def convert_arg(self, arg: str, node: ast.ASTNode) -&gt; T:
+        logger.debug(f&#34;Attempt to convert {arg} to {self.type.__name__}&#34;)
+
+        try:
+            arg_converted = self.type(arg)
+        except Exception as e:
+            raise OptionConversionError(node, e) from e
+
+        if isinstance(arg_converted, numbers.Real):
+            if self.minimum is not None or self.maximum is not None:
+                rangelimit(node, self.minimum, arg_converted, self.maximum)
+
+        if self.choices and arg_converted not in self.choices:
+            raise OptionChoiceError(node, arg_converted, self.choices)
+
+        return arg_converted
+
+
+def consume_option(
+    option: Option[T],
+    args: t.Sequence[str],
+    nodes: interpreter.ArgSourceMap[ast.ASTNode],
+    arg_num: int
+) -&gt; tuple[t.Sequence[T], int]:
+    logger.debug(f&#34;consume_option: args={str(args)}&#34;)
+
+    idx = 0
+
+    if not args and option.default is not None:
+        logger.debug(f&#34;{option.name}: return default arg {option.default}&#34;)
+        return [option.default], 1
+    elif not args:
+        raise OptionRequiredMissingError()
+
+    converted_args: t.MutableSequence[T] = []
+
+    while idx &lt; len(args):
+        arg = args[idx]
+        node = nodes[arg_num + idx]
+
+        try:
+            converted_arg = option.convert_arg(arg, node)
+
+            if option.modifier == OptionModifier.NONE:
+                return [converted_arg], 1
+
+            converted_args.append(converted_arg)
+            idx += 1
+        except OptionError as e:
+            if option.modifier == OptionModifier.NONE:
+                logger.debug(f&#34;Conversion failed.&#34;)
+                raise
+            else:
+                # For GREEDY, bail on first conversion failure.
+                logger.debug(f&#34;GREEDY: Got {str(converted_args)}&#34;)
+                return converted_args, idx
+
+    logger.debug(f&#34;GREEDY: Exhausted arguments. Got {str(converted_args)}&#34;)
+    return converted_args, idx
+
+
+def set_help(
+    help: str
+) -&gt; t.Callable[[Command], Command]:
+    def decorate(f: Command) -&gt; Command:
+        f.set_help(help)
+
+        return f
+
+    return decorate</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="scrolls.commands.consume_option"><code class="name flex">
+<span>def <span class="ident">consume_option</span></span>(<span>option: <a title="scrolls.commands.Option" href="#scrolls.commands.Option">Option</a>[~T], args: Sequence[str], nodes: <a title="scrolls.interpreter.ArgSourceMap" href="interpreter.html#scrolls.interpreter.ArgSourceMap">ArgSourceMap</a>, arg_num: int) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def consume_option(
+    option: Option[T],
+    args: t.Sequence[str],
+    nodes: interpreter.ArgSourceMap[ast.ASTNode],
+    arg_num: int
+) -&gt; tuple[t.Sequence[T], int]:
+    logger.debug(f&#34;consume_option: args={str(args)}&#34;)
+
+    idx = 0
+
+    if not args and option.default is not None:
+        logger.debug(f&#34;{option.name}: return default arg {option.default}&#34;)
+        return [option.default], 1
+    elif not args:
+        raise OptionRequiredMissingError()
+
+    converted_args: t.MutableSequence[T] = []
+
+    while idx &lt; len(args):
+        arg = args[idx]
+        node = nodes[arg_num + idx]
+
+        try:
+            converted_arg = option.convert_arg(arg, node)
+
+            if option.modifier == OptionModifier.NONE:
+                return [converted_arg], 1
+
+            converted_args.append(converted_arg)
+            idx += 1
+        except OptionError as e:
+            if option.modifier == OptionModifier.NONE:
+                logger.debug(f&#34;Conversion failed.&#34;)
+                raise
+            else:
+                # For GREEDY, bail on first conversion failure.
+                logger.debug(f&#34;GREEDY: Got {str(converted_args)}&#34;)
+                return converted_args, idx
+
+    logger.debug(f&#34;GREEDY: Exhausted arguments. Got {str(converted_args)}&#34;)
+    return converted_args, idx</code></pre>
+</details>
+</dd>
+<dt id="scrolls.commands.make_callback_command"><code class="name flex">
+<span>def <span class="ident">make_callback_command</span></span>(<span>name: str, description: str, aliases: Sequence[str] = (), hidden: bool = False) ‑> Callable[[Callable[[<a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, Sequence[Any]], None]], <a title="scrolls.commands.CallbackCommand" href="#scrolls.commands.CallbackCommand">CallbackCommand</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_callback_command(
+    name: str,
+    description: str,
+    aliases: t.Sequence[str] = (),
+    hidden: bool = False
+) -&gt; t.Callable[[CommandCallbackT], CallbackCommand]:
+    def decorate(callback: CommandCallbackT) -&gt; CallbackCommand:
+        return CallbackCommand(
+            name,
+            description,
+            callback,
+            aliases,
+            hidden
+        )
+
+    return decorate</code></pre>
+</details>
+</dd>
+<dt id="scrolls.commands.rangelimit"><code class="name flex">
+<span>def <span class="ident">rangelimit</span></span>(<span>node: <a title="scrolls.ast.ASTNode" href="ast.html#scrolls.ast.ASTNode">ASTNode</a>, low: Optional[numbers.Real], val: numbers.Real, high: Optional[numbers.Real]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if val is between low and high. If not, raise a RangeLimitError.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rangelimit(
+    node: ast.ASTNode,
+    low: t.Optional[numbers.Real],
+    val: numbers.Real,
+    high: t.Optional[numbers.Real]
+) -&gt; None:
+    &#34;&#34;&#34;Check if val is between low and high. If not, raise a RangeLimitError.&#34;&#34;&#34;
+
+    if low is None and high is None:
+        raise ValueError(&#34;low and high cannot both be None&#34;)
+
+    if not (__rangecheck_lower(low, val) and __rangecheck_upper(high, val)):
+        raise OptionRangeLimitError(node, low, val, high)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.commands.set_help"><code class="name flex">
+<span>def <span class="ident">set_help</span></span>(<span>help: str) ‑> Callable[[<a title="scrolls.commands.Command" href="#scrolls.commands.Command">Command</a>], <a title="scrolls.commands.Command" href="#scrolls.commands.Command">Command</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_help(
+    help: str
+) -&gt; t.Callable[[Command], Command]:
+    def decorate(f: Command) -&gt; Command:
+        f.set_help(help)
+
+        return f
+
+    return decorate</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="scrolls.commands.CallbackCommand"><code class="flex name class">
+<span>class <span class="ident">CallbackCommand</span></span>
+<span>(</span><span>name: str, description: str, callback: Callable[[<a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, Sequence[Any]], None], aliases: Sequence[str] = (), hidden: bool = False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A basic command that just invokes a given callback. Used for the make_callback_command decorator.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CallbackCommand(Command):
+    &#34;&#34;&#34;
+    A basic command that just invokes a given callback. Used for the make_callback_command decorator.
+    &#34;&#34;&#34;
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        callback: CommandCallbackT,
+        aliases: t.Sequence[str] = (),
+        hidden: bool = False
+    ):
+        super().__init__(name, description, aliases, hidden)
+        self.callback = callback
+
+    def invoke(self, context: interpreter.InterpreterContext, args: t.Sequence[t.Any]) -&gt; None:
+        self.callback(context, args)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.commands.Command" href="#scrolls.commands.Command">Command</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.commands.CallbackCommand.invoke"><code class="name flex">
+<span>def <span class="ident">invoke</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, args: Sequence[Any]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke(self, context: interpreter.InterpreterContext, args: t.Sequence[t.Any]) -&gt; None:
+    self.callback(context, args)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.commands.Command"><code class="flex name class">
+<span>class <span class="ident">Command</span></span>
+<span>(</span><span>name: str, description: str, aliases: Sequence[str] = (), hidden: bool = False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Command(abc.ABC):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        aliases: t.Sequence[str] = (),
+        hidden: bool = False
+    ):
+        self.name = name
+        self.description = description
+        self.help = &#34;&#34;
+        self.aliases = aliases
+        self.hidden = hidden
+
+        self.options: t.MutableSequence[Option] = []
+
+    def add_option(self, option: &#39;Option&#39;) -&gt; None:
+        if self.options and self.options[-1].modifier == OptionModifier.CONSUME_REST:
+            raise ValueError(&#34;Cannot add options after CONSUME_REST&#34;)
+
+        self.options.append(option)
+
+    def set_help(self, help: str) -&gt; None:
+        self.help = help
+
+    def convert_options(self, context: interpreter.InterpreterContext) -&gt; t.Sequence[t.Any]:
+        converted_opts = []
+
+        args = context.args
+        nodes = context.arg_nodes
+
+        idx = 0
+
+        for option in self.options:
+            if nodes:
+                context.current_node = nodes[idx]
+
+            try:
+                if option.modifier == OptionModifier.CONSUME_REST:
+                    if not args:
+                        raise OptionRequiredMissingError()
+
+                    converted_opts.append(args[0])
+                    break
+
+                _result, num_consumed = consume_option(option, args, nodes, idx)
+            except OptionRequiredMissingError as e:
+                raise interpreter.InterpreterError(
+                    context,
+                    f&#34;{option.name} {e}&#34;
+                )
+            except OptionError as e:
+                raise interpreter.InterpreterError(
+                    context,
+                    f&#34;{option.name}: {e}&#34;
+                )
+
+            if len(_result) == 1:
+                result = _result[0]
+            else:
+                result = _result
+
+            converted_opts.append(result)
+
+            args = args[num_consumed:]
+            idx += num_consumed
+
+        return converted_opts
+
+    @abc.abstractmethod
+    def invoke(self, context: interpreter.InterpreterContext, args: t.Sequence[t.Any]) -&gt; None: ...
+
+    def __call__(self, context: interpreter.InterpreterContext) -&gt; None:
+        self.invoke(context, self.convert_options(context))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="scrolls.commands.CallbackCommand" href="#scrolls.commands.CallbackCommand">CallbackCommand</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.commands.Command.add_option"><code class="name flex">
+<span>def <span class="ident">add_option</span></span>(<span>self, option: <a title="scrolls.commands.Option" href="#scrolls.commands.Option">Option</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_option(self, option: &#39;Option&#39;) -&gt; None:
+    if self.options and self.options[-1].modifier == OptionModifier.CONSUME_REST:
+        raise ValueError(&#34;Cannot add options after CONSUME_REST&#34;)
+
+    self.options.append(option)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.commands.Command.convert_options"><code class="name flex">
+<span>def <span class="ident">convert_options</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> Sequence[Any]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_options(self, context: interpreter.InterpreterContext) -&gt; t.Sequence[t.Any]:
+    converted_opts = []
+
+    args = context.args
+    nodes = context.arg_nodes
+
+    idx = 0
+
+    for option in self.options:
+        if nodes:
+            context.current_node = nodes[idx]
+
+        try:
+            if option.modifier == OptionModifier.CONSUME_REST:
+                if not args:
+                    raise OptionRequiredMissingError()
+
+                converted_opts.append(args[0])
+                break
+
+            _result, num_consumed = consume_option(option, args, nodes, idx)
+        except OptionRequiredMissingError as e:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;{option.name} {e}&#34;
+            )
+        except OptionError as e:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;{option.name}: {e}&#34;
+            )
+
+        if len(_result) == 1:
+            result = _result[0]
+        else:
+            result = _result
+
+        converted_opts.append(result)
+
+        args = args[num_consumed:]
+        idx += num_consumed
+
+    return converted_opts</code></pre>
+</details>
+</dd>
+<dt id="scrolls.commands.Command.invoke"><code class="name flex">
+<span>def <span class="ident">invoke</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, args: Sequence[Any]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+def invoke(self, context: interpreter.InterpreterContext, args: t.Sequence[t.Any]) -&gt; None: ...</code></pre>
+</details>
+</dd>
+<dt id="scrolls.commands.Command.set_help"><code class="name flex">
+<span>def <span class="ident">set_help</span></span>(<span>self, help: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_help(self, help: str) -&gt; None:
+    self.help = help</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.commands.GenericCommandHandler"><code class="flex name class">
+<span>class <span class="ident">GenericCommandHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>A basic call handler that uses <code>typing.Callable</code> (<code>ScrollCallback</code>) to
+implement a call handler.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GenericCommandHandler(interpreter.CallbackCallHandler[None]):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self._consume_rest_triggers: t.MutableMapping[str, int] = {}
+
+    def add_call(self, name: str, command: interpreter.ScrollCallback[None]) -&gt; None:
+        # Disallow non-command additions.
+        if not isinstance(command, Command):
+            raise TypeError(&#34;Commands added to GenericCommandHandler must be a type deriving scrolls.Command&#34;)
+
+        super().add_call(name, command)
+
+    # TODO add remove_command
+    def add_command(self, cmd: &#39;Command&#39;) -&gt; &#39;Command&#39;:
+        self.add_call(cmd.name, cmd)
+
+        for alias in cmd.aliases:
+            self.add_alias(alias, cmd.name)
+
+        # Set up consume_rest_triggers, which change the behavior of the tokenizer
+        # for commands that specify consume_rest.
+        if cmd.options and cmd.options[-1].modifier == OptionModifier.CONSUME_REST:
+            non_rest_count = len(cmd.options) - 1
+            self._consume_rest_triggers[cmd.name] = non_rest_count
+            for alias in cmd.aliases:
+                self._consume_rest_triggers[alias] = non_rest_count
+
+        return cmd
+
+    # Get all commands as Command objects
+    def all_commands(self) -&gt; t.Sequence[&#39;Command&#39;]:
+        # Safe to cast here, since adding non-command calls is not allowed.
+        return [t.cast(Command, cmd) for cmd in self.calls.values()]
+
+    @property
+    def consume_rest_triggers(self) -&gt; t.Mapping[str, int]:
+        return self._consume_rest_triggers</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="scrolls.commands.GenericCommandHandler.consume_rest_triggers"><code class="name">var <span class="ident">consume_rest_triggers</span> : Mapping[str, int]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def consume_rest_triggers(self) -&gt; t.Mapping[str, int]:
+    return self._consume_rest_triggers</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.commands.GenericCommandHandler.add_command"><code class="name flex">
+<span>def <span class="ident">add_command</span></span>(<span>self, cmd: <a title="scrolls.commands.Command" href="#scrolls.commands.Command">Command</a>) ‑> <a title="scrolls.commands.Command" href="#scrolls.commands.Command">Command</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_command(self, cmd: &#39;Command&#39;) -&gt; &#39;Command&#39;:
+    self.add_call(cmd.name, cmd)
+
+    for alias in cmd.aliases:
+        self.add_alias(alias, cmd.name)
+
+    # Set up consume_rest_triggers, which change the behavior of the tokenizer
+    # for commands that specify consume_rest.
+    if cmd.options and cmd.options[-1].modifier == OptionModifier.CONSUME_REST:
+        non_rest_count = len(cmd.options) - 1
+        self._consume_rest_triggers[cmd.name] = non_rest_count
+        for alias in cmd.aliases:
+            self._consume_rest_triggers[alias] = non_rest_count
+
+    return cmd</code></pre>
+</details>
+</dd>
+<dt id="scrolls.commands.GenericCommandHandler.all_commands"><code class="name flex">
+<span>def <span class="ident">all_commands</span></span>(<span>self) ‑> Sequence[<a title="scrolls.commands.Command" href="#scrolls.commands.Command">Command</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def all_commands(self) -&gt; t.Sequence[&#39;Command&#39;]:
+    # Safe to cast here, since adding non-command calls is not allowed.
+    return [t.cast(Command, cmd) for cmd in self.calls.values()]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.commands.Option"><code class="flex name class">
+<span>class <span class="ident">Option</span></span>
+<span>(</span><span>name: str, type: Type[~T] = builtins.str, minimum: Optional[numbers.Real] = None, default: Optional[~T] = None, maximum: Optional[numbers.Real] = None, modifier: <a title="scrolls.commands.OptionModifier" href="#scrolls.commands.OptionModifier">OptionModifier</a> = OptionModifier.NONE, choices: Sequence[~T] = ())</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Option(name: str, type: Type[~T] = <class 'str'>, minimum: Optional[numbers.Real] = None, default: Optional[~T] = None, maximum: Optional[numbers.Real] = None, modifier: scrolls.commands.OptionModifier = <OptionModifier.NONE: 0>, choices: Sequence[~T] = ())</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class Option(t.Generic[T]):
+    name: str
+    type: t.Type[T] = t.cast(t.Type[T], str)  # T is allowed to be str, but mypy complains. Cast it.
+    minimum: t.Optional[numbers.Real] = None
+    default: t.Optional[T] = None
+    maximum: t.Optional[numbers.Real] = None
+    modifier: OptionModifier = OptionModifier.NONE
+    choices: t.Sequence[T] = ()
+
+    def verify_option(self) -&gt; None:
+        bad_consume_rest = (
+            self.modifier == OptionModifier.CONSUME_REST and
+            not self.type == str
+        )
+        if bad_consume_rest:
+            raise TypeError(&#34;OptionModifier.CONSUME_REST can only be used on type str&#34;)
+
+    def __call__(self, cmd: Command) -&gt; Command:
+        &#34;&#34;&#34;Enables Options to be used as decorators directly.&#34;&#34;&#34;
+        self.verify_option()
+        cmd.add_option(self)
+        return cmd
+
+    def convert_arg(self, arg: str, node: ast.ASTNode) -&gt; T:
+        logger.debug(f&#34;Attempt to convert {arg} to {self.type.__name__}&#34;)
+
+        try:
+            arg_converted = self.type(arg)
+        except Exception as e:
+            raise OptionConversionError(node, e) from e
+
+        if isinstance(arg_converted, numbers.Real):
+            if self.minimum is not None or self.maximum is not None:
+                rangelimit(node, self.minimum, arg_converted, self.maximum)
+
+        if self.choices and arg_converted not in self.choices:
+            raise OptionChoiceError(node, arg_converted, self.choices)
+
+        return arg_converted</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>typing.Generic</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="scrolls.commands.Option.choices"><code class="name">var <span class="ident">choices</span> : Sequence[~T]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.commands.Option.default"><code class="name">var <span class="ident">default</span> : Optional[~T]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.commands.Option.maximum"><code class="name">var <span class="ident">maximum</span> : Optional[numbers.Real]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.commands.Option.minimum"><code class="name">var <span class="ident">minimum</span> : Optional[numbers.Real]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.commands.Option.modifier"><code class="name">var <span class="ident">modifier</span> : <a title="scrolls.commands.OptionModifier" href="#scrolls.commands.OptionModifier">OptionModifier</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.commands.Option.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.commands.Option.type"><code class="name">var <span class="ident">type</span> : Type[~T]</code></dt>
+<dd>
+<div class="desc"><p>str(object='') -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.<strong>str</strong>() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.commands.Option.convert_arg"><code class="name flex">
+<span>def <span class="ident">convert_arg</span></span>(<span>self, arg: str, node: <a title="scrolls.ast.ASTNode" href="ast.html#scrolls.ast.ASTNode">ASTNode</a>) ‑> ~T</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_arg(self, arg: str, node: ast.ASTNode) -&gt; T:
+    logger.debug(f&#34;Attempt to convert {arg} to {self.type.__name__}&#34;)
+
+    try:
+        arg_converted = self.type(arg)
+    except Exception as e:
+        raise OptionConversionError(node, e) from e
+
+    if isinstance(arg_converted, numbers.Real):
+        if self.minimum is not None or self.maximum is not None:
+            rangelimit(node, self.minimum, arg_converted, self.maximum)
+
+    if self.choices and arg_converted not in self.choices:
+        raise OptionChoiceError(node, arg_converted, self.choices)
+
+    return arg_converted</code></pre>
+</details>
+</dd>
+<dt id="scrolls.commands.Option.verify_option"><code class="name flex">
+<span>def <span class="ident">verify_option</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def verify_option(self) -&gt; None:
+    bad_consume_rest = (
+        self.modifier == OptionModifier.CONSUME_REST and
+        not self.type == str
+    )
+    if bad_consume_rest:
+        raise TypeError(&#34;OptionModifier.CONSUME_REST can only be used on type str&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.commands.OptionChoiceError"><code class="flex name class">
+<span>class <span class="ident">OptionChoiceError</span></span>
+<span>(</span><span>node: <a title="scrolls.ast.ASTNode" href="ast.html#scrolls.ast.ASTNode">ASTNode</a>, bad_choice: ~T, choices: Sequence[~T])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OptionChoiceError(OptionError, t.Generic[T]):
+    def __init__(
+        self,
+        node: ast.ASTNode,
+        bad_choice: T,
+        choices: t.Sequence[T]
+    ):
+        super().__init__(node)
+        self.bad_choice: T = bad_choice
+        self.choices: t.Sequence[T] = choices
+
+    def __str__(self) -&gt; str:
+        choices_str = &#34;, &#34;.join([str(choice) for choice in self.choices])
+        return f&#34;has bad value &#39;{self.bad_choice}&#39;, must be one of {choices_str}&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.commands.OptionError" href="#scrolls.commands.OptionError">OptionError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+<li>typing.Generic</li>
+</ul>
+</dd>
+<dt id="scrolls.commands.OptionConversionError"><code class="flex name class">
+<span>class <span class="ident">OptionConversionError</span></span>
+<span>(</span><span>node: <a title="scrolls.ast.ASTNode" href="ast.html#scrolls.ast.ASTNode">ASTNode</a>, cause: Exception)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OptionConversionError(OptionError):
+    def __init__(
+        self,
+        node: ast.ASTNode,
+        cause: Exception
+    ):
+        super().__init__(node)
+        self.cause = cause
+
+    def __str__(self) -&gt; str:
+        return str(self.cause)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.commands.OptionError" href="#scrolls.commands.OptionError">OptionError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="scrolls.commands.OptionError"><code class="flex name class">
+<span>class <span class="ident">OptionError</span></span>
+<span>(</span><span>node: <a title="scrolls.ast.ASTNode" href="ast.html#scrolls.ast.ASTNode">ASTNode</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OptionError(Exception):
+    def __init__(self, node: ast.ASTNode):
+        self.node = node</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="scrolls.commands.OptionChoiceError" href="#scrolls.commands.OptionChoiceError">OptionChoiceError</a></li>
+<li><a title="scrolls.commands.OptionConversionError" href="#scrolls.commands.OptionConversionError">OptionConversionError</a></li>
+<li><a title="scrolls.commands.OptionRangeLimitError" href="#scrolls.commands.OptionRangeLimitError">OptionRangeLimitError</a></li>
+</ul>
+</dd>
+<dt id="scrolls.commands.OptionModifier"><code class="flex name class">
+<span>class <span class="ident">OptionModifier</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OptionModifier(enum.Enum):
+    NONE = 0
+    GREEDY = 1
+    CONSUME_REST = 2</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="scrolls.commands.OptionModifier.CONSUME_REST"><code class="name">var <span class="ident">CONSUME_REST</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.commands.OptionModifier.GREEDY"><code class="name">var <span class="ident">GREEDY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.commands.OptionModifier.NONE"><code class="name">var <span class="ident">NONE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.commands.OptionRangeLimitError"><code class="flex name class">
+<span>class <span class="ident">OptionRangeLimitError</span></span>
+<span>(</span><span>node: <a title="scrolls.ast.ASTNode" href="ast.html#scrolls.ast.ASTNode">ASTNode</a>, low: Optional[numbers.Real], val: numbers.Real, high: Optional[numbers.Real])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OptionRangeLimitError(OptionError):
+    def __init__(
+        self,
+        node: ast.ASTNode,
+        low: t.Optional[numbers.Real],
+        val: numbers.Real,
+        high: t.Optional[numbers.Real]
+    ):
+        super().__init__(node)
+        self.low = low
+        self.val = val
+        self.high = high
+
+    def __str__(self) -&gt; str:
+        if self.high is None:
+            msg = f&#34;cannot go below {self.low}&#34;
+        elif self.low is None:
+            msg = f&#34;cannot exceed {self.high}&#34;
+        else:
+            msg = f&#34;must be between {self.low} and {self.high}&#34;
+
+        return msg</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.commands.OptionError" href="#scrolls.commands.OptionError">OptionError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="scrolls.commands.OptionRequiredMissingError"><code class="flex name class">
+<span>class <span class="ident">OptionRequiredMissingError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OptionRequiredMissingError(Exception):
+    def __str__(self) -&gt; str:
+        return &#34;is a required argument that is missing&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scrolls" href="index.html">scrolls</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="scrolls.commands.consume_option" href="#scrolls.commands.consume_option">consume_option</a></code></li>
+<li><code><a title="scrolls.commands.make_callback_command" href="#scrolls.commands.make_callback_command">make_callback_command</a></code></li>
+<li><code><a title="scrolls.commands.rangelimit" href="#scrolls.commands.rangelimit">rangelimit</a></code></li>
+<li><code><a title="scrolls.commands.set_help" href="#scrolls.commands.set_help">set_help</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="scrolls.commands.CallbackCommand" href="#scrolls.commands.CallbackCommand">CallbackCommand</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.commands.CallbackCommand.invoke" href="#scrolls.commands.CallbackCommand.invoke">invoke</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.commands.Command" href="#scrolls.commands.Command">Command</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.commands.Command.add_option" href="#scrolls.commands.Command.add_option">add_option</a></code></li>
+<li><code><a title="scrolls.commands.Command.convert_options" href="#scrolls.commands.Command.convert_options">convert_options</a></code></li>
+<li><code><a title="scrolls.commands.Command.invoke" href="#scrolls.commands.Command.invoke">invoke</a></code></li>
+<li><code><a title="scrolls.commands.Command.set_help" href="#scrolls.commands.Command.set_help">set_help</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.commands.GenericCommandHandler" href="#scrolls.commands.GenericCommandHandler">GenericCommandHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.commands.GenericCommandHandler.add_command" href="#scrolls.commands.GenericCommandHandler.add_command">add_command</a></code></li>
+<li><code><a title="scrolls.commands.GenericCommandHandler.all_commands" href="#scrolls.commands.GenericCommandHandler.all_commands">all_commands</a></code></li>
+<li><code><a title="scrolls.commands.GenericCommandHandler.consume_rest_triggers" href="#scrolls.commands.GenericCommandHandler.consume_rest_triggers">consume_rest_triggers</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.commands.Option" href="#scrolls.commands.Option">Option</a></code></h4>
+<ul class="two-column">
+<li><code><a title="scrolls.commands.Option.choices" href="#scrolls.commands.Option.choices">choices</a></code></li>
+<li><code><a title="scrolls.commands.Option.convert_arg" href="#scrolls.commands.Option.convert_arg">convert_arg</a></code></li>
+<li><code><a title="scrolls.commands.Option.default" href="#scrolls.commands.Option.default">default</a></code></li>
+<li><code><a title="scrolls.commands.Option.maximum" href="#scrolls.commands.Option.maximum">maximum</a></code></li>
+<li><code><a title="scrolls.commands.Option.minimum" href="#scrolls.commands.Option.minimum">minimum</a></code></li>
+<li><code><a title="scrolls.commands.Option.modifier" href="#scrolls.commands.Option.modifier">modifier</a></code></li>
+<li><code><a title="scrolls.commands.Option.name" href="#scrolls.commands.Option.name">name</a></code></li>
+<li><code><a title="scrolls.commands.Option.type" href="#scrolls.commands.Option.type">type</a></code></li>
+<li><code><a title="scrolls.commands.Option.verify_option" href="#scrolls.commands.Option.verify_option">verify_option</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.commands.OptionChoiceError" href="#scrolls.commands.OptionChoiceError">OptionChoiceError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.commands.OptionConversionError" href="#scrolls.commands.OptionConversionError">OptionConversionError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.commands.OptionError" href="#scrolls.commands.OptionError">OptionError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.commands.OptionModifier" href="#scrolls.commands.OptionModifier">OptionModifier</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.commands.OptionModifier.CONSUME_REST" href="#scrolls.commands.OptionModifier.CONSUME_REST">CONSUME_REST</a></code></li>
+<li><code><a title="scrolls.commands.OptionModifier.GREEDY" href="#scrolls.commands.OptionModifier.GREEDY">GREEDY</a></code></li>
+<li><code><a title="scrolls.commands.OptionModifier.NONE" href="#scrolls.commands.OptionModifier.NONE">NONE</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.commands.OptionRangeLimitError" href="#scrolls.commands.OptionRangeLimitError">OptionRangeLimitError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.commands.OptionRequiredMissingError" href="#scrolls.commands.OptionRequiredMissingError">OptionRequiredMissingError</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

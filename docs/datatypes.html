@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>scrolls.datatypes API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scrolls.datatypes</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Datatype conversions for Scrolls. This whole module is kind of gross, and only exists because
+# the interpreter stores everything as a string.
+
+import enum
+import functools
+import numbers
+import typing as t
+
+from . import interpreter
+
+__all__ = (
+    &#34;TRUE&#34;,
+    &#34;FALSE&#34;,
+    &#34;bool_to_str&#34;,
+    &#34;str_to_bool&#34;,
+    &#34;require_arg_length&#34;,
+    &#34;NumericType&#34;,
+    &#34;str_to_numeric&#34;,
+    &#34;require_numeric&#34;,
+    &#34;require_all_numeric&#34;,
+    &#34;apply_unary_num_op&#34;,
+    &#34;apply_binary_num_op&#34;,
+    &#34;apply_reduce_binary_num_op&#34;,
+    &#34;apply_mass_binary_num_op&#34;,
+    &#34;apply_binary_bool_op&#34;,
+    &#34;apply_unary_bool_op&#34;,
+    &#34;apply_reduce_bool_op&#34;
+)
+
+
+TRUE = &#34;1&#34;
+FALSE = &#34;0&#34;
+
+
+class NumericType(enum.Enum):
+    INT = enum.auto()
+    FLOAT = enum.auto()
+    NONE = enum.auto()
+
+
+NumT = t.TypeVar(&#39;NumT&#39;, bound=numbers.Real, covariant=True)
+NumU = t.TypeVar(&#39;NumU&#39;, bound=numbers.Real, covariant=True)
+ScrollNumT = tuple[t.Union[int, float], &#39;NumericType&#39;]
+UnaryNumOpT = t.Callable[[NumT], NumT]
+BinaryNumOpT = t.Callable[[NumT, NumU], t.Union[NumT, NumU]]
+
+UnaryBoolOpT = t.Callable[[bool], bool]
+BinaryBoolOpT = t.Callable[[bool, bool], bool]
+
+
+def str_to_bool(x: str) -&gt; bool:
+    # &#34;0&#34; is interpreted as FALSE, everything else as TRUE.
+    return not x == FALSE
+
+
+def bool_to_str(b: bool) -&gt; str:
+    return TRUE if b else FALSE
+
+
+def toint(n: t.Union[int, float]) -&gt; int:
+    return int(n)
+
+
+def tofloat(n: t.Union[int, float]) -&gt; float:
+    return float(n)
+
+
+def str_to_numeric(s: str) -&gt; tuple[t.Optional[t.Union[int, float]], NumericType]:
+    try:
+        return int(s), NumericType.INT
+    except ValueError as e:
+        pass
+
+    try:
+        return float(s), NumericType.FLOAT
+    except ValueError as e:
+        pass
+
+    return None, NumericType.NONE
+
+
+def require_numeric(context: interpreter.InterpreterContext, s: str) -&gt; ScrollNumT:
+    n, t = str_to_numeric(s)
+
+    if n is None:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;{context.call_name}: {s} is not a valid int or float&#34;
+        )
+
+    return n, t
+
+
+def require_all_numeric(
+    context: interpreter.InterpreterContext,
+    strs: t.Sequence[str]
+) -&gt; tuple[t.Sequence[t.Union[int, float]], NumericType]:
+
+    out = []
+    convert_to_float = False
+    for s in strs:
+        n, t = require_numeric(context, s)
+        if t == NumericType.FLOAT:
+            convert_to_float = True
+
+        out.append(n)
+
+    if convert_to_float:
+        return [float(x) for x in out], NumericType.FLOAT
+    else:
+        return out, NumericType.INT
+
+
+def require_arg_length(context: interpreter.InterpreterContext, n: int, args: t.Sequence[str] = ()) -&gt; None:
+    if not args:
+        args = context.args
+
+    if len(args) &lt; n:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;{context.call_name} requires at least {n} argument{&#39;&#39; if n == 1 else &#39;s&#39;}&#34;
+        )
+
+
+def apply_unary_num_op(
+    context: interpreter.InterpreterContext,
+    op: UnaryNumOpT
+) -&gt; ScrollNumT:
+    require_arg_length(context, 1)
+
+    n, t = require_numeric(context, context.args[0])
+    return op(n), t
+
+
+def apply_binary_num_op(
+    context: interpreter.InterpreterContext,
+    op: BinaryNumOpT,
+    args: t.Sequence[str] = (),
+    len_check: bool = False
+) -&gt; ScrollNumT:
+    if len_check:
+        require_arg_length(context, 2)
+
+    if args:
+        if len(args) != 2:
+            raise interpreter.InternalInterpreterError(
+                context,
+                f&#34;{context.call_name}: Internal arg pass for binary op had {len(args)} args&#34;
+            )
+    else:
+        args = context.args
+
+    (n1, n2), out_t = require_all_numeric(context, args)
+    return op(n1, n2), out_t
+
+
+def apply_reduce_binary_num_op(
+    context: interpreter.InterpreterContext,
+    reduce_op: BinaryNumOpT,
+    args: t.Sequence[str] = (),
+    len_check: bool = False
+) -&gt; ScrollNumT:
+    if len_check:
+        require_arg_length(context, 1)
+
+    if not args:
+        args = context.args
+
+    nums, nums_t = require_all_numeric(context, args)
+
+    out = functools.reduce(reduce_op, nums)
+    return out, nums_t
+
+
+def apply_mass_binary_num_op(
+    context: interpreter.InterpreterContext,
+    reduce_op: BinaryNumOpT,
+    final_op: BinaryNumOpT,
+    len_check: bool = False
+) -&gt; ScrollNumT:
+    if len_check and len(context.args) &lt; 2:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;{context.call_name} requires at least two arguments&#34;
+        )
+
+    if len(context.args) == 2:
+        # Skip reduction step if only 2 args
+        return apply_binary_num_op(context, final_op, len_check=False)
+
+    n1, t1 = require_numeric(context, context.args[0])
+    n2, t2 = apply_reduce_binary_num_op(context, reduce_op, context.args[1:], False)
+
+    if t1 != t2:
+        n1 = float(n1)
+        n2 = float(n2)
+        out_t = NumericType.FLOAT
+    else:
+        out_t = NumericType.INT
+
+    return final_op(n1, n2), out_t
+
+
+def apply_unary_bool_op(
+    context: interpreter.InterpreterContext,
+    op: UnaryBoolOpT,
+    len_check: bool = False
+) -&gt; bool:
+    if len_check:
+        require_arg_length(context, 1)
+
+    return op(str_to_bool(context.args[0]))
+
+
+def apply_binary_bool_op(
+    context: interpreter.InterpreterContext,
+    op: BinaryBoolOpT,
+    len_check: bool = False
+) -&gt; bool:
+    if len_check:
+        require_arg_length(context, 2)
+
+    return op(str_to_bool(context.args[0]), str_to_bool(context.args[1]))
+
+
+def apply_reduce_bool_op(
+    context: interpreter.InterpreterContext,
+    op: BinaryBoolOpT,
+    len_check: bool = False
+) -&gt; bool:
+    if len_check:
+        require_arg_length(context, 2)
+
+    result = functools.reduce(op, [str_to_bool(s) for s in context.args])
+    return result</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="scrolls.datatypes.apply_binary_bool_op"><code class="name flex">
+<span>def <span class="ident">apply_binary_bool_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[bool, bool], bool], len_check: bool = False) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_binary_bool_op(
+    context: interpreter.InterpreterContext,
+    op: BinaryBoolOpT,
+    len_check: bool = False
+) -&gt; bool:
+    if len_check:
+        require_arg_length(context, 2)
+
+    return op(str_to_bool(context.args[0]), str_to_bool(context.args[1]))</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.apply_binary_num_op"><code class="name flex">
+<span>def <span class="ident">apply_binary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], args: Sequence[str] = (), len_check: bool = False) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_binary_num_op(
+    context: interpreter.InterpreterContext,
+    op: BinaryNumOpT,
+    args: t.Sequence[str] = (),
+    len_check: bool = False
+) -&gt; ScrollNumT:
+    if len_check:
+        require_arg_length(context, 2)
+
+    if args:
+        if len(args) != 2:
+            raise interpreter.InternalInterpreterError(
+                context,
+                f&#34;{context.call_name}: Internal arg pass for binary op had {len(args)} args&#34;
+            )
+    else:
+        args = context.args
+
+    (n1, n2), out_t = require_all_numeric(context, args)
+    return op(n1, n2), out_t</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.apply_mass_binary_num_op"><code class="name flex">
+<span>def <span class="ident">apply_mass_binary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, reduce_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], final_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], len_check: bool = False) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_mass_binary_num_op(
+    context: interpreter.InterpreterContext,
+    reduce_op: BinaryNumOpT,
+    final_op: BinaryNumOpT,
+    len_check: bool = False
+) -&gt; ScrollNumT:
+    if len_check and len(context.args) &lt; 2:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;{context.call_name} requires at least two arguments&#34;
+        )
+
+    if len(context.args) == 2:
+        # Skip reduction step if only 2 args
+        return apply_binary_num_op(context, final_op, len_check=False)
+
+    n1, t1 = require_numeric(context, context.args[0])
+    n2, t2 = apply_reduce_binary_num_op(context, reduce_op, context.args[1:], False)
+
+    if t1 != t2:
+        n1 = float(n1)
+        n2 = float(n2)
+        out_t = NumericType.FLOAT
+    else:
+        out_t = NumericType.INT
+
+    return final_op(n1, n2), out_t</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.apply_reduce_binary_num_op"><code class="name flex">
+<span>def <span class="ident">apply_reduce_binary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, reduce_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], args: Sequence[str] = (), len_check: bool = False) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_reduce_binary_num_op(
+    context: interpreter.InterpreterContext,
+    reduce_op: BinaryNumOpT,
+    args: t.Sequence[str] = (),
+    len_check: bool = False
+) -&gt; ScrollNumT:
+    if len_check:
+        require_arg_length(context, 1)
+
+    if not args:
+        args = context.args
+
+    nums, nums_t = require_all_numeric(context, args)
+
+    out = functools.reduce(reduce_op, nums)
+    return out, nums_t</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.apply_reduce_bool_op"><code class="name flex">
+<span>def <span class="ident">apply_reduce_bool_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[bool, bool], bool], len_check: bool = False) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_reduce_bool_op(
+    context: interpreter.InterpreterContext,
+    op: BinaryBoolOpT,
+    len_check: bool = False
+) -&gt; bool:
+    if len_check:
+        require_arg_length(context, 2)
+
+    result = functools.reduce(op, [str_to_bool(s) for s in context.args])
+    return result</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.apply_unary_bool_op"><code class="name flex">
+<span>def <span class="ident">apply_unary_bool_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[bool], bool], len_check: bool = False) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_unary_bool_op(
+    context: interpreter.InterpreterContext,
+    op: UnaryBoolOpT,
+    len_check: bool = False
+) -&gt; bool:
+    if len_check:
+        require_arg_length(context, 1)
+
+    return op(str_to_bool(context.args[0]))</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.apply_unary_num_op"><code class="name flex">
+<span>def <span class="ident">apply_unary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[+NumT], +NumT]) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_unary_num_op(
+    context: interpreter.InterpreterContext,
+    op: UnaryNumOpT
+) -&gt; ScrollNumT:
+    require_arg_length(context, 1)
+
+    n, t = require_numeric(context, context.args[0])
+    return op(n), t</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.bool_to_str"><code class="name flex">
+<span>def <span class="ident">bool_to_str</span></span>(<span>b: bool) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bool_to_str(b: bool) -&gt; str:
+    return TRUE if b else FALSE</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.require_all_numeric"><code class="name flex">
+<span>def <span class="ident">require_all_numeric</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, strs: Sequence[str]) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def require_all_numeric(
+    context: interpreter.InterpreterContext,
+    strs: t.Sequence[str]
+) -&gt; tuple[t.Sequence[t.Union[int, float]], NumericType]:
+
+    out = []
+    convert_to_float = False
+    for s in strs:
+        n, t = require_numeric(context, s)
+        if t == NumericType.FLOAT:
+            convert_to_float = True
+
+        out.append(n)
+
+    if convert_to_float:
+        return [float(x) for x in out], NumericType.FLOAT
+    else:
+        return out, NumericType.INT</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.require_arg_length"><code class="name flex">
+<span>def <span class="ident">require_arg_length</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, n: int, args: Sequence[str] = ()) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def require_arg_length(context: interpreter.InterpreterContext, n: int, args: t.Sequence[str] = ()) -&gt; None:
+    if not args:
+        args = context.args
+
+    if len(args) &lt; n:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;{context.call_name} requires at least {n} argument{&#39;&#39; if n == 1 else &#39;s&#39;}&#34;
+        )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.require_numeric"><code class="name flex">
+<span>def <span class="ident">require_numeric</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, s: str) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def require_numeric(context: interpreter.InterpreterContext, s: str) -&gt; ScrollNumT:
+    n, t = str_to_numeric(s)
+
+    if n is None:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;{context.call_name}: {s} is not a valid int or float&#34;
+        )
+
+    return n, t</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.str_to_bool"><code class="name flex">
+<span>def <span class="ident">str_to_bool</span></span>(<span>x: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def str_to_bool(x: str) -&gt; bool:
+    # &#34;0&#34; is interpreted as FALSE, everything else as TRUE.
+    return not x == FALSE</code></pre>
+</details>
+</dd>
+<dt id="scrolls.datatypes.str_to_numeric"><code class="name flex">
+<span>def <span class="ident">str_to_numeric</span></span>(<span>s: str) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def str_to_numeric(s: str) -&gt; tuple[t.Optional[t.Union[int, float]], NumericType]:
+    try:
+        return int(s), NumericType.INT
+    except ValueError as e:
+        pass
+
+    try:
+        return float(s), NumericType.FLOAT
+    except ValueError as e:
+        pass
+
+    return None, NumericType.NONE</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="scrolls.datatypes.NumericType"><code class="flex name class">
+<span>class <span class="ident">NumericType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NumericType(enum.Enum):
+    INT = enum.auto()
+    FLOAT = enum.auto()
+    NONE = enum.auto()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="scrolls.datatypes.NumericType.FLOAT"><code class="name">var <span class="ident">FLOAT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.datatypes.NumericType.INT"><code class="name">var <span class="ident">INT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="scrolls.datatypes.NumericType.NONE"><code class="name">var <span class="ident">NONE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scrolls" href="index.html">scrolls</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="scrolls.datatypes.apply_binary_bool_op" href="#scrolls.datatypes.apply_binary_bool_op">apply_binary_bool_op</a></code></li>
+<li><code><a title="scrolls.datatypes.apply_binary_num_op" href="#scrolls.datatypes.apply_binary_num_op">apply_binary_num_op</a></code></li>
+<li><code><a title="scrolls.datatypes.apply_mass_binary_num_op" href="#scrolls.datatypes.apply_mass_binary_num_op">apply_mass_binary_num_op</a></code></li>
+<li><code><a title="scrolls.datatypes.apply_reduce_binary_num_op" href="#scrolls.datatypes.apply_reduce_binary_num_op">apply_reduce_binary_num_op</a></code></li>
+<li><code><a title="scrolls.datatypes.apply_reduce_bool_op" href="#scrolls.datatypes.apply_reduce_bool_op">apply_reduce_bool_op</a></code></li>
+<li><code><a title="scrolls.datatypes.apply_unary_bool_op" href="#scrolls.datatypes.apply_unary_bool_op">apply_unary_bool_op</a></code></li>
+<li><code><a title="scrolls.datatypes.apply_unary_num_op" href="#scrolls.datatypes.apply_unary_num_op">apply_unary_num_op</a></code></li>
+<li><code><a title="scrolls.datatypes.bool_to_str" href="#scrolls.datatypes.bool_to_str">bool_to_str</a></code></li>
+<li><code><a title="scrolls.datatypes.require_all_numeric" href="#scrolls.datatypes.require_all_numeric">require_all_numeric</a></code></li>
+<li><code><a title="scrolls.datatypes.require_arg_length" href="#scrolls.datatypes.require_arg_length">require_arg_length</a></code></li>
+<li><code><a title="scrolls.datatypes.require_numeric" href="#scrolls.datatypes.require_numeric">require_numeric</a></code></li>
+<li><code><a title="scrolls.datatypes.str_to_bool" href="#scrolls.datatypes.str_to_bool">str_to_bool</a></code></li>
+<li><code><a title="scrolls.datatypes.str_to_numeric" href="#scrolls.datatypes.str_to_numeric">str_to_numeric</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.datatypes.NumericType.FLOAT" href="#scrolls.datatypes.NumericType.FLOAT">FLOAT</a></code></li>
+<li><code><a title="scrolls.datatypes.NumericType.INT" href="#scrolls.datatypes.NumericType.INT">INT</a></code></li>
+<li><code><a title="scrolls.datatypes.NumericType.NONE" href="#scrolls.datatypes.NumericType.NONE">NONE</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

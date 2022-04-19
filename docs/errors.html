@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>scrolls.errors API documentation</title>
+<meta name="description" content="Errors not dependent on any specific Scrolls types …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scrolls.errors</code></h1>
+</header>
+<section id="section-intro">
+<p>Errors not dependent on any specific Scrolls types.</p>
+<p>Typically, you won't need to instantiate any of these yourself. The base exception
+for <em>all</em> Scrolls errors is <code><a title="scrolls.errors.ScrollError" href="#scrolls.errors.ScrollError">ScrollError</a></code>. Any error that occurs while validating
+script syntax or interpreting scripts will inherit from <code><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></code>.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Errors not dependent on any specific Scrolls types.
+
+Typically, you won&#39;t need to instantiate any of these yourself. The base exception
+for _all_ Scrolls errors is `ScrollError`. Any error that occurs while validating
+script syntax or interpreting scripts will inherit from `PositionalError`.
+&#34;&#34;&#34;
+
+import functools
+import math
+import typing as t
+
+__all__ = (
+    &#34;format_positional_error&#34;,
+    &#34;ScrollError&#34;,
+    &#34;PositionalError&#34;,
+    &#34;ParseError&#34;,
+    &#34;ParseEofError&#34;,
+    &#34;ParseExpectError&#34;,
+    &#34;TokenizeError&#34;,
+    &#34;TokenizeEofError&#34;
+)
+
+
+@functools.lru_cache(128)
+def format_positional_error(
+    line: int,
+    pos: int,
+    string: str,
+    message: str,
+    prior_lines: int = 3
+) -&gt; str:
+    &#34;&#34;&#34;Format a positional error generated by Scrolls.
+
+    Args:
+        line: The line the error was generated on.
+        pos: The character the error was generated on.
+        string: The script that generated the error.
+        message: The message associated with the error.
+
+        prior_lines: The number of lines that should be printed before the line
+            the error occurred on. The line containing the error will always
+            be printed.
+
+    Returns:
+        The formatted error message.
+
+        For example:
+        ```text
+        ...
+        1 print &#34;World&#34;
+        2 print &#34;Foo&#34;
+        3 print &#34;Bar&#34;
+        4 print &#34;bad string
+                           ^
+        line 4 - Unexpected EOF while parsing string literal.
+        ```
+
+        If there are more than `prior_lines` lines before the error, `...` will be
+        prepended to the output.
+    &#34;&#34;&#34;
+    zfill = max(1, int(math.log10(len(string))))
+    lines = [f&#34;{n:0{zfill}} {l}&#34; for n, l in enumerate(string.splitlines())]
+
+    printed_lines = lines[max(0, line - prior_lines): line + 1]
+
+    output_lines = [
+        *([&#34;...&#34;] if line - prior_lines &gt;= 1 else []),
+        *printed_lines,
+        &#34; &#34;*(pos + 1 + zfill) + &#34;^&#34;,
+        f&#34;line {line}: {message}&#34;
+    ]
+
+    return &#34;\n&#34;.join(output_lines)
+
+
+class ScrollError(Exception):
+    &#34;&#34;&#34;Base class for all Scrolls-related errors.&#34;&#34;&#34;
+    pass
+
+
+class PositionalError(ScrollError):
+    &#34;&#34;&#34;Generic error that happened somewhere in a script.
+
+    Any error in tokenizing, parsing, or interpreting should inherit from this.
+    Typically you&#39;ll never need to instantiate one of these yourself, just catch it
+    and call `str` on it. This will return a formatted error message pointing to
+    where the error happened. See `format_positional_error` for more details.
+
+    Example usage:
+
+    ```
+    try:
+        some_scrolls_function(...)
+    except PositionalError as e:
+        print(&#34;error:&#34;)
+        print(str(e))
+    ```
+
+    Note that this will apply to any error that inherits from `PositionalError` as well.
+    If you want to do your own formatting, you can use the instance variables below to
+    generate your own messages.
+    &#34;&#34;&#34;
+    def __init__(
+        self,
+        line: int,
+        pos: int,
+        string: str,
+        message: str
+    ):
+        self.line = line
+        &#34;&#34;&#34;The line the error occurred on.&#34;&#34;&#34;
+
+        self.pos = pos
+        &#34;&#34;&#34;The character along `line` the error occurred at.&#34;&#34;&#34;
+
+        self.string = string
+        &#34;&#34;&#34;The string that triggered the error. In all normal cases, this is a script.&#34;&#34;&#34;
+
+        self.message = message
+        &#34;&#34;&#34;The message associated with this error.&#34;&#34;&#34;
+
+    def __str__(self) -&gt; str:
+        &#34;&#34;&#34;
+        Return a formatted error string pointing out in the script where this error
+        happened.
+        &#34;&#34;&#34;
+        return format_positional_error(
+            self.line,
+            self.pos,
+            self.string,
+            self.message
+        )
+
+
+class TokenizeError(PositionalError):
+    &#34;&#34;&#34;Generic error raised while lexing/tokenizing a script.&#34;&#34;&#34;
+    pass
+
+
+class TokenizeEofError(TokenizeError):
+    &#34;&#34;&#34;Raised when the lexer/tokenizer hits an unexpected EOF (end of script).&#34;&#34;&#34;
+    pass
+
+
+class ParseError(PositionalError):
+    &#34;&#34;&#34;Generic error raised during the parsing stage.&#34;&#34;&#34;
+    def __init__(
+        self,
+        line: int,
+        pos: int,
+        string: str,
+        message: str
+    ):
+        super().__init__(
+            line,
+            pos,
+            string,
+            message
+        )
+
+        # IMPLEMENTATION DETAIL
+        # Sets whether this parse error is fatal or not. Defaults to `False`.
+        # If `True`, a `ParseError` will cause all parsing to stop immediately and
+        # raise the error. If `fatal`  is `False`, a parse function may try alternative
+        # parsing. Internally, `fatal = False` is used by `parse_choice` to determine
+        # which parsing function to choose. See `scrolls.ast` for more details.
+        self.fatal = False
+
+
+class ParseEofError(ParseError):
+    &#34;&#34;&#34;Raised when an EOF is encountered too early while parsing a script.&#34;&#34;&#34;
+    pass
+
+
+class ParseExpectError(ParseError):
+    &#34;&#34;&#34;Raised when an unexpected token is encountered during parsing.&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="scrolls.errors.format_positional_error"><code class="name flex">
+<span>def <span class="ident">format_positional_error</span></span>(<span>line: int, pos: int, string: str, message: str, prior_lines: int = 3) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Format a positional error generated by Scrolls.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>line</code></strong></dt>
+<dd>The line the error was generated on.</dd>
+<dt><strong><code>pos</code></strong></dt>
+<dd>The character the error was generated on.</dd>
+<dt><strong><code>string</code></strong></dt>
+<dd>The script that generated the error.</dd>
+<dt><strong><code>message</code></strong></dt>
+<dd>The message associated with the error.</dd>
+<dt><strong><code>prior_lines</code></strong></dt>
+<dd>The number of lines that should be printed before the line
+the error occurred on. The line containing the error will always
+be printed.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>The formatted error message.</p>
+<p>For example:</p>
+<pre><code class="language-text">...
+1 print &quot;World&quot;
+2 print &quot;Foo&quot;
+3 print &quot;Bar&quot;
+4 print &quot;bad string
+                   ^
+line 4 - Unexpected EOF while parsing string literal.
+</code></pre>
+<p>If there are more than <code>prior_lines</code> lines before the error, <code>&hellip;</code> will be
+prepended to the output.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@functools.lru_cache(128)
+def format_positional_error(
+    line: int,
+    pos: int,
+    string: str,
+    message: str,
+    prior_lines: int = 3
+) -&gt; str:
+    &#34;&#34;&#34;Format a positional error generated by Scrolls.
+
+    Args:
+        line: The line the error was generated on.
+        pos: The character the error was generated on.
+        string: The script that generated the error.
+        message: The message associated with the error.
+
+        prior_lines: The number of lines that should be printed before the line
+            the error occurred on. The line containing the error will always
+            be printed.
+
+    Returns:
+        The formatted error message.
+
+        For example:
+        ```text
+        ...
+        1 print &#34;World&#34;
+        2 print &#34;Foo&#34;
+        3 print &#34;Bar&#34;
+        4 print &#34;bad string
+                           ^
+        line 4 - Unexpected EOF while parsing string literal.
+        ```
+
+        If there are more than `prior_lines` lines before the error, `...` will be
+        prepended to the output.
+    &#34;&#34;&#34;
+    zfill = max(1, int(math.log10(len(string))))
+    lines = [f&#34;{n:0{zfill}} {l}&#34; for n, l in enumerate(string.splitlines())]
+
+    printed_lines = lines[max(0, line - prior_lines): line + 1]
+
+    output_lines = [
+        *([&#34;...&#34;] if line - prior_lines &gt;= 1 else []),
+        *printed_lines,
+        &#34; &#34;*(pos + 1 + zfill) + &#34;^&#34;,
+        f&#34;line {line}: {message}&#34;
+    ]
+
+    return &#34;\n&#34;.join(output_lines)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="scrolls.errors.ParseEofError"><code class="flex name class">
+<span>class <span class="ident">ParseEofError</span></span>
+<span>(</span><span>line: int, pos: int, string: str, message: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Raised when an EOF is encountered too early while parsing a script.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ParseEofError(ParseError):
+    &#34;&#34;&#34;Raised when an EOF is encountered too early while parsing a script.&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.ParseError" href="#scrolls.errors.ParseError">ParseError</a></li>
+<li><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></li>
+<li><a title="scrolls.errors.ScrollError" href="#scrolls.errors.ScrollError">ScrollError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.errors.ParseError" href="#scrolls.errors.ParseError">ParseError</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.errors.ParseError.line" href="#scrolls.errors.PositionalError.line">line</a></code></li>
+<li><code><a title="scrolls.errors.ParseError.message" href="#scrolls.errors.PositionalError.message">message</a></code></li>
+<li><code><a title="scrolls.errors.ParseError.pos" href="#scrolls.errors.PositionalError.pos">pos</a></code></li>
+<li><code><a title="scrolls.errors.ParseError.string" href="#scrolls.errors.PositionalError.string">string</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.errors.ParseError"><code class="flex name class">
+<span>class <span class="ident">ParseError</span></span>
+<span>(</span><span>line: int, pos: int, string: str, message: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generic error raised during the parsing stage.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ParseError(PositionalError):
+    &#34;&#34;&#34;Generic error raised during the parsing stage.&#34;&#34;&#34;
+    def __init__(
+        self,
+        line: int,
+        pos: int,
+        string: str,
+        message: str
+    ):
+        super().__init__(
+            line,
+            pos,
+            string,
+            message
+        )
+
+        # IMPLEMENTATION DETAIL
+        # Sets whether this parse error is fatal or not. Defaults to `False`.
+        # If `True`, a `ParseError` will cause all parsing to stop immediately and
+        # raise the error. If `fatal`  is `False`, a parse function may try alternative
+        # parsing. Internally, `fatal = False` is used by `parse_choice` to determine
+        # which parsing function to choose. See `scrolls.ast` for more details.
+        self.fatal = False</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></li>
+<li><a title="scrolls.errors.ScrollError" href="#scrolls.errors.ScrollError">ScrollError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.ParseEofError" href="#scrolls.errors.ParseEofError">ParseEofError</a></li>
+<li><a title="scrolls.errors.ParseExpectError" href="#scrolls.errors.ParseExpectError">ParseExpectError</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.errors.PositionalError.line" href="#scrolls.errors.PositionalError.line">line</a></code></li>
+<li><code><a title="scrolls.errors.PositionalError.message" href="#scrolls.errors.PositionalError.message">message</a></code></li>
+<li><code><a title="scrolls.errors.PositionalError.pos" href="#scrolls.errors.PositionalError.pos">pos</a></code></li>
+<li><code><a title="scrolls.errors.PositionalError.string" href="#scrolls.errors.PositionalError.string">string</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.errors.ParseExpectError"><code class="flex name class">
+<span>class <span class="ident">ParseExpectError</span></span>
+<span>(</span><span>line: int, pos: int, string: str, message: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Raised when an unexpected token is encountered during parsing.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ParseExpectError(ParseError):
+    &#34;&#34;&#34;Raised when an unexpected token is encountered during parsing.&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.ParseError" href="#scrolls.errors.ParseError">ParseError</a></li>
+<li><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></li>
+<li><a title="scrolls.errors.ScrollError" href="#scrolls.errors.ScrollError">ScrollError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.errors.ParseError" href="#scrolls.errors.ParseError">ParseError</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.errors.ParseError.line" href="#scrolls.errors.PositionalError.line">line</a></code></li>
+<li><code><a title="scrolls.errors.ParseError.message" href="#scrolls.errors.PositionalError.message">message</a></code></li>
+<li><code><a title="scrolls.errors.ParseError.pos" href="#scrolls.errors.PositionalError.pos">pos</a></code></li>
+<li><code><a title="scrolls.errors.ParseError.string" href="#scrolls.errors.PositionalError.string">string</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.errors.PositionalError"><code class="flex name class">
+<span>class <span class="ident">PositionalError</span></span>
+<span>(</span><span>line: int, pos: int, string: str, message: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generic error that happened somewhere in a script.</p>
+<p>Any error in tokenizing, parsing, or interpreting should inherit from this.
+Typically you'll never need to instantiate one of these yourself, just catch it
+and call <code>str</code> on it. This will return a formatted error message pointing to
+where the error happened. See <code><a title="scrolls.errors.format_positional_error" href="#scrolls.errors.format_positional_error">format_positional_error()</a></code> for more details.</p>
+<p>Example usage:</p>
+<pre><code>try:
+    some_scrolls_function(...)
+except PositionalError as e:
+    print(&quot;error:&quot;)
+    print(str(e))
+</code></pre>
+<p>Note that this will apply to any error that inherits from <code><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></code> as well.
+If you want to do your own formatting, you can use the instance variables below to
+generate your own messages.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PositionalError(ScrollError):
+    &#34;&#34;&#34;Generic error that happened somewhere in a script.
+
+    Any error in tokenizing, parsing, or interpreting should inherit from this.
+    Typically you&#39;ll never need to instantiate one of these yourself, just catch it
+    and call `str` on it. This will return a formatted error message pointing to
+    where the error happened. See `format_positional_error` for more details.
+
+    Example usage:
+
+    ```
+    try:
+        some_scrolls_function(...)
+    except PositionalError as e:
+        print(&#34;error:&#34;)
+        print(str(e))
+    ```
+
+    Note that this will apply to any error that inherits from `PositionalError` as well.
+    If you want to do your own formatting, you can use the instance variables below to
+    generate your own messages.
+    &#34;&#34;&#34;
+    def __init__(
+        self,
+        line: int,
+        pos: int,
+        string: str,
+        message: str
+    ):
+        self.line = line
+        &#34;&#34;&#34;The line the error occurred on.&#34;&#34;&#34;
+
+        self.pos = pos
+        &#34;&#34;&#34;The character along `line` the error occurred at.&#34;&#34;&#34;
+
+        self.string = string
+        &#34;&#34;&#34;The string that triggered the error. In all normal cases, this is a script.&#34;&#34;&#34;
+
+        self.message = message
+        &#34;&#34;&#34;The message associated with this error.&#34;&#34;&#34;
+
+    def __str__(self) -&gt; str:
+        &#34;&#34;&#34;
+        Return a formatted error string pointing out in the script where this error
+        happened.
+        &#34;&#34;&#34;
+        return format_positional_error(
+            self.line,
+            self.pos,
+            self.string,
+            self.message
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.ScrollError" href="#scrolls.errors.ScrollError">ScrollError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.ParseError" href="#scrolls.errors.ParseError">ParseError</a></li>
+<li><a title="scrolls.errors.TokenizeError" href="#scrolls.errors.TokenizeError">TokenizeError</a></li>
+<li><a title="scrolls.interpreter.InterpreterError" href="interpreter.html#scrolls.interpreter.InterpreterError">InterpreterError</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="scrolls.errors.PositionalError.line"><code class="name">var <span class="ident">line</span></code></dt>
+<dd>
+<div class="desc"><p>The line the error occurred on.</p></div>
+</dd>
+<dt id="scrolls.errors.PositionalError.message"><code class="name">var <span class="ident">message</span></code></dt>
+<dd>
+<div class="desc"><p>The message associated with this error.</p></div>
+</dd>
+<dt id="scrolls.errors.PositionalError.pos"><code class="name">var <span class="ident">pos</span></code></dt>
+<dd>
+<div class="desc"><p>The character along <code>line</code> the error occurred at.</p></div>
+</dd>
+<dt id="scrolls.errors.PositionalError.string"><code class="name">var <span class="ident">string</span></code></dt>
+<dd>
+<div class="desc"><p>The string that triggered the error. In all normal cases, this is a script.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.errors.ScrollError"><code class="flex name class">
+<span>class <span class="ident">ScrollError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for all Scrolls-related errors.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ScrollError(Exception):
+    &#34;&#34;&#34;Base class for all Scrolls-related errors.&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="scrolls.ast.ASTStateError" href="ast.html#scrolls.ast.ASTStateError">ASTStateError</a></li>
+<li><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></li>
+<li><a title="scrolls.interpreter.InterpreterReturn" href="interpreter.html#scrolls.interpreter.InterpreterReturn">InterpreterReturn</a></li>
+<li><a title="scrolls.interpreter.InterpreterStop" href="interpreter.html#scrolls.interpreter.InterpreterStop">InterpreterStop</a></li>
+</ul>
+</dd>
+<dt id="scrolls.errors.TokenizeEofError"><code class="flex name class">
+<span>class <span class="ident">TokenizeEofError</span></span>
+<span>(</span><span>line: int, pos: int, string: str, message: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Raised when the lexer/tokenizer hits an unexpected EOF (end of script).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TokenizeEofError(TokenizeError):
+    &#34;&#34;&#34;Raised when the lexer/tokenizer hits an unexpected EOF (end of script).&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.TokenizeError" href="#scrolls.errors.TokenizeError">TokenizeError</a></li>
+<li><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></li>
+<li><a title="scrolls.errors.ScrollError" href="#scrolls.errors.ScrollError">ScrollError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.errors.TokenizeError" href="#scrolls.errors.TokenizeError">TokenizeError</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.errors.TokenizeError.line" href="#scrolls.errors.PositionalError.line">line</a></code></li>
+<li><code><a title="scrolls.errors.TokenizeError.message" href="#scrolls.errors.PositionalError.message">message</a></code></li>
+<li><code><a title="scrolls.errors.TokenizeError.pos" href="#scrolls.errors.PositionalError.pos">pos</a></code></li>
+<li><code><a title="scrolls.errors.TokenizeError.string" href="#scrolls.errors.PositionalError.string">string</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.errors.TokenizeError"><code class="flex name class">
+<span>class <span class="ident">TokenizeError</span></span>
+<span>(</span><span>line: int, pos: int, string: str, message: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generic error raised while lexing/tokenizing a script.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TokenizeError(PositionalError):
+    &#34;&#34;&#34;Generic error raised while lexing/tokenizing a script.&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></li>
+<li><a title="scrolls.errors.ScrollError" href="#scrolls.errors.ScrollError">ScrollError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.TokenizeEofError" href="#scrolls.errors.TokenizeEofError">TokenizeEofError</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.errors.PositionalError.line" href="#scrolls.errors.PositionalError.line">line</a></code></li>
+<li><code><a title="scrolls.errors.PositionalError.message" href="#scrolls.errors.PositionalError.message">message</a></code></li>
+<li><code><a title="scrolls.errors.PositionalError.pos" href="#scrolls.errors.PositionalError.pos">pos</a></code></li>
+<li><code><a title="scrolls.errors.PositionalError.string" href="#scrolls.errors.PositionalError.string">string</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scrolls" href="index.html">scrolls</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="scrolls.errors.format_positional_error" href="#scrolls.errors.format_positional_error">format_positional_error</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="scrolls.errors.ParseEofError" href="#scrolls.errors.ParseEofError">ParseEofError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.errors.ParseError" href="#scrolls.errors.ParseError">ParseError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.errors.ParseExpectError" href="#scrolls.errors.ParseExpectError">ParseExpectError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.errors.PositionalError" href="#scrolls.errors.PositionalError">PositionalError</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.errors.PositionalError.line" href="#scrolls.errors.PositionalError.line">line</a></code></li>
+<li><code><a title="scrolls.errors.PositionalError.message" href="#scrolls.errors.PositionalError.message">message</a></code></li>
+<li><code><a title="scrolls.errors.PositionalError.pos" href="#scrolls.errors.PositionalError.pos">pos</a></code></li>
+<li><code><a title="scrolls.errors.PositionalError.string" href="#scrolls.errors.PositionalError.string">string</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.errors.ScrollError" href="#scrolls.errors.ScrollError">ScrollError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.errors.TokenizeEofError" href="#scrolls.errors.TokenizeEofError">TokenizeEofError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.errors.TokenizeError" href="#scrolls.errors.TokenizeError">TokenizeError</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

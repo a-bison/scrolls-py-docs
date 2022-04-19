@@ -1,0 +1,1881 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>scrolls.builtins API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scrolls.builtins</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import operator
+import random
+import typing as t
+
+from . import ast, containers, datatypes, interpreter
+
+__all__ = (
+    &#34;StdIoCommandHandler&#34;,
+    &#34;BuiltinControlHandler&#34;,
+    &#34;BuiltinCommandHandler&#34;,
+    &#34;RandomExpansionHandler&#34;,
+    &#34;ArithmeticExpansionHandler&#34;,
+    &#34;ComparisonExpansionHandler&#34;,
+    &#34;LogicExpansionHandler&#34;,
+    &#34;StringExpansionHandler&#34;,
+    &#34;BuiltinInitializer&#34;,
+    &#34;base_config&#34;
+)
+
+base_config = containers.DecoratorInterpreterConfig()
+
+
+class StdIoCommandHandler(interpreter.CallbackCommandHandler):
+    &#34;&#34;&#34;
+    Implements input and output commands using stdout/stdin.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;print&#34;, self.print)
+        self.add_call(&#34;input&#34;, self.input)
+
+    def print(self, context: interpreter.InterpreterContext) -&gt; None:
+        print(&#34; &#34;.join(context.args))
+
+    def input(self, context: interpreter.InterpreterContext) -&gt; None:
+        if not context.args:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;input: variable name is not specified&#34;
+            )
+
+        result = input()
+        context.set_var(context.args[0], result)
+
+
+@base_config.initializer
+class BuiltinInitializer(interpreter.Initializer):
+    def handle_call(self, context: interpreter.InterpreterContext) -&gt; None:
+        context.set_var(&#34;true&#34;, datatypes.TRUE)
+        context.set_var(&#34;false&#34;, datatypes.FALSE)
+        context.runtime_commands.add(interpreter.RuntimeCallHandler(), &#34;__def__&#34;)
+        context.runtime_expansions.add(interpreter.RuntimeCallHandler(), &#34;__def__&#34;)
+
+
+@base_config.commandhandler
+class BuiltinCommandHandler(interpreter.CallbackCommandHandler):
+    &#34;&#34;&#34;
+    Implements built-in command statements
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;set&#34;, self.set)
+        self.add_call(&#34;unset&#34;, self.unset)
+        self.add_call(&#34;stop&#34;, self.stop)
+        self.add_call(&#34;return&#34;, self._return)
+        self.add_call(&#34;nonlocal&#34;, self._nonlocal)
+        self.add_call(&#34;global&#34;, self._global)
+
+    def _return(self, context: interpreter.InterpreterContext) -&gt; None:
+        retval = &#34; &#34;.join(context.args)
+        context.set_retval(retval)
+        raise interpreter.InterpreterReturn()
+
+    def set(self, context: interpreter.InterpreterContext) -&gt; None:
+        if not context.args:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;set: variable name is not specified&#34;
+            )
+
+        context.set_var(context.args[0], &#34; &#34;.join(context.args[1:]))
+
+    def unset(self, context: interpreter.InterpreterContext) -&gt; None:
+        if not context.args:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;unset: variable name is not specified&#34;
+            )
+
+        try:
+            context.del_var(context.args[0])
+        except KeyError:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;unset: no such variable {context.args[0]}&#34;
+            )
+
+    def _nonlocal(self, context: interpreter.InterpreterContext) -&gt; None:
+        datatypes.require_arg_length(context, 1)
+        context.vars.declare_nonlocal(context.args[0])
+
+    def _global(self, context: interpreter.InterpreterContext) -&gt; None:
+        datatypes.require_arg_length(context, 1)
+        context.vars.declare_global(context.args[0])
+
+    def stop(self, context: interpreter.InterpreterContext) -&gt; None:
+        raise interpreter.InterpreterStop
+
+
+@base_config.controlhandler
+class BuiltinControlHandler(interpreter.CallbackControlHandler):
+    &#34;&#34;&#34;
+    Implements built-in control statements
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;repeat&#34;, self.repeat)
+        self.add_call(&#34;for&#34;, self._for)
+        self.add_call(&#34;if&#34;, self._if)
+        self.add_call(&#34;while&#34;, self._while)
+        self.add_call(&#34;def&#34;, self._def)
+
+    def _def(self, context: interpreter.InterpreterContext) -&gt; None:
+        args = context.args
+        datatypes.require_arg_length(context, 1)
+
+        command_calls = context.control_node.find_all(
+            lambda node: (node.type == ast.ASTNodeType.COMMAND_CALL and
+                          bool(node.children))
+        )
+
+        has_return = False
+        for node in command_calls:
+            name_node = node.children[0]
+
+            if name_node.type == ast.ASTNodeType.STRING and name_node.str_content() == &#34;return&#34;:
+                has_return = True
+                break
+
+        if has_return:
+            t.cast(
+                interpreter.RuntimeCallHandler[str],
+                context.runtime_expansions.get(&#34;__def__&#34;)
+            ).define(args[0], context.control_node, args[1:])
+        else:
+            t.cast(
+                interpreter.RuntimeCallHandler[None],
+                context.runtime_commands.get(&#34;__def__&#34;)
+            ).define(args[0], context.control_node, args[1:])
+
+    def repeat(self, context: interpreter.InterpreterContext) -&gt; None:
+        if len(context.args) != 1:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;repeat requires exactly one argument, the number of times to repeat&#34;
+            )
+
+        context.current_node = context.arg_nodes[0]
+
+        try:
+            repeat_times = int(context.args[0])
+        except ValueError:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;&#39;{context.args[0]}&#39; is not a valid integer&#34;
+            )
+
+        control_node = context.control_node
+        for _ in range(repeat_times):
+            context.interpreter.interpret_statement(context, control_node)
+
+    def _for(self, context: interpreter.InterpreterContext) -&gt; None:
+        if not context.args or len(context.args) &lt; 3:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;bad format in !for: expected !for(VARNAME in ARGS)&#34;
+            )
+
+        var_name, _in, *items = context.args
+
+        if _in != &#34;in&#34;:
+            context.current_node = context.arg_nodes[1]
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;unexpected token &#39;{_in}&#39;, should be &#39;in&#39;&#34;
+            )
+
+        control_node = context.control_node
+        for item in items:
+            context.set_var(var_name, item)
+            context.interpreter.interpret_statement(context, control_node)
+
+        context.del_var(var_name)
+
+    def _if(self, context: interpreter.InterpreterContext) -&gt; None:
+        if len(context.args) != 1:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;if: needs one and only one argument&#34;
+            )
+
+        if datatypes.str_to_bool(context.args[0]):
+            context.interpreter.interpret_statement(context, context.control_node)
+
+    def _while(self, context: interpreter.InterpreterContext) -&gt; None:
+        if len(context.args) != 1:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;while: needs one and only one argument&#34;
+            )
+
+        arg = context.args[0]
+
+        while datatypes.str_to_bool(arg):
+            context.interpreter.interpret_statement(context, context.control_node)
+
+            # HACK:
+            # In order for while to work right, we need to re-evaluate the argument
+            # every time.
+            arg = context.interpreter.interpret_string_or_expansion(context, context.arg_nodes[0])[0]
+
+
+class RandomExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Implements random expansions.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;select&#34;, self.select)
+        self.add_call(&#34;shuffle&#34;, self.shuffle)
+        self.add_call(&#34;uniform&#34;, self.uniform)
+
+    def select(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Randomly selects one of the arguments and returns it.
+        &#34;&#34;&#34;
+        return random.choice(context.args)
+
+    def shuffle(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Shuffle the arguments given and return them.
+        &#34;&#34;&#34;
+        args = list(context.args)
+        random.shuffle(args)
+        return &#34; &#34;.join(args)
+
+    def uniform(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Returns a random floating point number between two bounds, inclusive.
+        &#34;&#34;&#34;
+        if len(context.args) != 2:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;uniform: must have two args. (got {&#39;, &#39;.join(context.args)})&#34;
+            )
+
+        try:
+            lower = float(context.args[0])
+            upper = float(context.args[1])
+        except ValueError as e:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;uniform: {str(e)}&#34;
+            )
+
+        return str(random.uniform(lower, upper))
+
+
+@base_config.expansionhandler
+class ArithmeticExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Implements basic arithmetic expansions. These aren&#39;t very efficient, but
+    if you want efficiency, you shouldn&#39;t be using an interpreted language
+    with no JIT being interpreted by another interpreted language. :)
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;toint&#34;, self.toint)
+        self.add_call(&#34;tofloat&#34;, self.tofloat)
+        self.add_call(&#34;+&#34;, self.add)
+        self.add_call(&#34;-&#34;, self.sub)
+        self.add_call(&#34;*&#34;, self.mul)
+        self.add_call(&#34;/&#34;, self.div)
+        self.add_call(&#34;//&#34;, self.intdiv)
+        self.add_call(&#34;%&#34;, self.mod)
+
+    @staticmethod
+    def unary(context: interpreter.InterpreterContext, op: datatypes.UnaryNumOpT) -&gt; str:
+        return str(datatypes.apply_unary_num_op(context, op)[0])
+
+    @staticmethod
+    def binary(context: interpreter.InterpreterContext, op: datatypes.BinaryNumOpT) -&gt; str:
+        return str(datatypes.apply_binary_num_op(context, op)[0])
+
+    @staticmethod
+    def mass(
+        context: interpreter.InterpreterContext,
+        reduce_op: datatypes.BinaryNumOpT,
+        final_op: datatypes.BinaryNumOpT
+    ) -&gt; str:
+        return str(datatypes.apply_mass_binary_num_op(context, reduce_op, final_op)[0])
+
+    @staticmethod
+    def reduce(
+        context: interpreter.InterpreterContext,
+        reduce_op: datatypes.BinaryNumOpT
+    ) -&gt; str:
+        return str(datatypes.apply_reduce_binary_num_op(context, reduce_op)[0])
+
+    def sub(self, context: interpreter.InterpreterContext) -&gt; str:
+        # Sub behaves a little differently. If only one arg, negate instead of subtracting.
+        if len(context.args) == 1:
+            return self.unary(context, operator.neg)
+
+        return self.mass(context, reduce_op=operator.add, final_op=operator.sub)
+
+    def toint(self, context: interpreter.InterpreterContext) -&gt; str: return self.unary(context, datatypes.toint)
+    def tofloat(self, context: interpreter.InterpreterContext) -&gt; str: return self.unary(context, datatypes.tofloat)
+    def add(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.add)
+    def mul(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.mul)
+    def div(self, context: interpreter.InterpreterContext) -&gt; str: return self.mass(context, reduce_op=operator.mul, final_op=operator.truediv)
+    def intdiv(self, context: interpreter.InterpreterContext) -&gt; str: return self.mass(context, reduce_op=operator.mul, final_op=operator.floordiv)
+    def mod(self, context: interpreter.InterpreterContext) -&gt; str: return self.binary(context, operator.mod)
+
+
+@base_config.expansionhandler
+class ComparisonExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Implements basic comparison operators.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;eq?&#34;, self.equals)
+        self.add_alias(&#34;==&#34;, &#34;eq?&#34;)
+        self.add_call(&#34;neq?&#34;, self.not_equals)
+        self.add_call(&#34;&gt;&#34;, self.gt)
+        self.add_call(&#34;&lt;&#34;, self.lt)
+        self.add_call(&#34;&gt;=&#34;, self.gte)
+        self.add_call(&#34;&lt;=&#34;, self.lte)
+        self.add_call(&#34;in?&#34;, self._in)
+
+    def equals_bool(self, context: interpreter.InterpreterContext) -&gt; bool:
+        args = context.args
+        if len(args) != 2:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;{context.call_name}: must have exactly 2 args&#34;
+            )
+
+        try:
+            float_args, _ = datatypes.require_all_numeric(context, args)
+            return float_args[0] == float_args[1]
+        except interpreter.InterpreterError:
+            return args[0] == args[1]
+
+    def get_numeric_compare_args(self, context: interpreter.InterpreterContext) -&gt; t.Tuple[float, float]:
+        args = context.args
+        if len(args) != 2:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;{context.call_name}: must have exactly 2 args&#34;
+            )
+
+        (a, b), _ = datatypes.require_all_numeric(context, args)
+
+        return a, b
+
+    def equals(self, context: interpreter.InterpreterContext) -&gt; str:
+        return datatypes.bool_to_str(self.equals_bool(context))
+
+    def not_equals(self, context: interpreter.InterpreterContext) -&gt; str:
+        return datatypes.bool_to_str(not self.equals_bool(context))
+
+    def gt(self, context: interpreter.InterpreterContext) -&gt; str:
+        a, b = self.get_numeric_compare_args(context)
+        return datatypes.bool_to_str(a &gt; b)
+
+    def lt(self, context: interpreter.InterpreterContext) -&gt; str:
+        a, b = self.get_numeric_compare_args(context)
+        return datatypes.bool_to_str(a &lt; b)
+
+    def gte(self, context: interpreter.InterpreterContext) -&gt; str:
+        a, b = self.get_numeric_compare_args(context)
+        return datatypes.bool_to_str(a &gt;= b)
+
+    def lte(self, context: interpreter.InterpreterContext) -&gt; str:
+        a, b = self.get_numeric_compare_args(context)
+        return datatypes.bool_to_str(a &lt;= b)
+
+    def _in(self, context: interpreter.InterpreterContext) -&gt; str:
+        if len(context.args) == 0:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;{context.call_name} requires at least one argument&#34;
+            )
+
+        return datatypes.bool_to_str(context.args[0] in context.args[1:])
+
+
+@base_config.expansionhandler
+class LogicExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Implements basic logic operators.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;not&#34;, self._not)
+        self.add_call(&#34;and&#34;, self._and)
+        self.add_call(&#34;or&#34;, self._or)
+        self.add_call(&#34;xor&#34;, self._xor)
+
+    @staticmethod
+    def unary(context: interpreter.InterpreterContext, op: datatypes.UnaryNumOpT) -&gt; str:
+        return datatypes.bool_to_str(datatypes.apply_unary_bool_op(context, op))
+
+    @staticmethod
+    def reduce(context: interpreter.InterpreterContext, op: datatypes.BinaryNumOpT) -&gt; str:
+        return datatypes.bool_to_str(datatypes.apply_reduce_bool_op(context, op))
+
+    def _not(self, context: interpreter.InterpreterContext) -&gt; str: return self.unary(context, operator.not_)
+    def _and(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.and_)
+    def _or(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.or_)
+    def _xor(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.xor)
+
+
+@base_config.expansionhandler
+class StringExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Implements basic string manipulation functions.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;cat&#34;, self.concat)
+        self.add_alias(&#34;concat&#34;, &#34;cat&#34;)
+        self.add_call(&#34;vempty?&#34;, self.vempty)
+        self.add_call(&#34;vhead&#34;, self.vhead)
+        self.add_call(&#34;vtail&#34;, self.vtail)
+        self.add_call(&#34;rangev&#34;, self.rangev)
+
+    def concat(self, context: interpreter.InterpreterContext) -&gt; str:
+        return &#34;&#34;.join(context.args)
+
+    def vempty(self, context: interpreter.InterpreterContext) -&gt; str:
+        datatypes.require_arg_length(context, 1)
+        return datatypes.bool_to_str(not bool(context.args[0]))
+
+    def vhead(self, context: interpreter.InterpreterContext) -&gt; str:
+        datatypes.require_arg_length(context, 1)
+        return context.args[0].split(maxsplit=1)[0]
+
+    def vtail(self, context: interpreter.InterpreterContext) -&gt; str:
+        datatypes.require_arg_length(context, 1)
+        return &#34;&#34;.join(context.args[0].split(maxsplit=1)[1:])
+
+    def rangev(self, context: interpreter.InterpreterContext) -&gt; str:
+        datatypes.require_arg_length(context, 2)
+        (a, b, *rest), _ = datatypes.require_all_numeric(context, context.args)
+
+        a = int(a)
+        b = int(b)
+
+        return &#34; &#34;.join([str(x) for x in range(a, b)])</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler"><code class="flex name class">
+<span>class <span class="ident">ArithmeticExpansionHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements basic arithmetic expansions. These aren't very efficient, but
+if you want efficiency, you shouldn't be using an interpreted language
+with no JIT being interpreted by another interpreted language. :)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@base_config.expansionhandler
+class ArithmeticExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Implements basic arithmetic expansions. These aren&#39;t very efficient, but
+    if you want efficiency, you shouldn&#39;t be using an interpreted language
+    with no JIT being interpreted by another interpreted language. :)
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;toint&#34;, self.toint)
+        self.add_call(&#34;tofloat&#34;, self.tofloat)
+        self.add_call(&#34;+&#34;, self.add)
+        self.add_call(&#34;-&#34;, self.sub)
+        self.add_call(&#34;*&#34;, self.mul)
+        self.add_call(&#34;/&#34;, self.div)
+        self.add_call(&#34;//&#34;, self.intdiv)
+        self.add_call(&#34;%&#34;, self.mod)
+
+    @staticmethod
+    def unary(context: interpreter.InterpreterContext, op: datatypes.UnaryNumOpT) -&gt; str:
+        return str(datatypes.apply_unary_num_op(context, op)[0])
+
+    @staticmethod
+    def binary(context: interpreter.InterpreterContext, op: datatypes.BinaryNumOpT) -&gt; str:
+        return str(datatypes.apply_binary_num_op(context, op)[0])
+
+    @staticmethod
+    def mass(
+        context: interpreter.InterpreterContext,
+        reduce_op: datatypes.BinaryNumOpT,
+        final_op: datatypes.BinaryNumOpT
+    ) -&gt; str:
+        return str(datatypes.apply_mass_binary_num_op(context, reduce_op, final_op)[0])
+
+    @staticmethod
+    def reduce(
+        context: interpreter.InterpreterContext,
+        reduce_op: datatypes.BinaryNumOpT
+    ) -&gt; str:
+        return str(datatypes.apply_reduce_binary_num_op(context, reduce_op)[0])
+
+    def sub(self, context: interpreter.InterpreterContext) -&gt; str:
+        # Sub behaves a little differently. If only one arg, negate instead of subtracting.
+        if len(context.args) == 1:
+            return self.unary(context, operator.neg)
+
+        return self.mass(context, reduce_op=operator.add, final_op=operator.sub)
+
+    def toint(self, context: interpreter.InterpreterContext) -&gt; str: return self.unary(context, datatypes.toint)
+    def tofloat(self, context: interpreter.InterpreterContext) -&gt; str: return self.unary(context, datatypes.tofloat)
+    def add(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.add)
+    def mul(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.mul)
+    def div(self, context: interpreter.InterpreterContext) -&gt; str: return self.mass(context, reduce_op=operator.mul, final_op=operator.truediv)
+    def intdiv(self, context: interpreter.InterpreterContext) -&gt; str: return self.mass(context, reduce_op=operator.mul, final_op=operator.floordiv)
+    def mod(self, context: interpreter.InterpreterContext) -&gt; str: return self.binary(context, operator.mod)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.binary"><code class="name flex">
+<span>def <span class="ident">binary</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]]) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def binary(context: interpreter.InterpreterContext, op: datatypes.BinaryNumOpT) -&gt; str:
+    return str(datatypes.apply_binary_num_op(context, op)[0])</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.mass"><code class="name flex">
+<span>def <span class="ident">mass</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, reduce_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], final_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]]) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def mass(
+    context: interpreter.InterpreterContext,
+    reduce_op: datatypes.BinaryNumOpT,
+    final_op: datatypes.BinaryNumOpT
+) -&gt; str:
+    return str(datatypes.apply_mass_binary_num_op(context, reduce_op, final_op)[0])</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.reduce"><code class="name flex">
+<span>def <span class="ident">reduce</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, reduce_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]]) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def reduce(
+    context: interpreter.InterpreterContext,
+    reduce_op: datatypes.BinaryNumOpT
+) -&gt; str:
+    return str(datatypes.apply_reduce_binary_num_op(context, reduce_op)[0])</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.unary"><code class="name flex">
+<span>def <span class="ident">unary</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[+NumT], +NumT]) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def unary(context: interpreter.InterpreterContext, op: datatypes.UnaryNumOpT) -&gt; str:
+    return str(datatypes.apply_unary_num_op(context, op)[0])</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.add)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.div"><code class="name flex">
+<span>def <span class="ident">div</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def div(self, context: interpreter.InterpreterContext) -&gt; str: return self.mass(context, reduce_op=operator.mul, final_op=operator.truediv)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.intdiv"><code class="name flex">
+<span>def <span class="ident">intdiv</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intdiv(self, context: interpreter.InterpreterContext) -&gt; str: return self.mass(context, reduce_op=operator.mul, final_op=operator.floordiv)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.mod"><code class="name flex">
+<span>def <span class="ident">mod</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mod(self, context: interpreter.InterpreterContext) -&gt; str: return self.binary(context, operator.mod)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.mul"><code class="name flex">
+<span>def <span class="ident">mul</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mul(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.mul)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.sub"><code class="name flex">
+<span>def <span class="ident">sub</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sub(self, context: interpreter.InterpreterContext) -&gt; str:
+    # Sub behaves a little differently. If only one arg, negate instead of subtracting.
+    if len(context.args) == 1:
+        return self.unary(context, operator.neg)
+
+    return self.mass(context, reduce_op=operator.add, final_op=operator.sub)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.tofloat"><code class="name flex">
+<span>def <span class="ident">tofloat</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tofloat(self, context: interpreter.InterpreterContext) -&gt; str: return self.unary(context, datatypes.tofloat)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.toint"><code class="name flex">
+<span>def <span class="ident">toint</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def toint(self, context: interpreter.InterpreterContext) -&gt; str: return self.unary(context, datatypes.toint)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.builtins.BuiltinCommandHandler"><code class="flex name class">
+<span>class <span class="ident">BuiltinCommandHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements built-in command statements</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@base_config.commandhandler
+class BuiltinCommandHandler(interpreter.CallbackCommandHandler):
+    &#34;&#34;&#34;
+    Implements built-in command statements
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;set&#34;, self.set)
+        self.add_call(&#34;unset&#34;, self.unset)
+        self.add_call(&#34;stop&#34;, self.stop)
+        self.add_call(&#34;return&#34;, self._return)
+        self.add_call(&#34;nonlocal&#34;, self._nonlocal)
+        self.add_call(&#34;global&#34;, self._global)
+
+    def _return(self, context: interpreter.InterpreterContext) -&gt; None:
+        retval = &#34; &#34;.join(context.args)
+        context.set_retval(retval)
+        raise interpreter.InterpreterReturn()
+
+    def set(self, context: interpreter.InterpreterContext) -&gt; None:
+        if not context.args:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;set: variable name is not specified&#34;
+            )
+
+        context.set_var(context.args[0], &#34; &#34;.join(context.args[1:]))
+
+    def unset(self, context: interpreter.InterpreterContext) -&gt; None:
+        if not context.args:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;unset: variable name is not specified&#34;
+            )
+
+        try:
+            context.del_var(context.args[0])
+        except KeyError:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;unset: no such variable {context.args[0]}&#34;
+            )
+
+    def _nonlocal(self, context: interpreter.InterpreterContext) -&gt; None:
+        datatypes.require_arg_length(context, 1)
+        context.vars.declare_nonlocal(context.args[0])
+
+    def _global(self, context: interpreter.InterpreterContext) -&gt; None:
+        datatypes.require_arg_length(context, 1)
+        context.vars.declare_global(context.args[0])
+
+    def stop(self, context: interpreter.InterpreterContext) -&gt; None:
+        raise interpreter.InterpreterStop</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.BuiltinCommandHandler.set"><code class="name flex">
+<span>def <span class="ident">set</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set(self, context: interpreter.InterpreterContext) -&gt; None:
+    if not context.args:
+        raise interpreter.InterpreterError(
+            context,
+            &#34;set: variable name is not specified&#34;
+        )
+
+    context.set_var(context.args[0], &#34; &#34;.join(context.args[1:]))</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.BuiltinCommandHandler.stop"><code class="name flex">
+<span>def <span class="ident">stop</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stop(self, context: interpreter.InterpreterContext) -&gt; None:
+    raise interpreter.InterpreterStop</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.BuiltinCommandHandler.unset"><code class="name flex">
+<span>def <span class="ident">unset</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unset(self, context: interpreter.InterpreterContext) -&gt; None:
+    if not context.args:
+        raise interpreter.InterpreterError(
+            context,
+            &#34;unset: variable name is not specified&#34;
+        )
+
+    try:
+        context.del_var(context.args[0])
+    except KeyError:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;unset: no such variable {context.args[0]}&#34;
+        )</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.builtins.BuiltinControlHandler"><code class="flex name class">
+<span>class <span class="ident">BuiltinControlHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements built-in control statements</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@base_config.controlhandler
+class BuiltinControlHandler(interpreter.CallbackControlHandler):
+    &#34;&#34;&#34;
+    Implements built-in control statements
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;repeat&#34;, self.repeat)
+        self.add_call(&#34;for&#34;, self._for)
+        self.add_call(&#34;if&#34;, self._if)
+        self.add_call(&#34;while&#34;, self._while)
+        self.add_call(&#34;def&#34;, self._def)
+
+    def _def(self, context: interpreter.InterpreterContext) -&gt; None:
+        args = context.args
+        datatypes.require_arg_length(context, 1)
+
+        command_calls = context.control_node.find_all(
+            lambda node: (node.type == ast.ASTNodeType.COMMAND_CALL and
+                          bool(node.children))
+        )
+
+        has_return = False
+        for node in command_calls:
+            name_node = node.children[0]
+
+            if name_node.type == ast.ASTNodeType.STRING and name_node.str_content() == &#34;return&#34;:
+                has_return = True
+                break
+
+        if has_return:
+            t.cast(
+                interpreter.RuntimeCallHandler[str],
+                context.runtime_expansions.get(&#34;__def__&#34;)
+            ).define(args[0], context.control_node, args[1:])
+        else:
+            t.cast(
+                interpreter.RuntimeCallHandler[None],
+                context.runtime_commands.get(&#34;__def__&#34;)
+            ).define(args[0], context.control_node, args[1:])
+
+    def repeat(self, context: interpreter.InterpreterContext) -&gt; None:
+        if len(context.args) != 1:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;repeat requires exactly one argument, the number of times to repeat&#34;
+            )
+
+        context.current_node = context.arg_nodes[0]
+
+        try:
+            repeat_times = int(context.args[0])
+        except ValueError:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;&#39;{context.args[0]}&#39; is not a valid integer&#34;
+            )
+
+        control_node = context.control_node
+        for _ in range(repeat_times):
+            context.interpreter.interpret_statement(context, control_node)
+
+    def _for(self, context: interpreter.InterpreterContext) -&gt; None:
+        if not context.args or len(context.args) &lt; 3:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;bad format in !for: expected !for(VARNAME in ARGS)&#34;
+            )
+
+        var_name, _in, *items = context.args
+
+        if _in != &#34;in&#34;:
+            context.current_node = context.arg_nodes[1]
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;unexpected token &#39;{_in}&#39;, should be &#39;in&#39;&#34;
+            )
+
+        control_node = context.control_node
+        for item in items:
+            context.set_var(var_name, item)
+            context.interpreter.interpret_statement(context, control_node)
+
+        context.del_var(var_name)
+
+    def _if(self, context: interpreter.InterpreterContext) -&gt; None:
+        if len(context.args) != 1:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;if: needs one and only one argument&#34;
+            )
+
+        if datatypes.str_to_bool(context.args[0]):
+            context.interpreter.interpret_statement(context, context.control_node)
+
+    def _while(self, context: interpreter.InterpreterContext) -&gt; None:
+        if len(context.args) != 1:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;while: needs one and only one argument&#34;
+            )
+
+        arg = context.args[0]
+
+        while datatypes.str_to_bool(arg):
+            context.interpreter.interpret_statement(context, context.control_node)
+
+            # HACK:
+            # In order for while to work right, we need to re-evaluate the argument
+            # every time.
+            arg = context.interpreter.interpret_string_or_expansion(context, context.arg_nodes[0])[0]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.BuiltinControlHandler.repeat"><code class="name flex">
+<span>def <span class="ident">repeat</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def repeat(self, context: interpreter.InterpreterContext) -&gt; None:
+    if len(context.args) != 1:
+        raise interpreter.InterpreterError(
+            context,
+            &#34;repeat requires exactly one argument, the number of times to repeat&#34;
+        )
+
+    context.current_node = context.arg_nodes[0]
+
+    try:
+        repeat_times = int(context.args[0])
+    except ValueError:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;&#39;{context.args[0]}&#39; is not a valid integer&#34;
+        )
+
+    control_node = context.control_node
+    for _ in range(repeat_times):
+        context.interpreter.interpret_statement(context, control_node)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.builtins.BuiltinInitializer"><code class="flex name class">
+<span>class <span class="ident">BuiltinInitializer</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>The base class for initializers. Initializers are used by the interpreter to set up <code>InterpreterContext</code> instances
+immediately before a script is run. Initializers are considered to implement the <code>CallHandler</code> interface, even though
+they don't actually handle calls.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@base_config.initializer
+class BuiltinInitializer(interpreter.Initializer):
+    def handle_call(self, context: interpreter.InterpreterContext) -&gt; None:
+        context.set_var(&#34;true&#34;, datatypes.TRUE)
+        context.set_var(&#34;false&#34;, datatypes.FALSE)
+        context.runtime_commands.add(interpreter.RuntimeCallHandler(), &#34;__def__&#34;)
+        context.runtime_expansions.add(interpreter.RuntimeCallHandler(), &#34;__def__&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.Initializer" href="interpreter.html#scrolls.interpreter.Initializer">Initializer</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.Initializer" href="interpreter.html#scrolls.interpreter.Initializer">Initializer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.Initializer.handle_call" href="interpreter.html#scrolls.interpreter.Initializer.handle_call">handle_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.builtins.ComparisonExpansionHandler"><code class="flex name class">
+<span>class <span class="ident">ComparisonExpansionHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements basic comparison operators.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@base_config.expansionhandler
+class ComparisonExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Implements basic comparison operators.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;eq?&#34;, self.equals)
+        self.add_alias(&#34;==&#34;, &#34;eq?&#34;)
+        self.add_call(&#34;neq?&#34;, self.not_equals)
+        self.add_call(&#34;&gt;&#34;, self.gt)
+        self.add_call(&#34;&lt;&#34;, self.lt)
+        self.add_call(&#34;&gt;=&#34;, self.gte)
+        self.add_call(&#34;&lt;=&#34;, self.lte)
+        self.add_call(&#34;in?&#34;, self._in)
+
+    def equals_bool(self, context: interpreter.InterpreterContext) -&gt; bool:
+        args = context.args
+        if len(args) != 2:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;{context.call_name}: must have exactly 2 args&#34;
+            )
+
+        try:
+            float_args, _ = datatypes.require_all_numeric(context, args)
+            return float_args[0] == float_args[1]
+        except interpreter.InterpreterError:
+            return args[0] == args[1]
+
+    def get_numeric_compare_args(self, context: interpreter.InterpreterContext) -&gt; t.Tuple[float, float]:
+        args = context.args
+        if len(args) != 2:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;{context.call_name}: must have exactly 2 args&#34;
+            )
+
+        (a, b), _ = datatypes.require_all_numeric(context, args)
+
+        return a, b
+
+    def equals(self, context: interpreter.InterpreterContext) -&gt; str:
+        return datatypes.bool_to_str(self.equals_bool(context))
+
+    def not_equals(self, context: interpreter.InterpreterContext) -&gt; str:
+        return datatypes.bool_to_str(not self.equals_bool(context))
+
+    def gt(self, context: interpreter.InterpreterContext) -&gt; str:
+        a, b = self.get_numeric_compare_args(context)
+        return datatypes.bool_to_str(a &gt; b)
+
+    def lt(self, context: interpreter.InterpreterContext) -&gt; str:
+        a, b = self.get_numeric_compare_args(context)
+        return datatypes.bool_to_str(a &lt; b)
+
+    def gte(self, context: interpreter.InterpreterContext) -&gt; str:
+        a, b = self.get_numeric_compare_args(context)
+        return datatypes.bool_to_str(a &gt;= b)
+
+    def lte(self, context: interpreter.InterpreterContext) -&gt; str:
+        a, b = self.get_numeric_compare_args(context)
+        return datatypes.bool_to_str(a &lt;= b)
+
+    def _in(self, context: interpreter.InterpreterContext) -&gt; str:
+        if len(context.args) == 0:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;{context.call_name} requires at least one argument&#34;
+            )
+
+        return datatypes.bool_to_str(context.args[0] in context.args[1:])</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.ComparisonExpansionHandler.equals"><code class="name flex">
+<span>def <span class="ident">equals</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def equals(self, context: interpreter.InterpreterContext) -&gt; str:
+    return datatypes.bool_to_str(self.equals_bool(context))</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ComparisonExpansionHandler.equals_bool"><code class="name flex">
+<span>def <span class="ident">equals_bool</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def equals_bool(self, context: interpreter.InterpreterContext) -&gt; bool:
+    args = context.args
+    if len(args) != 2:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;{context.call_name}: must have exactly 2 args&#34;
+        )
+
+    try:
+        float_args, _ = datatypes.require_all_numeric(context, args)
+        return float_args[0] == float_args[1]
+    except interpreter.InterpreterError:
+        return args[0] == args[1]</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ComparisonExpansionHandler.get_numeric_compare_args"><code class="name flex">
+<span>def <span class="ident">get_numeric_compare_args</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> Tuple[float, float]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_numeric_compare_args(self, context: interpreter.InterpreterContext) -&gt; t.Tuple[float, float]:
+    args = context.args
+    if len(args) != 2:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;{context.call_name}: must have exactly 2 args&#34;
+        )
+
+    (a, b), _ = datatypes.require_all_numeric(context, args)
+
+    return a, b</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ComparisonExpansionHandler.gt"><code class="name flex">
+<span>def <span class="ident">gt</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gt(self, context: interpreter.InterpreterContext) -&gt; str:
+    a, b = self.get_numeric_compare_args(context)
+    return datatypes.bool_to_str(a &gt; b)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ComparisonExpansionHandler.gte"><code class="name flex">
+<span>def <span class="ident">gte</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gte(self, context: interpreter.InterpreterContext) -&gt; str:
+    a, b = self.get_numeric_compare_args(context)
+    return datatypes.bool_to_str(a &gt;= b)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ComparisonExpansionHandler.lt"><code class="name flex">
+<span>def <span class="ident">lt</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lt(self, context: interpreter.InterpreterContext) -&gt; str:
+    a, b = self.get_numeric_compare_args(context)
+    return datatypes.bool_to_str(a &lt; b)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ComparisonExpansionHandler.lte"><code class="name flex">
+<span>def <span class="ident">lte</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lte(self, context: interpreter.InterpreterContext) -&gt; str:
+    a, b = self.get_numeric_compare_args(context)
+    return datatypes.bool_to_str(a &lt;= b)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ComparisonExpansionHandler.not_equals"><code class="name flex">
+<span>def <span class="ident">not_equals</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def not_equals(self, context: interpreter.InterpreterContext) -&gt; str:
+    return datatypes.bool_to_str(not self.equals_bool(context))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.builtins.LogicExpansionHandler"><code class="flex name class">
+<span>class <span class="ident">LogicExpansionHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements basic logic operators.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@base_config.expansionhandler
+class LogicExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Implements basic logic operators.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;not&#34;, self._not)
+        self.add_call(&#34;and&#34;, self._and)
+        self.add_call(&#34;or&#34;, self._or)
+        self.add_call(&#34;xor&#34;, self._xor)
+
+    @staticmethod
+    def unary(context: interpreter.InterpreterContext, op: datatypes.UnaryNumOpT) -&gt; str:
+        return datatypes.bool_to_str(datatypes.apply_unary_bool_op(context, op))
+
+    @staticmethod
+    def reduce(context: interpreter.InterpreterContext, op: datatypes.BinaryNumOpT) -&gt; str:
+        return datatypes.bool_to_str(datatypes.apply_reduce_bool_op(context, op))
+
+    def _not(self, context: interpreter.InterpreterContext) -&gt; str: return self.unary(context, operator.not_)
+    def _and(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.and_)
+    def _or(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.or_)
+    def _xor(self, context: interpreter.InterpreterContext) -&gt; str: return self.reduce(context, operator.xor)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="scrolls.builtins.LogicExpansionHandler.reduce"><code class="name flex">
+<span>def <span class="ident">reduce</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]]) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def reduce(context: interpreter.InterpreterContext, op: datatypes.BinaryNumOpT) -&gt; str:
+    return datatypes.bool_to_str(datatypes.apply_reduce_bool_op(context, op))</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.LogicExpansionHandler.unary"><code class="name flex">
+<span>def <span class="ident">unary</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[+NumT], +NumT]) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def unary(context: interpreter.InterpreterContext, op: datatypes.UnaryNumOpT) -&gt; str:
+    return datatypes.bool_to_str(datatypes.apply_unary_bool_op(context, op))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.builtins.RandomExpansionHandler"><code class="flex name class">
+<span>class <span class="ident">RandomExpansionHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements random expansions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RandomExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Implements random expansions.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;select&#34;, self.select)
+        self.add_call(&#34;shuffle&#34;, self.shuffle)
+        self.add_call(&#34;uniform&#34;, self.uniform)
+
+    def select(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Randomly selects one of the arguments and returns it.
+        &#34;&#34;&#34;
+        return random.choice(context.args)
+
+    def shuffle(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Shuffle the arguments given and return them.
+        &#34;&#34;&#34;
+        args = list(context.args)
+        random.shuffle(args)
+        return &#34; &#34;.join(args)
+
+    def uniform(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Returns a random floating point number between two bounds, inclusive.
+        &#34;&#34;&#34;
+        if len(context.args) != 2:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;uniform: must have two args. (got {&#39;, &#39;.join(context.args)})&#34;
+            )
+
+        try:
+            lower = float(context.args[0])
+            upper = float(context.args[1])
+        except ValueError as e:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;uniform: {str(e)}&#34;
+            )
+
+        return str(random.uniform(lower, upper))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.RandomExpansionHandler.select"><code class="name flex">
+<span>def <span class="ident">select</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Randomly selects one of the arguments and returns it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Randomly selects one of the arguments and returns it.
+    &#34;&#34;&#34;
+    return random.choice(context.args)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.RandomExpansionHandler.shuffle"><code class="name flex">
+<span>def <span class="ident">shuffle</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Shuffle the arguments given and return them.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def shuffle(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Shuffle the arguments given and return them.
+    &#34;&#34;&#34;
+    args = list(context.args)
+    random.shuffle(args)
+    return &#34; &#34;.join(args)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.RandomExpansionHandler.uniform"><code class="name flex">
+<span>def <span class="ident">uniform</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a random floating point number between two bounds, inclusive.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def uniform(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Returns a random floating point number between two bounds, inclusive.
+    &#34;&#34;&#34;
+    if len(context.args) != 2:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;uniform: must have two args. (got {&#39;, &#39;.join(context.args)})&#34;
+        )
+
+    try:
+        lower = float(context.args[0])
+        upper = float(context.args[1])
+    except ValueError as e:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;uniform: {str(e)}&#34;
+        )
+
+    return str(random.uniform(lower, upper))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.builtins.StdIoCommandHandler"><code class="flex name class">
+<span>class <span class="ident">StdIoCommandHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements input and output commands using stdout/stdin.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StdIoCommandHandler(interpreter.CallbackCommandHandler):
+    &#34;&#34;&#34;
+    Implements input and output commands using stdout/stdin.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;print&#34;, self.print)
+        self.add_call(&#34;input&#34;, self.input)
+
+    def print(self, context: interpreter.InterpreterContext) -&gt; None:
+        print(&#34; &#34;.join(context.args))
+
+    def input(self, context: interpreter.InterpreterContext) -&gt; None:
+        if not context.args:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;input: variable name is not specified&#34;
+            )
+
+        result = input()
+        context.set_var(context.args[0], result)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.StdIoCommandHandler.input"><code class="name flex">
+<span>def <span class="ident">input</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def input(self, context: interpreter.InterpreterContext) -&gt; None:
+    if not context.args:
+        raise interpreter.InterpreterError(
+            context,
+            &#34;input: variable name is not specified&#34;
+        )
+
+    result = input()
+    context.set_var(context.args[0], result)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.StdIoCommandHandler.print"><code class="name flex">
+<span>def <span class="ident">print</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print(self, context: interpreter.InterpreterContext) -&gt; None:
+    print(&#34; &#34;.join(context.args))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.builtins.StringExpansionHandler"><code class="flex name class">
+<span>class <span class="ident">StringExpansionHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements basic string manipulation functions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@base_config.expansionhandler
+class StringExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Implements basic string manipulation functions.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;cat&#34;, self.concat)
+        self.add_alias(&#34;concat&#34;, &#34;cat&#34;)
+        self.add_call(&#34;vempty?&#34;, self.vempty)
+        self.add_call(&#34;vhead&#34;, self.vhead)
+        self.add_call(&#34;vtail&#34;, self.vtail)
+        self.add_call(&#34;rangev&#34;, self.rangev)
+
+    def concat(self, context: interpreter.InterpreterContext) -&gt; str:
+        return &#34;&#34;.join(context.args)
+
+    def vempty(self, context: interpreter.InterpreterContext) -&gt; str:
+        datatypes.require_arg_length(context, 1)
+        return datatypes.bool_to_str(not bool(context.args[0]))
+
+    def vhead(self, context: interpreter.InterpreterContext) -&gt; str:
+        datatypes.require_arg_length(context, 1)
+        return context.args[0].split(maxsplit=1)[0]
+
+    def vtail(self, context: interpreter.InterpreterContext) -&gt; str:
+        datatypes.require_arg_length(context, 1)
+        return &#34;&#34;.join(context.args[0].split(maxsplit=1)[1:])
+
+    def rangev(self, context: interpreter.InterpreterContext) -&gt; str:
+        datatypes.require_arg_length(context, 2)
+        (a, b, *rest), _ = datatypes.require_all_numeric(context, context.args)
+
+        a = int(a)
+        b = int(b)
+
+        return &#34; &#34;.join([str(x) for x in range(a, b)])</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.StringExpansionHandler.concat"><code class="name flex">
+<span>def <span class="ident">concat</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def concat(self, context: interpreter.InterpreterContext) -&gt; str:
+    return &#34;&#34;.join(context.args)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.StringExpansionHandler.rangev"><code class="name flex">
+<span>def <span class="ident">rangev</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rangev(self, context: interpreter.InterpreterContext) -&gt; str:
+    datatypes.require_arg_length(context, 2)
+    (a, b, *rest), _ = datatypes.require_all_numeric(context, context.args)
+
+    a = int(a)
+    b = int(b)
+
+    return &#34; &#34;.join([str(x) for x in range(a, b)])</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.StringExpansionHandler.vempty"><code class="name flex">
+<span>def <span class="ident">vempty</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vempty(self, context: interpreter.InterpreterContext) -&gt; str:
+    datatypes.require_arg_length(context, 1)
+    return datatypes.bool_to_str(not bool(context.args[0]))</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.StringExpansionHandler.vhead"><code class="name flex">
+<span>def <span class="ident">vhead</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vhead(self, context: interpreter.InterpreterContext) -&gt; str:
+    datatypes.require_arg_length(context, 1)
+    return context.args[0].split(maxsplit=1)[0]</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.StringExpansionHandler.vtail"><code class="name flex">
+<span>def <span class="ident">vtail</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vtail(self, context: interpreter.InterpreterContext) -&gt; str:
+    datatypes.require_arg_length(context, 1)
+    return &#34;&#34;.join(context.args[0].split(maxsplit=1)[1:])</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scrolls" href="index.html">scrolls</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="scrolls.builtins.ArithmeticExpansionHandler" href="#scrolls.builtins.ArithmeticExpansionHandler">ArithmeticExpansionHandler</a></code></h4>
+<ul class="two-column">
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.add" href="#scrolls.builtins.ArithmeticExpansionHandler.add">add</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.binary" href="#scrolls.builtins.ArithmeticExpansionHandler.binary">binary</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.div" href="#scrolls.builtins.ArithmeticExpansionHandler.div">div</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.intdiv" href="#scrolls.builtins.ArithmeticExpansionHandler.intdiv">intdiv</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.mass" href="#scrolls.builtins.ArithmeticExpansionHandler.mass">mass</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.mod" href="#scrolls.builtins.ArithmeticExpansionHandler.mod">mod</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.mul" href="#scrolls.builtins.ArithmeticExpansionHandler.mul">mul</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.reduce" href="#scrolls.builtins.ArithmeticExpansionHandler.reduce">reduce</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.sub" href="#scrolls.builtins.ArithmeticExpansionHandler.sub">sub</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.tofloat" href="#scrolls.builtins.ArithmeticExpansionHandler.tofloat">tofloat</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.toint" href="#scrolls.builtins.ArithmeticExpansionHandler.toint">toint</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.unary" href="#scrolls.builtins.ArithmeticExpansionHandler.unary">unary</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.builtins.BuiltinCommandHandler" href="#scrolls.builtins.BuiltinCommandHandler">BuiltinCommandHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.BuiltinCommandHandler.set" href="#scrolls.builtins.BuiltinCommandHandler.set">set</a></code></li>
+<li><code><a title="scrolls.builtins.BuiltinCommandHandler.stop" href="#scrolls.builtins.BuiltinCommandHandler.stop">stop</a></code></li>
+<li><code><a title="scrolls.builtins.BuiltinCommandHandler.unset" href="#scrolls.builtins.BuiltinCommandHandler.unset">unset</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.builtins.BuiltinControlHandler" href="#scrolls.builtins.BuiltinControlHandler">BuiltinControlHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.BuiltinControlHandler.repeat" href="#scrolls.builtins.BuiltinControlHandler.repeat">repeat</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.builtins.BuiltinInitializer" href="#scrolls.builtins.BuiltinInitializer">BuiltinInitializer</a></code></h4>
+</li>
+<li>
+<h4><code><a title="scrolls.builtins.ComparisonExpansionHandler" href="#scrolls.builtins.ComparisonExpansionHandler">ComparisonExpansionHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.ComparisonExpansionHandler.equals" href="#scrolls.builtins.ComparisonExpansionHandler.equals">equals</a></code></li>
+<li><code><a title="scrolls.builtins.ComparisonExpansionHandler.equals_bool" href="#scrolls.builtins.ComparisonExpansionHandler.equals_bool">equals_bool</a></code></li>
+<li><code><a title="scrolls.builtins.ComparisonExpansionHandler.get_numeric_compare_args" href="#scrolls.builtins.ComparisonExpansionHandler.get_numeric_compare_args">get_numeric_compare_args</a></code></li>
+<li><code><a title="scrolls.builtins.ComparisonExpansionHandler.gt" href="#scrolls.builtins.ComparisonExpansionHandler.gt">gt</a></code></li>
+<li><code><a title="scrolls.builtins.ComparisonExpansionHandler.gte" href="#scrolls.builtins.ComparisonExpansionHandler.gte">gte</a></code></li>
+<li><code><a title="scrolls.builtins.ComparisonExpansionHandler.lt" href="#scrolls.builtins.ComparisonExpansionHandler.lt">lt</a></code></li>
+<li><code><a title="scrolls.builtins.ComparisonExpansionHandler.lte" href="#scrolls.builtins.ComparisonExpansionHandler.lte">lte</a></code></li>
+<li><code><a title="scrolls.builtins.ComparisonExpansionHandler.not_equals" href="#scrolls.builtins.ComparisonExpansionHandler.not_equals">not_equals</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.builtins.LogicExpansionHandler" href="#scrolls.builtins.LogicExpansionHandler">LogicExpansionHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.LogicExpansionHandler.reduce" href="#scrolls.builtins.LogicExpansionHandler.reduce">reduce</a></code></li>
+<li><code><a title="scrolls.builtins.LogicExpansionHandler.unary" href="#scrolls.builtins.LogicExpansionHandler.unary">unary</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.builtins.RandomExpansionHandler" href="#scrolls.builtins.RandomExpansionHandler">RandomExpansionHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.RandomExpansionHandler.select" href="#scrolls.builtins.RandomExpansionHandler.select">select</a></code></li>
+<li><code><a title="scrolls.builtins.RandomExpansionHandler.shuffle" href="#scrolls.builtins.RandomExpansionHandler.shuffle">shuffle</a></code></li>
+<li><code><a title="scrolls.builtins.RandomExpansionHandler.uniform" href="#scrolls.builtins.RandomExpansionHandler.uniform">uniform</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.builtins.StdIoCommandHandler" href="#scrolls.builtins.StdIoCommandHandler">StdIoCommandHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.StdIoCommandHandler.input" href="#scrolls.builtins.StdIoCommandHandler.input">input</a></code></li>
+<li><code><a title="scrolls.builtins.StdIoCommandHandler.print" href="#scrolls.builtins.StdIoCommandHandler.print">print</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.builtins.StringExpansionHandler" href="#scrolls.builtins.StringExpansionHandler">StringExpansionHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.StringExpansionHandler.concat" href="#scrolls.builtins.StringExpansionHandler.concat">concat</a></code></li>
+<li><code><a title="scrolls.builtins.StringExpansionHandler.rangev" href="#scrolls.builtins.StringExpansionHandler.rangev">rangev</a></code></li>
+<li><code><a title="scrolls.builtins.StringExpansionHandler.vempty" href="#scrolls.builtins.StringExpansionHandler.vempty">vempty</a></code></li>
+<li><code><a title="scrolls.builtins.StringExpansionHandler.vhead" href="#scrolls.builtins.StringExpansionHandler.vhead">vhead</a></code></li>
+<li><code><a title="scrolls.builtins.StringExpansionHandler.vtail" href="#scrolls.builtins.StringExpansionHandler.vtail">vtail</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
