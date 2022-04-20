@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>scrolls API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Scrolls is a small, embeddable scripting engine with an emphasis on abuse prevention, designed to be used
+in bots for chat services such as Discord …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +23,249 @@
 <h1 class="title">Package <code>scrolls</code></h1>
 </header>
 <section id="section-intro">
+<p>Scrolls is a small, embeddable scripting engine with an emphasis on abuse prevention, designed to be used
+in bots for chat services such as Discord.</p>
+<h1 id="what-is-this">What is this?</h1>
+<p>Scrolls is designed to allow the execution of arbitrary untrusted code, without
+opening yourself up to possible sandbox escapes. The original intended purpose
+of this scripting engine is to allow users of Discord bots to create their own
+custom commands with a simple scripting language. Because of this origin, there
+are a few key design elements:</p>
+<ul>
+<li>The syntax for statements resembles discord bot prefix commands.</li>
+<li>The interpreter is designed to be as pluggable as possible - it will only
+ever do what you tell it to.</li>
+<li>Optimization isn't much of a priority - most commands will involve CPU or
+network-intensive operations, so the interpreter itself doesn't really need to
+be fast.</li>
+</ul>
+<h1 id="what-is-this-not">What is this not?</h1>
+<ul>
+<li>Scrolls is not meant for performance. If you want a decently fast embedded scripting
+language, try <a href="https://www.lua.org/">Lua</a>.</li>
+<li>Scrolls is meant for scripting <em>services</em> - chatbots, web interfaces, etc. While it
+can be used locally, there are better options when you don't need to worry about
+sandboxing.</li>
+</ul>
+<h1 id="quickstart">Quickstart</h1>
+<ul>
+<li>Read <a href="#language-overview">Language Overview</a> for an introduction to the Scrolls language.</li>
+<li>See <code><a title="scrolls.interpreter" href="interpreter.html">scrolls.interpreter</a></code> for an introduction to embedding Scrolls.</li>
+<li>See <code><a title="scrolls.ast" href="ast.html">scrolls.ast</a></code> for an explanation of the parser.</li>
+</ul>
+<h1 id="language-overview">Language Overview</h1>
+<p>Scrolls was originally designed to string together existing discord bot commands
+into new ones. As such, the statement syntax was heavily based on bash/sh.
+Other influences include python, lisp, and perl.</p>
+<h2 id="command-calls">Command Calls</h2>
+<p>Similarly to shell scripts, the most basic form of a scrolls script is just a
+sequence of commands:</p>
+<pre><code class="language-scrolls">print hello world
+print this is an example
+do-something 10 20
+</code></pre>
+<p>A command name may be any string that does not contain <code>$ ^ ! ( ) { } ; #</code>. Arguments
+are set apart by spaces. Commands may be put on the same line using semicolons:</p>
+<pre><code class="language-scrolls">print hello world; print this is an example
+do-something 10 20
+</code></pre>
+<p>You can terminate lines with semicolons if you want, but this is optional.</p>
+<p>Commands are more specifically referred to as "command calls".</p>
+<h2 id="control-calls">Control Calls</h2>
+<pre><code class="language-scrolls">!repeat(4) {
+    print hello world
+}
+
+# equivalent to:
+print hello world
+print hello world
+print hello world
+print hello world
+</code></pre>
+<p>Control calls are not keywords, but ordinary python functions that can be customized.
+The difference is that control calls take a Scrolls statement as an argument, and command
+calls do not. Control call names MUST start with <code>!</code>. Other than that, the same naming
+rules apply, no <code>$ ! ( ) { } ; #</code> (<code>!</code> may not appear anywhere but the start). Note that
+control calls also take their arguments in parentheses, as opposed to commands.</p>
+<h2 id="statements">Statements</h2>
+<p>There are three types of statements in Scrolls:</p>
+<h3 id="command">Command</h3>
+<pre><code class="language-scrolls">NAME SPACE_DELIMITED_ARGUMENTS
+</code></pre>
+<h3 id="block">Block</h3>
+<pre><code class="language-scrolls">{
+    STATEMENT
+    STATEMENT
+    ...
+}
+</code></pre>
+<h3 id="control">Control</h3>
+<pre><code class="language-scrolls">!NAME(SPACE_DELIMITED_ARGUMENTS) STATEMENT
+</code></pre>
+<p>Due to this definition, the following is also valid:</p>
+<pre><code class="language-scrolls">!repeat(4) print hello world
+</code></pre>
+<h2 id="comments">Comments</h2>
+<p>Comments may be defined with the <code>#</code> character.</p>
+<pre><code class="language-scrolls"># This is a comment.
+print hello world# comments can border literals, though it doesn't look great.
+print foo bar #blah () {} comments can contain any character, and last until end of line.
+</code></pre>
+<h2 id="variable-substitution">Variable Substitution</h2>
+<p>Scrolls supports variable expansion with <code>$</code>. Variables may be set with the built-in <code>set</code>
+command call.</p>
+<pre><code class="language-scrolls">set test hello world
+print $test
+
+# prints:
+# hello world
+</code></pre>
+<p>There is also a built in <code>for</code> control call, which will run a code block repeatedly
+with different parameters.</p>
+<pre><code class="language-scrolls">!for(x in 1 2 3 4 5) {
+    print $x
+}
+
+# prints:
+# 1
+# 2
+# 3
+# 4
+# 5
+</code></pre>
+<h2 id="substitution-calls">Substitution Calls</h2>
+<p>In addition to variable expansion, expansions may call into python code, in which case
+the python code will determine what the expansion is replaced with. For example,
+<code>$(select hello world)</code> will randomly be replaced by <code>hello</code> 50% of the time, and <code>world</code> otherwise. This may
+be used to randomly select arguments to commands, or randomly select the commands
+themselves:</p>
+<pre><code class="language-scrolls">command $(select arg1 arg2)
+$(select command1 command2) hello world
+</code></pre>
+<p>The general form of a substitution call is <code>$(NAME SPACE_DELIMITED_ARGUMENTS)</code>.
+Substitution calls and variable references may be nested indefinitely:</p>
+<pre><code class="language-scrolls">set v test
+command $(select $(select arg1 arg2 $v) $v)
+</code></pre>
+<h2 id="datatypes">Datatypes</h2>
+<p>Scrolls is a weakly typed language, and its only real datatype is the string (specifically
+utf-8 strings). All calls will convert to other datatypes internally as needed, and will
+always return strings. That being said, built-in Scrolls calls will follow certain rules
+when interpreting strings.</p>
+<h3 id="numeric">Numeric</h3>
+<p>For the purposes of arithmetic and numeric comparisons:
+- Floats are strings such as <code>3.5</code>, <code>-0.12</code>, <code>1.0</code>, etc.
+- Integers are any numeric string with no decimal point; <code>1</code>, <code>-32</code>, etc.</p>
+<p>Most arithmetic operators operate as follows:
+- If all inputs are formatted as integers, the output will be too.
+- If one or more inputs are formatted as floats, the output will be formatted as float.</p>
+<p>For example:
+- <code>$(+ 1 2 3)</code> will result in <code>6</code>
+- <code>$(+ 1 2 3.0)</code> will result in <code>6.0</code></p>
+<p>Notable exceptions to this are:
+- Division (<code>/</code>) will always output floats.</p>
+<h3 id="strings">Strings</h3>
+<p>Strings are the default datatype in Scrolls, and do not need to be enclosed in quotes.
+If you need to include special characters or newlines in strings, you may use double
+quotes:</p>
+<pre><code class="language-scrolls">print &quot;hello world (foo bar) {this is fine}&quot;
+print &quot;spacing      is      preserved&quot;
+print &quot;newlines
+are
+allowed
+too&quot;
+</code></pre>
+<p>In order to include characters like <code>"</code>, you can use escape sequences:</p>
+<pre><code class="language-scrolls"># prints &quot;quoted string&quot;
+print &quot;\&quot;quoted string\&quot;&quot;
+</code></pre>
+<p>Nearly everything is a string, including all call names and variable references. As such,
+call names may be stored in variables as a primitive form of indirection:</p>
+<pre><code class="language-scrolls">!for(operator in + - * /) {
+  print $($operator 5 8) 
+}
+
+# Equivalent to...
+print $(+ 5 8)
+print $(- 5 8)
+print $(* 5 8)
+print $(/ 5 8)
+</code></pre>
+<p>See <a href="examples/arithmetic.scrl">arithmetic.scrl</a> for an example of this idea. </p>
+<p>Using quoted literals, we can make the "everything is a string" idea a bit more obvious:</p>
+<pre><code class="language-scrolls"># Does the same thing as the above example
+!&quot;for&quot;(&quot;operator&quot; &quot;in&quot; &quot;+&quot; &quot;-&quot; &quot;*&quot; &quot;/&quot;) {
+  &quot;print&quot; $($&quot;operator&quot; &quot;5&quot; &quot;8&quot;)
+}
+</code></pre>
+<h3 id="structures-lists-etc">Structures (Lists, etc.)</h3>
+<p>There are no dedicated datastructures in Scrolls, however there is built in support
+for manipulating space-delimited lists of strings referred to as <em>vectors</em>. For example,
+here is how to iterate over each element in a vector:</p>
+<pre><code class="language-scrolls">set vector 1 2 3 4 5
+!while($(not $(vempty? $vector))) {
+  print $(vhead $vector)      # vhead returns the first item in a vector
+  set vector $(vtail $vector) # vtail returns all but the first item in a vector
+}
+</code></pre>
+<p>Of course, this operation is common enough that a dedicated control structure is
+provided for it:</p>
+<pre><code class="language-scrolls">set vector 1 2 3 4 5
+!for(x in $^vector) {
+  print $x
+}
+</code></pre>
+<p><code>$^</code> is the <em>vector expansion operator</em>. It will split the value of the expansion
+along spaces, and pass the pieces as separate arguments. The best way to illustrate the
+difference is with an example:</p>
+<pre><code class="language-scrolls">set vector 1 2 3 4 5
+!for(x in $^vector) {
+  print $x
+}
+
+# prints:
+# 1
+# 2
+# 3
+# 4
+# 5
+</code></pre>
+<p>Contrast with removing <code>^</code>: </p>
+<pre><code class="language-scrolls">set vector 1 2 3 4 5
+!for(x in $vector) { # note the ^ is missing here! 
+  print $x
+}
+
+# prints:
+# 1 2 3 4 5
+</code></pre>
+<p>Above, the vector is being passed as a single, unsplit string. The primary use of
+the <code>^</code> operator is to pass vectors into calls that do not understand them directly. For
+example, the <code>shuffle</code> builtin, which shuffles its arguments, but does not understand
+vectors:</p>
+<pre><code class="language-scrolls"># will always print 1 2 3 4 5
+set vector 1 2 3 4 5
+print $(shuffle $vector) # shuffle is only taking 1 argument here
+
+# will shuffle as expected, ex 3 5 1 2 4
+print $(shuffle $^vector) # note the added ^, shuffle is taking each element
+                          # in $vector as its own argument
+</code></pre>
+<h2 id="further-reading">Further Reading</h2>
+<p>See <code><a title="scrolls.builtins" href="builtins.html">scrolls.builtins</a></code> for a reference of commands, control structures and expansions
+included with Scrolls.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from .ast import *
+<pre><code class="python">&#34;&#34;&#34;
+Scrolls is a small, embeddable scripting engine with an emphasis on abuse prevention, designed to be used
+in bots for chat services such as Discord.
+
+.. include:: pdoc/scrolls.md
+&#34;&#34;&#34;
+
+from .ast import *
 from .builtins import *
 from .commands import *
 from .containers import *
@@ -77,7 +316,32 @@ from .interpreter import *</code></pre>
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#what-is-this">What is this?</a></li>
+<li><a href="#what-is-this-not">What is this not?</a></li>
+<li><a href="#quickstart">Quickstart</a></li>
+<li><a href="#language-overview">Language Overview</a><ul>
+<li><a href="#command-calls">Command Calls</a></li>
+<li><a href="#control-calls">Control Calls</a></li>
+<li><a href="#statements">Statements</a><ul>
+<li><a href="#command">Command</a></li>
+<li><a href="#block">Block</a></li>
+<li><a href="#control">Control</a></li>
+</ul>
+</li>
+<li><a href="#comments">Comments</a></li>
+<li><a href="#variable-substitution">Variable Substitution</a></li>
+<li><a href="#substitution-calls">Substitution Calls</a></li>
+<li><a href="#datatypes">Datatypes</a><ul>
+<li><a href="#numeric">Numeric</a></li>
+<li><a href="#strings">Strings</a></li>
+<li><a href="#structures-lists-etc">Structures (Lists, etc.)</a></li>
+</ul>
+</li>
+<li><a href="#further-reading">Further Reading</a></li>
+</ul>
+</li>
+</ul>
 </div>
 <ul id="index">
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
