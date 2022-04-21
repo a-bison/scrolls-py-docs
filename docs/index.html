@@ -54,10 +54,15 @@ sandboxing.</li>
 <li>See <code><a title="scrolls.ast" href="ast.html">scrolls.ast</a></code> for an explanation of the parser.</li>
 </ul>
 <h1 id="language-overview">Language Overview</h1>
-<p>Scrolls was originally designed to string together existing discord bot commands
+<p>Scrolls was originally designed to combine existing discord bot commands
 into new ones. As such, the statement syntax was heavily based on bash/sh.
 Other influences include python, lisp, and perl.</p>
-<h2 id="command-calls">Command Calls</h2>
+<h2 id="statements">Statements</h2>
+<p>There are three types of statements in Scrolls.</p>
+<h3 id="command">Command</h3>
+<pre><code class="language-scrolls"># syntax:
+NAME SPACE_DELIMITED_ARGUMENTS
+</code></pre>
 <p>Similarly to shell scripts, the most basic form of a scrolls script is just a
 sequence of commands:</p>
 <pre><code class="language-scrolls">print hello world
@@ -70,11 +75,17 @@ are set apart by spaces. Commands may be put on the same line using semicolons:<
 do-something 10 20
 </code></pre>
 <p>You can terminate lines with semicolons if you want, but this is optional.</p>
-<p>Commands are more specifically referred to as "command calls".</p>
-<h2 id="control-calls">Control Calls</h2>
-<pre><code class="language-scrolls">!repeat(4) {
-    print hello world
-}
+<h3 id="control">Control</h3>
+<pre><code class="language-scrolls"># syntax:
+!NAME(SPACE_DELIMITED_ARGUMENTS) STATEMENT
+</code></pre>
+<p>Control structures all follow the same syntax in Scrolls. <code>!</code>, followed by the control name,
+followed by arguments, followed by a single statement. Scrolls supports a number of traditional
+control structures, including <code>while</code>, <code>if</code>, and <code>for</code>. </p>
+<p>In Scrolls, control structures are pluggable. Adding new ones does not increase the
+complexity of syntax; they're technically function calls, not keywords.
+Because of this, some shorthand structures are provided as well, such as <code>repeat</code>:</p>
+<pre><code class="language-scrolls">!repeat(4) print &quot;hello world&quot;
 
 # equivalent to:
 print hello world
@@ -82,38 +93,40 @@ print hello world
 print hello world
 print hello world
 </code></pre>
-<p>Control calls are not keywords, but ordinary python functions that can be customized.
-The difference is that control calls take a Scrolls statement as an argument, and command
-calls do not. Control call names MUST start with <code>!</code>. Other than that, the same naming
-rules apply, no <code>$ ! ( ) { } ; #</code> (<code>!</code> may not appear anywhere but the start). Note that
-control calls also take their arguments in parentheses, as opposed to commands.</p>
-<h2 id="statements">Statements</h2>
-<p>There are three types of statements in Scrolls:</p>
-<h3 id="command">Command</h3>
-<pre><code class="language-scrolls">NAME SPACE_DELIMITED_ARGUMENTS
-</code></pre>
 <h3 id="block">Block</h3>
-<pre><code class="language-scrolls">{
+<pre><code class="language-scrolls"># syntax:
+{
     STATEMENT
     STATEMENT
     ...
 }
 </code></pre>
-<h3 id="control">Control</h3>
-<pre><code class="language-scrolls">!NAME(SPACE_DELIMITED_ARGUMENTS) STATEMENT
-</code></pre>
-<p>Due to this definition, the following is also valid:</p>
-<pre><code class="language-scrolls">!repeat(4) print hello world
+<p>Blocks group together multiple statements into a single one. They can be placed anywhere a statement
+is expected. This is used to achieve more recognizable control structures with code blocks:</p>
+<pre><code class="language-scrolls">!repeat(4) {
+    print hello
+    print world
+}
+
+# equivalent to:
+print hello
+print world
+print hello
+print world
+print hello
+print world
+print hello
+print world
 </code></pre>
 <h2 id="comments">Comments</h2>
 <p>Comments may be defined with the <code>#</code> character.</p>
 <pre><code class="language-scrolls"># This is a comment.
 print hello world# comments can border literals, though it doesn't look great.
-print foo bar #blah () {} comments can contain any character, and last until end of line.
+print foo bar #comments! can( contain) any; character, and last until end of line.
 </code></pre>
 <h2 id="variable-substitution">Variable Substitution</h2>
 <p>Scrolls supports variable expansion with <code>$</code>. Variables may be set with the built-in <code>set</code>
-command call.</p>
+command.</p>
 <pre><code class="language-scrolls">set test hello world
 print $test
 
@@ -133,19 +146,50 @@ with different parameters.</p>
 # 4
 # 5
 </code></pre>
-<h2 id="substitution-calls">Substitution Calls</h2>
-<p>In addition to variable expansion, expansions may call into python code, in which case
-the python code will determine what the expansion is replaced with. For example,
+<h2 id="expansion-calls">Expansion Calls</h2>
+<p>In addition to variable expansion, expansions may call into some code, in which case
+the code will determine what the expansion is replaced with. For example,
 <code>$(select hello world)</code> will randomly be replaced by <code>hello</code> 50% of the time, and <code>world</code> otherwise. This may
 be used to randomly select arguments to commands, or randomly select the commands
 themselves:</p>
 <pre><code class="language-scrolls">command $(select arg1 arg2)
 $(select command1 command2) hello world
 </code></pre>
-<p>The general form of a substitution call is <code>$(NAME SPACE_DELIMITED_ARGUMENTS)</code>.
-Substitution calls and variable references may be nested indefinitely:</p>
+<p>The general form of an expansion call is <code>$(NAME SPACE_DELIMITED_ARGUMENTS)</code>.
+Expansion calls and variable references may be nested indefinitely:</p>
 <pre><code class="language-scrolls">set v test
 command $(select $(select arg1 arg2 $v) $v)
+</code></pre>
+<h2 id="functions-defining-commands">Functions / Defining Commands</h2>
+<p>Custom commands and substitution calls may be defined through the <code>def</code> control
+structure.</p>
+<p><strong>Defining a Command</strong></p>
+<pre><code class="language-scrolls">!def(commandname arg1 arg2) {
+    print $arg1
+    print $arg2
+}
+commandname hello world
+</code></pre>
+<p><strong>Defining an Expansion Call</strong></p>
+<pre><code class="language-scrolls">!def(square x) {
+    return $(* x x)
+}
+print &quot;4 squared is&quot; $(square 4)
+</code></pre>
+<p>The key difference is the presence of the <code>return</code> command. If a <code>def</code> block
+contains a <code>return</code> statement, it defines an expansion call. If not, it defines
+a new command.</p>
+<p>Note that it is currently not possible to define custom control structures with
+Scrolls code. See <a href="interpreter.html#extensions">Extensions</a> for more info on how to
+define custom control structures.</p>
+<h2 id="math">Math</h2>
+<p>Arithmetic and logic operators are implemented as expansion calls. This results
+in a prefix syntax that <a href="https://en.wikipedia.org/wiki/Polish_notation">may look familiar</a> if
+you've ever used lisp:</p>
+<pre><code class="language-scrolls"># converts celsius to fahrenheit
+!def(c_to_f c) {
+    return $(+ $(* $c 1.8) 32)
+}
 </code></pre>
 <h2 id="datatypes">Datatypes</h2>
 <p>Scrolls is a weakly typed language, and its only real datatype is the string (specifically
@@ -251,9 +295,14 @@ print $(shuffle $vector) # shuffle is only taking 1 argument here
 print $(shuffle $^vector) # note the added ^, shuffle is taking each element
                           # in $vector as its own argument
 </code></pre>
-<h2 id="further-reading">Further Reading</h2>
-<p>See <code><a title="scrolls.builtins" href="builtins.html">scrolls.builtins</a></code> for a reference of commands, control structures and expansions
-included with Scrolls.</p>
+<h1 id="further-reading">Further Reading</h1>
+<ul>
+<li>See <code><a title="scrolls.builtins" href="builtins.html">scrolls.builtins</a></code> for a reference of commands, control structures and expansions
+included with Scrolls.</li>
+<li>See the <a href="https://github.com/a-bison/scrolls-py/tree/master/examples">examples directory</a>
+for more complete examples of Scrolls code.</li>
+<li>See the source code: <a href="https://github.com/a-bison/scrolls-py">https://github.com/a-bison/scrolls-py</a></li>
+</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -321,26 +370,26 @@ from .interpreter import *</code></pre>
 <li><a href="#what-is-this-not">What is this not?</a></li>
 <li><a href="#quickstart">Quickstart</a></li>
 <li><a href="#language-overview">Language Overview</a><ul>
-<li><a href="#command-calls">Command Calls</a></li>
-<li><a href="#control-calls">Control Calls</a></li>
 <li><a href="#statements">Statements</a><ul>
 <li><a href="#command">Command</a></li>
-<li><a href="#block">Block</a></li>
 <li><a href="#control">Control</a></li>
+<li><a href="#block">Block</a></li>
 </ul>
 </li>
 <li><a href="#comments">Comments</a></li>
 <li><a href="#variable-substitution">Variable Substitution</a></li>
-<li><a href="#substitution-calls">Substitution Calls</a></li>
+<li><a href="#expansion-calls">Expansion Calls</a></li>
+<li><a href="#functions-defining-commands">Functions / Defining Commands</a></li>
+<li><a href="#math">Math</a></li>
 <li><a href="#datatypes">Datatypes</a><ul>
 <li><a href="#numeric">Numeric</a></li>
 <li><a href="#strings">Strings</a></li>
 <li><a href="#structures-lists-etc">Structures (Lists, etc.)</a></li>
 </ul>
 </li>
-<li><a href="#further-reading">Further Reading</a></li>
 </ul>
 </li>
+<li><a href="#further-reading">Further Reading</a></li>
 </ul>
 </div>
 <ul id="index">
