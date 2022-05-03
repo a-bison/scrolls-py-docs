@@ -478,7 +478,6 @@ class InterpreterContext:
         self._call_context: t.Optional[CallContext] = None
         self._interpreter: t.Optional[Interpreter] = None
         self._vars = ScopedVarStore()
-        self._script: t.Optional[str] = None
 
         self.statement_count = 0
         &#34;&#34;&#34;The number of statements that have been run by the interpreter so far.&#34;&#34;&#34;
@@ -527,25 +526,6 @@ class InterpreterContext:
         - **Must** catch `InterpreterReturn` and set the return value on this exception.
         &#34;&#34;&#34;
         return self._expansion_handlers
-
-    @property
-    def script(self) -&gt; str:
-        &#34;&#34;&#34;
-        The script being executed.
-
-        Raises:
-            InternalInterpreterError: If the script is not initialized.
-        &#34;&#34;&#34;
-        if self._script is None:
-            raise InternalInterpreterError(
-                self, &#34;Script is not initialized.&#34;
-            )
-
-        return self._script
-
-    @script.setter
-    def script(self, s: str) -&gt; None:
-        self._script = s
 
     @property
     def interpreter(self) -&gt; &#39;Interpreter&#39;:
@@ -1089,7 +1069,7 @@ class InterpreterError(errors.PositionalError):
             super().__init__(
                 tok.line,
                 tok.position,
-                self.ctx.script,
+                tok.tokenizer.stream.history(),
                 message
             )
         else:
@@ -1248,47 +1228,94 @@ class Interpreter:
         tree = ast.parse_scroll(tokenizer)
         return self.interpret_ast(tree, context)
 
+    def init_context(self, context: InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Initialize a context for this interpreter.
+        &#34;&#34;&#34;
+        context.interpreter = self
+        self.apply_initializers(context)
+
     def run_statement(
         self,
         statement: str,
         context: t.Optional[InterpreterContext] = None,
-        consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({}),
-        consume_rest_consumes_all: bool = False,
-        single_char_token_enable: bool = True
+        tokenizer: t.Optional[ast.Tokenizer] = None
     ) -&gt; InterpreterContext:
-        &#34;&#34;&#34;Run a single Scrolls statement. Intended for use in implementing a REPL.
+        &#34;&#34;&#34;Run a single Scrolls statement.
 
         Args:
             statement: The statement to run. Must be a single syntatically valid Scrolls statement.
             context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
                 automatically. Otherwise, the passed context object will be used.
-            consume_rest_triggers: A mapping of triggers for the CONSUME_REST parsing feature.
-            consume_rest_consumes_all: Set whether consume_rest consumes until the end of the statement. See
-                `scrolls.ast.Tokenizer.set_consume_rest_all`
-            single_char_token_enable: Set whether special characters are enabled. See
-                `scrolls.ast.Tokenizer.set_single_char_token_enable`
+            tokenizer: Optional. If no tokenizer is specified, a new one will be created.
+                Use this option if you want to maintain tokenizer state between
+                uses of this function.
 
         Returns:
             The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
             it will be the automatically created `InterpreterContext` instance.
         &#34;&#34;&#34;
         # Set up parsing and parse statement
-        tokenizer = ast.Tokenizer(statement, consume_rest_triggers)
-        tokenizer.set_consume_rest_all(consume_rest_consumes_all)
-        tokenizer.set_single_char_token_enable(single_char_token_enable)
-        parse_ctx = ast.ParseContext(tokenizer)
-        statement_node = ast.parse_statement(parse_ctx)
+        if tokenizer is None:
+            tokenizer = ast.Tokenizer(statement)
+
+        statement_node = ast.parse_statement(tokenizer)
 
         # Interpret statement
         if context is None:
             context = self.context_cls(statement_node)
 
-        context.interpreter = self
-        context.script = statement
-
+        self.init_context(context)
         self.interpret_statement(context, statement_node)
 
         return context
+
+    def repl(
+        self,
+        on_error: t.Optional[t.Callable[[errors.ScrollError], None]] = None
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Drop into a REPL (read eval print loop).
+
+        Args:
+            on_error: A function to call when an error occurs. If `None`,
+                      errors will stop the REPL.
+        &#34;&#34;&#34;
+        stream = ast.REPLStream()
+        tokenizer = ast.Tokenizer(stream)
+        context = self.context_cls()
+        self.init_context(context)
+
+        while True:
+            try:
+                statement_node = ast.parse_statement(tokenizer)
+                stream.set_statement()
+
+                self.interpret_statement(context, statement_node)
+            except InterpreterStop:
+                return
+            except InterpreterReturn:
+                e = InterpreterError(
+                    context,
+                    f&#34;returning only allowed in functions&#34;
+                )
+                if on_error is not None:
+                    on_error(e)
+                    stream.set_statement()
+                    stream.next_line()
+                else:
+                    raise e
+            except KeyboardInterrupt:
+                print(&#34;Keyboard interrupt.&#34;)
+                return
+            except errors.ScrollError as e:
+                if on_error is not None:
+                    on_error(e)
+                    stream.set_statement()
+                    stream.next_line()
+                else:
+                    raise
+
 
     @staticmethod
     def test_parse(
@@ -1327,7 +1354,6 @@ class Interpreter:
             context = self.context_cls(tree.root)
 
         context.interpreter = self
-        context.script = tree.script
         self.apply_initializers(context)
 
         try:
@@ -2561,47 +2587,94 @@ denial of service through infinite recursion. If zero, then call depth is unlimi
         tree = ast.parse_scroll(tokenizer)
         return self.interpret_ast(tree, context)
 
+    def init_context(self, context: InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Initialize a context for this interpreter.
+        &#34;&#34;&#34;
+        context.interpreter = self
+        self.apply_initializers(context)
+
     def run_statement(
         self,
         statement: str,
         context: t.Optional[InterpreterContext] = None,
-        consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({}),
-        consume_rest_consumes_all: bool = False,
-        single_char_token_enable: bool = True
+        tokenizer: t.Optional[ast.Tokenizer] = None
     ) -&gt; InterpreterContext:
-        &#34;&#34;&#34;Run a single Scrolls statement. Intended for use in implementing a REPL.
+        &#34;&#34;&#34;Run a single Scrolls statement.
 
         Args:
             statement: The statement to run. Must be a single syntatically valid Scrolls statement.
             context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
                 automatically. Otherwise, the passed context object will be used.
-            consume_rest_triggers: A mapping of triggers for the CONSUME_REST parsing feature.
-            consume_rest_consumes_all: Set whether consume_rest consumes until the end of the statement. See
-                `scrolls.ast.Tokenizer.set_consume_rest_all`
-            single_char_token_enable: Set whether special characters are enabled. See
-                `scrolls.ast.Tokenizer.set_single_char_token_enable`
+            tokenizer: Optional. If no tokenizer is specified, a new one will be created.
+                Use this option if you want to maintain tokenizer state between
+                uses of this function.
 
         Returns:
             The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
             it will be the automatically created `InterpreterContext` instance.
         &#34;&#34;&#34;
         # Set up parsing and parse statement
-        tokenizer = ast.Tokenizer(statement, consume_rest_triggers)
-        tokenizer.set_consume_rest_all(consume_rest_consumes_all)
-        tokenizer.set_single_char_token_enable(single_char_token_enable)
-        parse_ctx = ast.ParseContext(tokenizer)
-        statement_node = ast.parse_statement(parse_ctx)
+        if tokenizer is None:
+            tokenizer = ast.Tokenizer(statement)
+
+        statement_node = ast.parse_statement(tokenizer)
 
         # Interpret statement
         if context is None:
             context = self.context_cls(statement_node)
 
-        context.interpreter = self
-        context.script = statement
-
+        self.init_context(context)
         self.interpret_statement(context, statement_node)
 
         return context
+
+    def repl(
+        self,
+        on_error: t.Optional[t.Callable[[errors.ScrollError], None]] = None
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Drop into a REPL (read eval print loop).
+
+        Args:
+            on_error: A function to call when an error occurs. If `None`,
+                      errors will stop the REPL.
+        &#34;&#34;&#34;
+        stream = ast.REPLStream()
+        tokenizer = ast.Tokenizer(stream)
+        context = self.context_cls()
+        self.init_context(context)
+
+        while True:
+            try:
+                statement_node = ast.parse_statement(tokenizer)
+                stream.set_statement()
+
+                self.interpret_statement(context, statement_node)
+            except InterpreterStop:
+                return
+            except InterpreterReturn:
+                e = InterpreterError(
+                    context,
+                    f&#34;returning only allowed in functions&#34;
+                )
+                if on_error is not None:
+                    on_error(e)
+                    stream.set_statement()
+                    stream.next_line()
+                else:
+                    raise e
+            except KeyboardInterrupt:
+                print(&#34;Keyboard interrupt.&#34;)
+                return
+            except errors.ScrollError as e:
+                if on_error is not None:
+                    on_error(e)
+                    stream.set_statement()
+                    stream.next_line()
+                else:
+                    raise
+
 
     @staticmethod
     def test_parse(
@@ -2640,7 +2713,6 @@ denial of service through infinite recursion. If zero, then call depth is unlimi
             context = self.context_cls(tree.root)
 
         context.interpreter = self
-        context.script = tree.script
         self.apply_initializers(context)
 
         try:
@@ -3007,6 +3079,23 @@ def initializers(self) -&gt; BaseCallHandlerContainer[None]:
         init.handle_call(context)</code></pre>
 </details>
 </dd>
+<dt id="scrolls.interpreter.Interpreter.init_context"><code class="name flex">
+<span>def <span class="ident">init_context</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Initialize a context for this interpreter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_context(self, context: InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;
+    Initialize a context for this interpreter.
+    &#34;&#34;&#34;
+    context.interpreter = self
+    self.apply_initializers(context)</code></pre>
+</details>
+</dd>
 <dt id="scrolls.interpreter.Interpreter.interpret_ast"><code class="name flex">
 <span>def <span class="ident">interpret_ast</span></span>(<span>self, tree: <a title="scrolls.ast.AST" href="ast.html#scrolls.ast.AST">AST</a>, context: Optional[<a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a>] = None) ‑> <a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a></span>
 </code></dt>
@@ -3048,7 +3137,6 @@ it will be the automatically created <code><a title="scrolls.interpreter.Interpr
         context = self.context_cls(tree.root)
 
     context.interpreter = self
-    context.script = tree.script
     self.apply_initializers(context)
 
     try:
@@ -3478,6 +3566,68 @@ interpreter.</p></div>
         return context.statement_count &gt; self.statement_limit</code></pre>
 </details>
 </dd>
+<dt id="scrolls.interpreter.Interpreter.repl"><code class="name flex">
+<span>def <span class="ident">repl</span></span>(<span>self, on_error: Optional[Callable[[<a title="scrolls.errors.ScrollError" href="errors.html#scrolls.errors.ScrollError">ScrollError</a>], None]] = None) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Drop into a REPL (read eval print loop).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>on_error</code></strong></dt>
+<dd>A function to call when an error occurs. If <code>None</code>,
+errors will stop the REPL.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def repl(
+    self,
+    on_error: t.Optional[t.Callable[[errors.ScrollError], None]] = None
+) -&gt; None:
+    &#34;&#34;&#34;
+    Drop into a REPL (read eval print loop).
+
+    Args:
+        on_error: A function to call when an error occurs. If `None`,
+                  errors will stop the REPL.
+    &#34;&#34;&#34;
+    stream = ast.REPLStream()
+    tokenizer = ast.Tokenizer(stream)
+    context = self.context_cls()
+    self.init_context(context)
+
+    while True:
+        try:
+            statement_node = ast.parse_statement(tokenizer)
+            stream.set_statement()
+
+            self.interpret_statement(context, statement_node)
+        except InterpreterStop:
+            return
+        except InterpreterReturn:
+            e = InterpreterError(
+                context,
+                f&#34;returning only allowed in functions&#34;
+            )
+            if on_error is not None:
+                on_error(e)
+                stream.set_statement()
+                stream.next_line()
+            else:
+                raise e
+        except KeyboardInterrupt:
+            print(&#34;Keyboard interrupt.&#34;)
+            return
+        except errors.ScrollError as e:
+            if on_error is not None:
+                on_error(e)
+                stream.set_statement()
+                stream.next_line()
+            else:
+                raise</code></pre>
+</details>
+</dd>
 <dt id="scrolls.interpreter.Interpreter.run"><code class="name flex">
 <span>def <span class="ident">run</span></span>(<span>self, script: str, context: Optional[<a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a>] = None, consume_rest_triggers: Mapping[str, int] = mappingproxy({})) ‑> <a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a></span>
 </code></dt>
@@ -3524,10 +3674,10 @@ it will be the automatically created <code><a title="scrolls.interpreter.Interpr
 </details>
 </dd>
 <dt id="scrolls.interpreter.Interpreter.run_statement"><code class="name flex">
-<span>def <span class="ident">run_statement</span></span>(<span>self, statement: str, context: Optional[<a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a>] = None, consume_rest_triggers: Mapping[str, int] = mappingproxy({}), consume_rest_consumes_all: bool = False, single_char_token_enable: bool = True) ‑> <a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a></span>
+<span>def <span class="ident">run_statement</span></span>(<span>self, statement: str, context: Optional[<a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a>] = None, tokenizer: Optional[<a title="scrolls.ast.Tokenizer" href="ast.html#scrolls.ast.Tokenizer">Tokenizer</a>] = None) ‑> <a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Run a single Scrolls statement. Intended for use in implementing a REPL.</p>
+<div class="desc"><p>Run a single Scrolls statement.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>statement</code></strong></dt>
@@ -3535,14 +3685,10 @@ it will be the automatically created <code><a title="scrolls.interpreter.Interpr
 <dt><strong><code>context</code></strong></dt>
 <dd>Optional. If no context is specified, then an instance of <code><a title="scrolls.interpreter.Interpreter.context_cls" href="#scrolls.interpreter.Interpreter.context_cls">Interpreter.context_cls</a></code> is created
 automatically. Otherwise, the passed context object will be used.</dd>
-<dt><strong><code>consume_rest_triggers</code></strong></dt>
-<dd>A mapping of triggers for the CONSUME_REST parsing feature.</dd>
-<dt><strong><code>consume_rest_consumes_all</code></strong></dt>
-<dd>Set whether consume_rest consumes until the end of the statement. See
-<code><a title="scrolls.ast.Tokenizer.set_consume_rest_all" href="ast.html#scrolls.ast.Tokenizer.set_consume_rest_all">Tokenizer.set_consume_rest_all()</a></code></dd>
-<dt><strong><code>single_char_token_enable</code></strong></dt>
-<dd>Set whether special characters are enabled. See
-<code><a title="scrolls.ast.Tokenizer.set_single_char_token_enable" href="ast.html#scrolls.ast.Tokenizer.set_single_char_token_enable">Tokenizer.set_single_char_token_enable()</a></code></dd>
+<dt><strong><code>tokenizer</code></strong></dt>
+<dd>Optional. If no tokenizer is specified, a new one will be created.
+Use this option if you want to maintain tokenizer state between
+uses of this function.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>The context used to execute the script. If <code>context</code> was not None, <code>context</code> will be returned. Otherwise,
@@ -3555,40 +3701,33 @@ it will be the automatically created <code><a title="scrolls.interpreter.Interpr
     self,
     statement: str,
     context: t.Optional[InterpreterContext] = None,
-    consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({}),
-    consume_rest_consumes_all: bool = False,
-    single_char_token_enable: bool = True
+    tokenizer: t.Optional[ast.Tokenizer] = None
 ) -&gt; InterpreterContext:
-    &#34;&#34;&#34;Run a single Scrolls statement. Intended for use in implementing a REPL.
+    &#34;&#34;&#34;Run a single Scrolls statement.
 
     Args:
         statement: The statement to run. Must be a single syntatically valid Scrolls statement.
         context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
             automatically. Otherwise, the passed context object will be used.
-        consume_rest_triggers: A mapping of triggers for the CONSUME_REST parsing feature.
-        consume_rest_consumes_all: Set whether consume_rest consumes until the end of the statement. See
-            `scrolls.ast.Tokenizer.set_consume_rest_all`
-        single_char_token_enable: Set whether special characters are enabled. See
-            `scrolls.ast.Tokenizer.set_single_char_token_enable`
+        tokenizer: Optional. If no tokenizer is specified, a new one will be created.
+            Use this option if you want to maintain tokenizer state between
+            uses of this function.
 
     Returns:
         The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
         it will be the automatically created `InterpreterContext` instance.
     &#34;&#34;&#34;
     # Set up parsing and parse statement
-    tokenizer = ast.Tokenizer(statement, consume_rest_triggers)
-    tokenizer.set_consume_rest_all(consume_rest_consumes_all)
-    tokenizer.set_single_char_token_enable(single_char_token_enable)
-    parse_ctx = ast.ParseContext(tokenizer)
-    statement_node = ast.parse_statement(parse_ctx)
+    if tokenizer is None:
+        tokenizer = ast.Tokenizer(statement)
+
+    statement_node = ast.parse_statement(tokenizer)
 
     # Interpret statement
     if context is None:
         context = self.context_cls(statement_node)
 
-    context.interpreter = self
-    context.script = statement
-
+    self.init_context(context)
     self.interpret_statement(context, statement_node)
 
     return context</code></pre>
@@ -3619,7 +3758,6 @@ This is also the main interface plugin writers will use to interact with the int
         self._call_context: t.Optional[CallContext] = None
         self._interpreter: t.Optional[Interpreter] = None
         self._vars = ScopedVarStore()
-        self._script: t.Optional[str] = None
 
         self.statement_count = 0
         &#34;&#34;&#34;The number of statements that have been run by the interpreter so far.&#34;&#34;&#34;
@@ -3668,25 +3806,6 @@ This is also the main interface plugin writers will use to interact with the int
         - **Must** catch `InterpreterReturn` and set the return value on this exception.
         &#34;&#34;&#34;
         return self._expansion_handlers
-
-    @property
-    def script(self) -&gt; str:
-        &#34;&#34;&#34;
-        The script being executed.
-
-        Raises:
-            InternalInterpreterError: If the script is not initialized.
-        &#34;&#34;&#34;
-        if self._script is None:
-            raise InternalInterpreterError(
-                self, &#34;Script is not initialized.&#34;
-            )
-
-        return self._script
-
-    @script.setter
-    def script(self, s: str) -&gt; None:
-        self._script = s
 
     @property
     def interpreter(self) -&gt; &#39;Interpreter&#39;:
@@ -4113,34 +4232,6 @@ def runtime_expansions(self) -&gt; &#39;BaseCallHandlerContainer[str]&#39;:
     return self._expansion_handlers</code></pre>
 </details>
 </dd>
-<dt id="scrolls.interpreter.InterpreterContext.script"><code class="name">var <span class="ident">script</span> : str</code></dt>
-<dd>
-<div class="desc"><p>The script being executed.</p>
-<h2 id="raises">Raises</h2>
-<dl>
-<dt><code><a title="scrolls.interpreter.InternalInterpreterError" href="#scrolls.interpreter.InternalInterpreterError">InternalInterpreterError</a></code></dt>
-<dd>If the script is not initialized.</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def script(self) -&gt; str:
-    &#34;&#34;&#34;
-    The script being executed.
-
-    Raises:
-        InternalInterpreterError: If the script is not initialized.
-    &#34;&#34;&#34;
-    if self._script is None:
-        raise InternalInterpreterError(
-            self, &#34;Script is not initialized.&#34;
-        )
-
-    return self._script</code></pre>
-</details>
-</dd>
 <dt id="scrolls.interpreter.InterpreterContext.statement_count"><code class="name">var <span class="ident">statement_count</span></code></dt>
 <dd>
 <div class="desc"><p>The number of statements that have been run by the interpreter so far.</p></div>
@@ -4406,7 +4497,7 @@ current context for later use, see <code><a title="scrolls.interpreter.Interpret
             super().__init__(
                 tok.line,
                 tok.position,
-                self.ctx.script,
+                tok.tokenizer.stream.history(),
                 message
             )
         else:
@@ -5436,6 +5527,7 @@ after searching up the stack.</p>
 <li><code><a title="scrolls.interpreter.Interpreter.context_cls" href="#scrolls.interpreter.Interpreter.context_cls">context_cls</a></code></li>
 <li><code><a title="scrolls.interpreter.Interpreter.control_handlers" href="#scrolls.interpreter.Interpreter.control_handlers">control_handlers</a></code></li>
 <li><code><a title="scrolls.interpreter.Interpreter.expansion_handlers" href="#scrolls.interpreter.Interpreter.expansion_handlers">expansion_handlers</a></code></li>
+<li><code><a title="scrolls.interpreter.Interpreter.init_context" href="#scrolls.interpreter.Interpreter.init_context">init_context</a></code></li>
 <li><code><a title="scrolls.interpreter.Interpreter.initializers" href="#scrolls.interpreter.Interpreter.initializers">initializers</a></code></li>
 <li><code><a title="scrolls.interpreter.Interpreter.interpret_ast" href="#scrolls.interpreter.Interpreter.interpret_ast">interpret_ast</a></code></li>
 <li><code><a title="scrolls.interpreter.Interpreter.interpret_block" href="#scrolls.interpreter.Interpreter.interpret_block">interpret_block</a></code></li>
@@ -5451,6 +5543,7 @@ after searching up the stack.</p>
 <li><code><a title="scrolls.interpreter.Interpreter.interpret_variable_reference" href="#scrolls.interpreter.Interpreter.interpret_variable_reference">interpret_variable_reference</a></code></li>
 <li><code><a title="scrolls.interpreter.Interpreter.over_call_depth_limit" href="#scrolls.interpreter.Interpreter.over_call_depth_limit">over_call_depth_limit</a></code></li>
 <li><code><a title="scrolls.interpreter.Interpreter.over_statement_limit" href="#scrolls.interpreter.Interpreter.over_statement_limit">over_statement_limit</a></code></li>
+<li><code><a title="scrolls.interpreter.Interpreter.repl" href="#scrolls.interpreter.Interpreter.repl">repl</a></code></li>
 <li><code><a title="scrolls.interpreter.Interpreter.run" href="#scrolls.interpreter.Interpreter.run">run</a></code></li>
 <li><code><a title="scrolls.interpreter.Interpreter.run_statement" href="#scrolls.interpreter.Interpreter.run_statement">run_statement</a></code></li>
 <li><code><a title="scrolls.interpreter.Interpreter.test_parse" href="#scrolls.interpreter.Interpreter.test_parse">test_parse</a></code></li>
@@ -5475,7 +5568,6 @@ after searching up the stack.</p>
 <li><code><a title="scrolls.interpreter.InterpreterContext.reset_call" href="#scrolls.interpreter.InterpreterContext.reset_call">reset_call</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.runtime_commands" href="#scrolls.interpreter.InterpreterContext.runtime_commands">runtime_commands</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.runtime_expansions" href="#scrolls.interpreter.InterpreterContext.runtime_expansions">runtime_expansions</a></code></li>
-<li><code><a title="scrolls.interpreter.InterpreterContext.script" href="#scrolls.interpreter.InterpreterContext.script">script</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.set_call" href="#scrolls.interpreter.InterpreterContext.set_call">set_call</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.set_retval" href="#scrolls.interpreter.InterpreterContext.set_retval">set_retval</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.set_var" href="#scrolls.interpreter.InterpreterContext.set_var">set_var</a></code></li>
