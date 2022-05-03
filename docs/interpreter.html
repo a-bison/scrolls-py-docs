@@ -1237,27 +1237,26 @@ class Interpreter:
 
     def run_statement(
         self,
-        statement: str,
+        statement: t.Union[str, ast.Tokenizer],
         context: t.Optional[InterpreterContext] = None,
-        tokenizer: t.Optional[ast.Tokenizer] = None
     ) -&gt; InterpreterContext:
         &#34;&#34;&#34;Run a single Scrolls statement.
 
         Args:
-            statement: The statement to run. Must be a single syntatically valid Scrolls statement.
+            statement: The statement to run. Must be either a string, or a tokenizer populated with a valid Scrolls
+                statement.
             context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
                 automatically. Otherwise, the passed context object will be used.
-            tokenizer: Optional. If no tokenizer is specified, a new one will be created.
-                Use this option if you want to maintain tokenizer state between
-                uses of this function.
 
         Returns:
             The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
             it will be the automatically created `InterpreterContext` instance.
         &#34;&#34;&#34;
         # Set up parsing and parse statement
-        if tokenizer is None:
+        if isinstance(statement, str):
             tokenizer = ast.Tokenizer(statement)
+        else:
+            tokenizer = statement
 
         statement_node = ast.parse_statement(tokenizer)
 
@@ -2596,27 +2595,26 @@ denial of service through infinite recursion. If zero, then call depth is unlimi
 
     def run_statement(
         self,
-        statement: str,
+        statement: t.Union[str, ast.Tokenizer],
         context: t.Optional[InterpreterContext] = None,
-        tokenizer: t.Optional[ast.Tokenizer] = None
     ) -&gt; InterpreterContext:
         &#34;&#34;&#34;Run a single Scrolls statement.
 
         Args:
-            statement: The statement to run. Must be a single syntatically valid Scrolls statement.
+            statement: The statement to run. Must be either a string, or a tokenizer populated with a valid Scrolls
+                statement.
             context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
                 automatically. Otherwise, the passed context object will be used.
-            tokenizer: Optional. If no tokenizer is specified, a new one will be created.
-                Use this option if you want to maintain tokenizer state between
-                uses of this function.
 
         Returns:
             The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
             it will be the automatically created `InterpreterContext` instance.
         &#34;&#34;&#34;
         # Set up parsing and parse statement
-        if tokenizer is None:
+        if isinstance(statement, str):
             tokenizer = ast.Tokenizer(statement)
+        else:
+            tokenizer = statement
 
         statement_node = ast.parse_statement(tokenizer)
 
@@ -3674,21 +3672,18 @@ it will be the automatically created <code><a title="scrolls.interpreter.Interpr
 </details>
 </dd>
 <dt id="scrolls.interpreter.Interpreter.run_statement"><code class="name flex">
-<span>def <span class="ident">run_statement</span></span>(<span>self, statement: str, context: Optional[<a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a>] = None, tokenizer: Optional[<a title="scrolls.ast.Tokenizer" href="ast.html#scrolls.ast.Tokenizer">Tokenizer</a>] = None) ‑> <a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a></span>
+<span>def <span class="ident">run_statement</span></span>(<span>self, statement: Union[str, <a title="scrolls.ast.Tokenizer" href="ast.html#scrolls.ast.Tokenizer">Tokenizer</a>], context: Optional[<a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a>] = None) ‑> <a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Run a single Scrolls statement.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>statement</code></strong></dt>
-<dd>The statement to run. Must be a single syntatically valid Scrolls statement.</dd>
+<dd>The statement to run. Must be either a string, or a tokenizer populated with a valid Scrolls
+statement.</dd>
 <dt><strong><code>context</code></strong></dt>
 <dd>Optional. If no context is specified, then an instance of <code><a title="scrolls.interpreter.Interpreter.context_cls" href="#scrolls.interpreter.Interpreter.context_cls">Interpreter.context_cls</a></code> is created
 automatically. Otherwise, the passed context object will be used.</dd>
-<dt><strong><code>tokenizer</code></strong></dt>
-<dd>Optional. If no tokenizer is specified, a new one will be created.
-Use this option if you want to maintain tokenizer state between
-uses of this function.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>The context used to execute the script. If <code>context</code> was not None, <code>context</code> will be returned. Otherwise,
@@ -3699,27 +3694,26 @@ it will be the automatically created <code><a title="scrolls.interpreter.Interpr
 </summary>
 <pre><code class="python">def run_statement(
     self,
-    statement: str,
+    statement: t.Union[str, ast.Tokenizer],
     context: t.Optional[InterpreterContext] = None,
-    tokenizer: t.Optional[ast.Tokenizer] = None
 ) -&gt; InterpreterContext:
     &#34;&#34;&#34;Run a single Scrolls statement.
 
     Args:
-        statement: The statement to run. Must be a single syntatically valid Scrolls statement.
+        statement: The statement to run. Must be either a string, or a tokenizer populated with a valid Scrolls
+            statement.
         context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
             automatically. Otherwise, the passed context object will be used.
-        tokenizer: Optional. If no tokenizer is specified, a new one will be created.
-            Use this option if you want to maintain tokenizer state between
-            uses of this function.
 
     Returns:
         The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
         it will be the automatically created `InterpreterContext` instance.
     &#34;&#34;&#34;
     # Set up parsing and parse statement
-    if tokenizer is None:
+    if isinstance(statement, str):
         tokenizer = ast.Tokenizer(statement)
+    else:
+        tokenizer = statement
 
     statement_node = ast.parse_statement(tokenizer)
 
