@@ -186,6 +186,7 @@ The interpreter implementation.
 import abc
 import dataclasses
 import logging
+import pathlib
 import types
 import typing as t
 import uuid
@@ -486,6 +487,9 @@ class InterpreterContext:
         self._command_handlers: BaseCallHandlerContainer[None] = BaseCallHandlerContainer()
         self._expansion_handlers: BaseCallHandlerContainer[str] = BaseCallHandlerContainer()
 
+        self._open_files: t.MutableMapping[int, t.IO[str]] = {}
+        self._fid = 0
+
     @property
     def vars(self) -&gt; ScopedVarStore:
         &#34;&#34;&#34;The variable store.&#34;&#34;&#34;
@@ -502,6 +506,65 @@ class InterpreterContext:
     def get_var(self, name: str) -&gt; str:
         &#34;&#34;&#34;Get a variable.&#34;&#34;&#34;
         return self.vars.get_var(name)
+
+    def open_file(self, path: str, mode: str) -&gt; int:
+        &#34;&#34;&#34;
+        Opens a file for this context.
+
+        Returns:
+             A numeric file ID that should be used in other `*_file` functions
+             for `InterpreterContext`.
+        &#34;&#34;&#34;
+        p = pathlib.Path(path)
+
+        if not p.exists():
+            raise InterpreterError(
+                self,
+                f&#34;{path} does not exist&#34;
+            )
+
+        if not p.is_file():
+            raise InterpreterError(
+                self,
+                f&#34;{path} is not a file&#34;
+            )
+
+        # do not allow binary mode for now
+        mode = mode.replace(&#34;b&#34;, &#34;&#34;)
+
+        f = open(p, mode)
+        self._open_files[self._fid] = f
+        used_fid = self._fid
+        self._fid += 1
+
+        logger.debug(f&#34;Opened file: {path}&#34;)
+
+        return used_fid
+
+    def close_file(self, fid: int) -&gt; None:
+        &#34;&#34;&#34;
+        Closes a file for this context.
+        &#34;&#34;&#34;
+        if fid not in self._open_files:
+            raise InterpreterError(
+                self,
+                f&#34;file already closed, or not open (fid {fid})&#34;
+            )
+
+        self._open_files[fid].close()
+        del self._open_files[fid]
+
+    def get_file(self, fid: int) -&gt; t.IO[str]:
+        &#34;&#34;&#34;
+        Gets an open file for this context.
+        &#34;&#34;&#34;
+        if fid not in self._open_files:
+            raise InterpreterError(
+                self,
+                f&#34;file already closed, or not open (fid {fid})&#34;
+            )
+
+        return self._open_files[fid]
 
     @property
     def runtime_commands(self) -&gt; &#39;BaseCallHandlerContainer[None]&#39;:
@@ -2183,11 +2246,13 @@ implement a call handler.</p></div>
 <li><a title="scrolls.builtins.BuiltinCommandHandler" href="builtins.html#scrolls.builtins.BuiltinCommandHandler">BuiltinCommandHandler</a></li>
 <li><a title="scrolls.builtins.BuiltinControlHandler" href="builtins.html#scrolls.builtins.BuiltinControlHandler">BuiltinControlHandler</a></li>
 <li><a title="scrolls.builtins.ComparisonExpansionHandler" href="builtins.html#scrolls.builtins.ComparisonExpansionHandler">ComparisonExpansionHandler</a></li>
+<li><a title="scrolls.builtins.FileCommandHandler" href="builtins.html#scrolls.builtins.FileCommandHandler">FileCommandHandler</a></li>
+<li><a title="scrolls.builtins.FileExpansionHandler" href="builtins.html#scrolls.builtins.FileExpansionHandler">FileExpansionHandler</a></li>
 <li><a title="scrolls.builtins.LogicExpansionHandler" href="builtins.html#scrolls.builtins.LogicExpansionHandler">LogicExpansionHandler</a></li>
 <li><a title="scrolls.builtins.RandomExpansionHandler" href="builtins.html#scrolls.builtins.RandomExpansionHandler">RandomExpansionHandler</a></li>
 <li><a title="scrolls.builtins.StdIoCommandHandler" href="builtins.html#scrolls.builtins.StdIoCommandHandler">StdIoCommandHandler</a></li>
 <li><a title="scrolls.builtins.StringExpansionHandler" href="builtins.html#scrolls.builtins.StringExpansionHandler">StringExpansionHandler</a></li>
-<li><a title="scrolls.commands.GenericCommandHandler" href="commands.html#scrolls.commands.GenericCommandHandler">GenericCommandHandler</a></li>
+<li><a title="scrolls.ext.callbase.CallBaseCallHandler" href="ext/callbase.html#scrolls.ext.callbase.CallBaseCallHandler">CallBaseCallHandler</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -3760,6 +3825,9 @@ This is also the main interface plugin writers will use to interact with the int
         self._command_handlers: BaseCallHandlerContainer[None] = BaseCallHandlerContainer()
         self._expansion_handlers: BaseCallHandlerContainer[str] = BaseCallHandlerContainer()
 
+        self._open_files: t.MutableMapping[int, t.IO[str]] = {}
+        self._fid = 0
+
     @property
     def vars(self) -&gt; ScopedVarStore:
         &#34;&#34;&#34;The variable store.&#34;&#34;&#34;
@@ -3776,6 +3844,65 @@ This is also the main interface plugin writers will use to interact with the int
     def get_var(self, name: str) -&gt; str:
         &#34;&#34;&#34;Get a variable.&#34;&#34;&#34;
         return self.vars.get_var(name)
+
+    def open_file(self, path: str, mode: str) -&gt; int:
+        &#34;&#34;&#34;
+        Opens a file for this context.
+
+        Returns:
+             A numeric file ID that should be used in other `*_file` functions
+             for `InterpreterContext`.
+        &#34;&#34;&#34;
+        p = pathlib.Path(path)
+
+        if not p.exists():
+            raise InterpreterError(
+                self,
+                f&#34;{path} does not exist&#34;
+            )
+
+        if not p.is_file():
+            raise InterpreterError(
+                self,
+                f&#34;{path} is not a file&#34;
+            )
+
+        # do not allow binary mode for now
+        mode = mode.replace(&#34;b&#34;, &#34;&#34;)
+
+        f = open(p, mode)
+        self._open_files[self._fid] = f
+        used_fid = self._fid
+        self._fid += 1
+
+        logger.debug(f&#34;Opened file: {path}&#34;)
+
+        return used_fid
+
+    def close_file(self, fid: int) -&gt; None:
+        &#34;&#34;&#34;
+        Closes a file for this context.
+        &#34;&#34;&#34;
+        if fid not in self._open_files:
+            raise InterpreterError(
+                self,
+                f&#34;file already closed, or not open (fid {fid})&#34;
+            )
+
+        self._open_files[fid].close()
+        del self._open_files[fid]
+
+    def get_file(self, fid: int) -&gt; t.IO[str]:
+        &#34;&#34;&#34;
+        Gets an open file for this context.
+        &#34;&#34;&#34;
+        if fid not in self._open_files:
+            raise InterpreterError(
+                self,
+                f&#34;file already closed, or not open (fid {fid})&#34;
+            )
+
+        return self._open_files[fid]
 
     @property
     def runtime_commands(self) -&gt; &#39;BaseCallHandlerContainer[None]&#39;:
@@ -4246,6 +4373,29 @@ def vars(self) -&gt; ScopedVarStore:
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="scrolls.interpreter.InterpreterContext.close_file"><code class="name flex">
+<span>def <span class="ident">close_file</span></span>(<span>self, fid: int) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Closes a file for this context.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close_file(self, fid: int) -&gt; None:
+    &#34;&#34;&#34;
+    Closes a file for this context.
+    &#34;&#34;&#34;
+    if fid not in self._open_files:
+        raise InterpreterError(
+            self,
+            f&#34;file already closed, or not open (fid {fid})&#34;
+        )
+
+    self._open_files[fid].close()
+    del self._open_files[fid]</code></pre>
+</details>
+</dd>
 <dt id="scrolls.interpreter.InterpreterContext.del_var"><code class="name flex">
 <span>def <span class="ident">del_var</span></span>(<span>self, name: str) ‑> None</span>
 </code></dt>
@@ -4258,6 +4408,28 @@ def vars(self) -&gt; ScopedVarStore:
 <pre><code class="python">def del_var(self, name: str) -&gt; None:
     &#34;&#34;&#34;Delete a variable.&#34;&#34;&#34;
     self.vars.del_var(name)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.InterpreterContext.get_file"><code class="name flex">
+<span>def <span class="ident">get_file</span></span>(<span>self, fid: int) ‑> IO[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets an open file for this context.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_file(self, fid: int) -&gt; t.IO[str]:
+    &#34;&#34;&#34;
+    Gets an open file for this context.
+    &#34;&#34;&#34;
+    if fid not in self._open_files:
+        raise InterpreterError(
+            self,
+            f&#34;file already closed, or not open (fid {fid})&#34;
+        )
+
+    return self._open_files[fid]</code></pre>
 </details>
 </dd>
 <dt id="scrolls.interpreter.InterpreterContext.get_var"><code class="name flex">
@@ -4288,6 +4460,53 @@ def vars(self) -&gt; ScopedVarStore:
     Checks if the current context is in a call or not.
     &#34;&#34;&#34;
     return self._call_context is not None</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.InterpreterContext.open_file"><code class="name flex">
+<span>def <span class="ident">open_file</span></span>(<span>self, path: str, mode: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Opens a file for this context.</p>
+<h2 id="returns">Returns</h2>
+<p>A numeric file ID that should be used in other <code>*_file</code> functions
+for <code><a title="scrolls.interpreter.InterpreterContext" href="#scrolls.interpreter.InterpreterContext">InterpreterContext</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def open_file(self, path: str, mode: str) -&gt; int:
+    &#34;&#34;&#34;
+    Opens a file for this context.
+
+    Returns:
+         A numeric file ID that should be used in other `*_file` functions
+         for `InterpreterContext`.
+    &#34;&#34;&#34;
+    p = pathlib.Path(path)
+
+    if not p.exists():
+        raise InterpreterError(
+            self,
+            f&#34;{path} does not exist&#34;
+        )
+
+    if not p.is_file():
+        raise InterpreterError(
+            self,
+            f&#34;{path} is not a file&#34;
+        )
+
+    # do not allow binary mode for now
+    mode = mode.replace(&#34;b&#34;, &#34;&#34;)
+
+    f = open(p, mode)
+    self._open_files[self._fid] = f
+    used_fid = self._fid
+    self._fid += 1
+
+    logger.debug(f&#34;Opened file: {path}&#34;)
+
+    return used_fid</code></pre>
 </details>
 </dd>
 <dt id="scrolls.interpreter.InterpreterContext.pop_call"><code class="name flex">
@@ -5551,12 +5770,15 @@ after searching up the stack.</p>
 <li><code><a title="scrolls.interpreter.InterpreterContext.call_context" href="#scrolls.interpreter.InterpreterContext.call_context">call_context</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.call_name" href="#scrolls.interpreter.InterpreterContext.call_name">call_name</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.call_stack" href="#scrolls.interpreter.InterpreterContext.call_stack">call_stack</a></code></li>
+<li><code><a title="scrolls.interpreter.InterpreterContext.close_file" href="#scrolls.interpreter.InterpreterContext.close_file">close_file</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.control_node" href="#scrolls.interpreter.InterpreterContext.control_node">control_node</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.current_node" href="#scrolls.interpreter.InterpreterContext.current_node">current_node</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.del_var" href="#scrolls.interpreter.InterpreterContext.del_var">del_var</a></code></li>
+<li><code><a title="scrolls.interpreter.InterpreterContext.get_file" href="#scrolls.interpreter.InterpreterContext.get_file">get_file</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.get_var" href="#scrolls.interpreter.InterpreterContext.get_var">get_var</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.in_call" href="#scrolls.interpreter.InterpreterContext.in_call">in_call</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.interpreter" href="#scrolls.interpreter.InterpreterContext.interpreter">interpreter</a></code></li>
+<li><code><a title="scrolls.interpreter.InterpreterContext.open_file" href="#scrolls.interpreter.InterpreterContext.open_file">open_file</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.pop_call" href="#scrolls.interpreter.InterpreterContext.pop_call">pop_call</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.push_call" href="#scrolls.interpreter.InterpreterContext.push_call">push_call</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.reset_call" href="#scrolls.interpreter.InterpreterContext.reset_call">reset_call</a></code></li>

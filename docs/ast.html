@@ -1686,8 +1686,7 @@ def parse_scroll(tokenizer: Tokenizer) -&gt; AST:
 
 def parse_statement(tokenizer: Tokenizer) -&gt; ASTNode:
     &#34;&#34;&#34;
-    Parse a single statement from a `Tokenizer`. Note that additional statements
-    may be added to the `Tokenizer` by using `Tokenizer.feed`.
+    Parse a single statement from a `Tokenizer`.
     &#34;&#34;&#34;
     ctx = ParseContext(tokenizer)
     return _parse_statement(ctx)</code></pre>
@@ -1720,16 +1719,14 @@ def parse_statement(tokenizer: Tokenizer) -&gt; ASTNode:
 <span>def <span class="ident">parse_statement</span></span>(<span>tokenizer: <a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a>) ‑> <a title="scrolls.ast.ASTNode" href="#scrolls.ast.ASTNode">ASTNode</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Parse a single statement from a <code><a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a></code>. Note that additional statements
-may be added to the <code><a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a></code> by using <code>Tokenizer.feed</code>.</p></div>
+<div class="desc"><p>Parse a single statement from a <code><a title="scrolls.ast.Tokenizer" href="#scrolls.ast.Tokenizer">Tokenizer</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def parse_statement(tokenizer: Tokenizer) -&gt; ASTNode:
     &#34;&#34;&#34;
-    Parse a single statement from a `Tokenizer`. Note that additional statements
-    may be added to the `Tokenizer` by using `Tokenizer.feed`.
+    Parse a single statement from a `Tokenizer`.
     &#34;&#34;&#34;
     ctx = ParseContext(tokenizer)
     return _parse_statement(ctx)</code></pre>

@@ -53,7 +53,10 @@ __all__ = (
     &#34;LogicExpansionHandler&#34;,
     &#34;StringExpansionHandler&#34;,
     &#34;BuiltinInitializer&#34;,
-    &#34;base_config&#34;
+    &#34;FileCommandHandler&#34;,
+    &#34;FileExpansionHandler&#34;,
+    &#34;base_config&#34;,
+    &#34;file_config&#34;
 )
 
 base_config: containers.DecoratorInterpreterConfig = containers.DecoratorInterpreterConfig()
@@ -73,6 +76,14 @@ A configuration object containing the Scrolls base language. This currently cons
     `StdIoCommandHandler`.
 &#34;&#34;&#34;
 
+file_config: containers.DecoratorInterpreterConfig = containers.DecoratorInterpreterConfig()
+&#34;&#34;&#34;
+A configuration object containing base Scrolls utilities for working with files.
+Consists of:
+
+- `FileExpansionHandler`
+- `FileCommandHandler`
+&#34;&#34;&#34;
 
 class StdIoCommandHandler(interpreter.CallbackCommandHandler):
     &#34;&#34;&#34;
@@ -81,6 +92,7 @@ class StdIoCommandHandler(interpreter.CallbackCommandHandler):
     def __init__(self) -&gt; None:
         super().__init__()
         self.add_call(&#34;print&#34;, self.print)
+        self.add_call(&#34;write&#34;, self.write)
         self.add_call(&#34;input&#34;, self.input)
 
     def print(self, context: interpreter.InterpreterContext) -&gt; None:
@@ -93,6 +105,19 @@ class StdIoCommandHandler(interpreter.CallbackCommandHandler):
         ```
         &#34;&#34;&#34;
         print(&#34; &#34;.join(context.args))
+
+    def write(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements the `write` command. Prints all arguments passed to it, joined
+        by spaces. The difference vs. `print` is that `print` appends a newline,
+        while `write` does not.
+
+        **Usage**
+        ```scrolls
+        write hello world foo bar
+        ```
+        &#34;&#34;&#34;
+        print(&#34; &#34;.join(context.args), end=&#34;&#34;)
 
     def input(self, context: interpreter.InterpreterContext) -&gt; None:
         &#34;&#34;&#34;
@@ -113,6 +138,85 @@ class StdIoCommandHandler(interpreter.CallbackCommandHandler):
 
         result = input()
         context.set_var(context.args[0], result)
+
+
+@file_config.commandhandler
+class FileCommandHandler(interpreter.CallbackCommandHandler):
+    &#34;&#34;&#34;
+    Defines commands for working with files.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;file-close&#34;, self.close)
+
+    def close(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements `file-close`. If you&#39;re looking for `file-open`, see
+        `FileExpansionHandler.open`.
+
+        **Usage**
+        ```scrolls
+        set f $(file-open file w)
+        # do things to file...
+        file-close $f
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        fid, _ = datatypes.require_numeric(context, context.args[0])
+        context.close_file(int(fid))
+
+
+@file_config.expansionhandler
+class FileExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Defines expansions for working with files.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;file-open&#34;, self.open)
+        self.add_call(&#34;file-read&#34;, self.read)
+
+    def open(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `file-open`. If you&#39;re looking for `file-close`, see
+        `FileCommandHandler.close`.
+
+        `file-open` returns an integer ID used as a handle to the file.
+        This ID should be saved and used for all `file-*` functions.
+
+        **Usage**
+        ```scrolls
+        set f $(file-open file w)
+        # do things to file...
+        file-close $f
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+
+        if len(context.args) &gt; 1:
+            mode = context.args[1]
+        else:
+            # default is read
+            mode = &#34;r&#34;
+
+        return str(context.open_file(context.args[0], mode))
+
+    def read(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `file-read`. Reads an entire file and returns a string.
+
+        **Usage**
+        ```scrolls
+        set f $(file-open file w)
+        print $(file-read $f)
+        file-close $f
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        fid, _ = datatypes.require_numeric(context, context.args[0])
+
+        f = context.get_file(int(fid))
+        return f.read()
 
 
 @base_config.initializer
@@ -927,6 +1031,10 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
         super().__init__()
         self.add_call(&#34;cat&#34;, self.concat)
         self.add_alias(&#34;concat&#34;, &#34;cat&#34;)
+        self.add_call(&#34;getc&#34;, self.getc)
+        self.add_call(&#34;len&#34;, self.len)
+        self.add_call(&#34;ord&#34;, self.ord)
+        self.add_call(&#34;chr&#34;, self.chr)
         self.add_call(&#34;vempty?&#34;, self.vempty)
         self.add_call(&#34;vhead&#34;, self.vhead)
         self.add_call(&#34;vtail&#34;, self.vtail)
@@ -944,6 +1052,58 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
         ```
         &#34;&#34;&#34;
         return &#34;&#34;.join(context.args)
+
+    def getc(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `getc`. Gets a single character from a string, starting at 0.
+
+        **Usage**
+        ```scrolls
+        set example &#34;Hello&#34;
+        print $(getc $example 4) # prints &#39;o&#39;
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 2)
+        n = int(datatypes.require_numeric(context, context.args[1])[0])
+
+        return context.args[0][n]
+
+    def len(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `len`. Gets the length of the passed string.
+
+        **Usage**
+        ```scrolls
+        print $(len &#34;hello&#34;) # prints 5
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        return str(len(context.args[0]))
+
+    def ord(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `ord`. Converts a single character to its integer equivalent.
+
+        **Usage**
+        ```scrolls
+        print $(ord &#34;h&#34;) # prints 104
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        return str(ord(context.args[0]))
+
+    def chr(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `chr`. Converts a number into the character it corresponds to.
+
+        **Usage**
+        ```scrolls
+        print $(chr 104) # prints h
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        c = int(datatypes.require_numeric(context, context.args[0])[0])
+        return chr(c)
 
     def vempty(self, context: interpreter.InterpreterContext) -&gt; str:
         &#34;&#34;&#34;
@@ -1026,6 +1186,15 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
 <p><code>print</code> and <code>input</code> are <strong>not</strong> defined as part of the base language, and must be added manually. See
 <code><a title="scrolls.builtins.StdIoCommandHandler" href="#scrolls.builtins.StdIoCommandHandler">StdIoCommandHandler</a></code>.</p>
 </div></div>
+</dd>
+<dt id="scrolls.builtins.file_config"><code class="name">var <span class="ident">file_config</span> : <a title="scrolls.containers.DecoratorInterpreterConfig" href="containers.html#scrolls.containers.DecoratorInterpreterConfig">DecoratorInterpreterConfig</a></code></dt>
+<dd>
+<div class="desc"><p>A configuration object containing base Scrolls utilities for working with files.
+Consists of:</p>
+<ul>
+<li><code><a title="scrolls.builtins.FileExpansionHandler" href="#scrolls.builtins.FileExpansionHandler">FileExpansionHandler</a></code></li>
+<li><code><a title="scrolls.builtins.FileCommandHandler" href="#scrolls.builtins.FileCommandHandler">FileCommandHandler</a></code></li>
+</ul></div>
 </dd>
 </dl>
 </section>
@@ -2793,6 +2962,248 @@ print $(=== hello hello) # prints 0
 </li>
 </ul>
 </dd>
+<dt id="scrolls.builtins.FileCommandHandler"><code class="flex name class">
+<span>class <span class="ident">FileCommandHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines commands for working with files.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@file_config.commandhandler
+class FileCommandHandler(interpreter.CallbackCommandHandler):
+    &#34;&#34;&#34;
+    Defines commands for working with files.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;file-close&#34;, self.close)
+
+    def close(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements `file-close`. If you&#39;re looking for `file-open`, see
+        `FileExpansionHandler.open`.
+
+        **Usage**
+        ```scrolls
+        set f $(file-open file w)
+        # do things to file...
+        file-close $f
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        fid, _ = datatypes.require_numeric(context, context.args[0])
+        context.close_file(int(fid))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.FileCommandHandler.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>file-close</code>. If you're looking for <code>file-open</code>, see
+<code><a title="scrolls.builtins.FileExpansionHandler.open" href="#scrolls.builtins.FileExpansionHandler.open">FileExpansionHandler.open()</a></code>.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">set f $(file-open file w)
+# do things to file...
+file-close $f
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self, context: interpreter.InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;
+    Implements `file-close`. If you&#39;re looking for `file-open`, see
+    `FileExpansionHandler.open`.
+
+    **Usage**
+    ```scrolls
+    set f $(file-open file w)
+    # do things to file...
+    file-close $f
+    ```
+    &#34;&#34;&#34;
+    datatypes.require_arg_length(context, 1)
+    fid, _ = datatypes.require_numeric(context, context.args[0])
+    context.close_file(int(fid))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.builtins.FileExpansionHandler"><code class="flex name class">
+<span>class <span class="ident">FileExpansionHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines expansions for working with files.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@file_config.expansionhandler
+class FileExpansionHandler(interpreter.CallbackExpansionHandler):
+    &#34;&#34;&#34;
+    Defines expansions for working with files.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;file-open&#34;, self.open)
+        self.add_call(&#34;file-read&#34;, self.read)
+
+    def open(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `file-open`. If you&#39;re looking for `file-close`, see
+        `FileCommandHandler.close`.
+
+        `file-open` returns an integer ID used as a handle to the file.
+        This ID should be saved and used for all `file-*` functions.
+
+        **Usage**
+        ```scrolls
+        set f $(file-open file w)
+        # do things to file...
+        file-close $f
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+
+        if len(context.args) &gt; 1:
+            mode = context.args[1]
+        else:
+            # default is read
+            mode = &#34;r&#34;
+
+        return str(context.open_file(context.args[0], mode))
+
+    def read(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `file-read`. Reads an entire file and returns a string.
+
+        **Usage**
+        ```scrolls
+        set f $(file-open file w)
+        print $(file-read $f)
+        file-close $f
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        fid, _ = datatypes.require_numeric(context, context.args[0])
+
+        f = context.get_file(int(fid))
+        return f.read()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.FileExpansionHandler.open"><code class="name flex">
+<span>def <span class="ident">open</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>file-open</code>. If you're looking for <code>file-close</code>, see
+<code><a title="scrolls.builtins.FileCommandHandler.close" href="#scrolls.builtins.FileCommandHandler.close">FileCommandHandler.close()</a></code>.</p>
+<p><code>file-open</code> returns an integer ID used as a handle to the file.
+This ID should be saved and used for all <code>file-*</code> functions.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">set f $(file-open file w)
+# do things to file...
+file-close $f
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def open(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `file-open`. If you&#39;re looking for `file-close`, see
+    `FileCommandHandler.close`.
+
+    `file-open` returns an integer ID used as a handle to the file.
+    This ID should be saved and used for all `file-*` functions.
+
+    **Usage**
+    ```scrolls
+    set f $(file-open file w)
+    # do things to file...
+    file-close $f
+    ```
+    &#34;&#34;&#34;
+    datatypes.require_arg_length(context, 1)
+
+    if len(context.args) &gt; 1:
+        mode = context.args[1]
+    else:
+        # default is read
+        mode = &#34;r&#34;
+
+    return str(context.open_file(context.args[0], mode))</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.FileExpansionHandler.read"><code class="name flex">
+<span>def <span class="ident">read</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>file-read</code>. Reads an entire file and returns a string.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">set f $(file-open file w)
+print $(file-read $f)
+file-close $f
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `file-read`. Reads an entire file and returns a string.
+
+    **Usage**
+    ```scrolls
+    set f $(file-open file w)
+    print $(file-read $f)
+    file-close $f
+    ```
+    &#34;&#34;&#34;
+    datatypes.require_arg_length(context, 1)
+    fid, _ = datatypes.require_numeric(context, context.args[0])
+
+    f = context.get_file(int(fid))
+    return f.read()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
 <dt id="scrolls.builtins.LogicExpansionHandler"><code class="flex name class">
 <span>class <span class="ident">LogicExpansionHandler</span></span>
 </code></dt>
@@ -3204,6 +3615,7 @@ print $(select foo bar baz)
     def __init__(self) -&gt; None:
         super().__init__()
         self.add_call(&#34;print&#34;, self.print)
+        self.add_call(&#34;write&#34;, self.write)
         self.add_call(&#34;input&#34;, self.input)
 
     def print(self, context: interpreter.InterpreterContext) -&gt; None:
@@ -3216,6 +3628,19 @@ print $(select foo bar baz)
         ```
         &#34;&#34;&#34;
         print(&#34; &#34;.join(context.args))
+
+    def write(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements the `write` command. Prints all arguments passed to it, joined
+        by spaces. The difference vs. `print` is that `print` appends a newline,
+        while `write` does not.
+
+        **Usage**
+        ```scrolls
+        write hello world foo bar
+        ```
+        &#34;&#34;&#34;
+        print(&#34; &#34;.join(context.args), end=&#34;&#34;)
 
     def input(self, context: interpreter.InterpreterContext) -&gt; None:
         &#34;&#34;&#34;
@@ -3303,6 +3728,34 @@ print $foo # prints what you entered
     print(&#34; &#34;.join(context.args))</code></pre>
 </details>
 </dd>
+<dt id="scrolls.builtins.StdIoCommandHandler.write"><code class="name flex">
+<span>def <span class="ident">write</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements the <code>write</code> command. Prints all arguments passed to it, joined
+by spaces. The difference vs. <code>print</code> is that <code>print</code> appends a newline,
+while <code>write</code> does not.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">write hello world foo bar
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write(self, context: interpreter.InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;
+    Implements the `write` command. Prints all arguments passed to it, joined
+    by spaces. The difference vs. `print` is that `print` appends a newline,
+    while `write` does not.
+
+    **Usage**
+    ```scrolls
+    write hello world foo bar
+    ```
+    &#34;&#34;&#34;
+    print(&#34; &#34;.join(context.args), end=&#34;&#34;)</code></pre>
+</details>
+</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -3334,6 +3787,10 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
         super().__init__()
         self.add_call(&#34;cat&#34;, self.concat)
         self.add_alias(&#34;concat&#34;, &#34;cat&#34;)
+        self.add_call(&#34;getc&#34;, self.getc)
+        self.add_call(&#34;len&#34;, self.len)
+        self.add_call(&#34;ord&#34;, self.ord)
+        self.add_call(&#34;chr&#34;, self.chr)
         self.add_call(&#34;vempty?&#34;, self.vempty)
         self.add_call(&#34;vhead&#34;, self.vhead)
         self.add_call(&#34;vtail&#34;, self.vtail)
@@ -3351,6 +3808,58 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
         ```
         &#34;&#34;&#34;
         return &#34;&#34;.join(context.args)
+
+    def getc(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `getc`. Gets a single character from a string, starting at 0.
+
+        **Usage**
+        ```scrolls
+        set example &#34;Hello&#34;
+        print $(getc $example 4) # prints &#39;o&#39;
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 2)
+        n = int(datatypes.require_numeric(context, context.args[1])[0])
+
+        return context.args[0][n]
+
+    def len(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `len`. Gets the length of the passed string.
+
+        **Usage**
+        ```scrolls
+        print $(len &#34;hello&#34;) # prints 5
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        return str(len(context.args[0]))
+
+    def ord(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `ord`. Converts a single character to its integer equivalent.
+
+        **Usage**
+        ```scrolls
+        print $(ord &#34;h&#34;) # prints 104
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        return str(ord(context.args[0]))
+
+    def chr(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `chr`. Converts a number into the character it corresponds to.
+
+        **Usage**
+        ```scrolls
+        print $(chr 104) # prints h
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        c = int(datatypes.require_numeric(context, context.args[0])[0])
+        return chr(c)
 
     def vempty(self, context: interpreter.InterpreterContext) -&gt; str:
         &#34;&#34;&#34;
@@ -3417,6 +3926,32 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
 </ul>
 <h3>Methods</h3>
 <dl>
+<dt id="scrolls.builtins.StringExpansionHandler.chr"><code class="name flex">
+<span>def <span class="ident">chr</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>chr</code>. Converts a number into the character it corresponds to.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">print $(chr 104) # prints h
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def chr(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `chr`. Converts a number into the character it corresponds to.
+
+    **Usage**
+    ```scrolls
+    print $(chr 104) # prints h
+    ```
+    &#34;&#34;&#34;
+    datatypes.require_arg_length(context, 1)
+    c = int(datatypes.require_numeric(context, context.args[0])[0])
+    return chr(c)</code></pre>
+</details>
+</dd>
 <dt id="scrolls.builtins.StringExpansionHandler.concat"><code class="name flex">
 <span>def <span class="ident">concat</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
@@ -3443,6 +3978,85 @@ print $(cat $example &quot;!&quot;) # prints Hello World!
     ```
     &#34;&#34;&#34;
     return &#34;&#34;.join(context.args)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.StringExpansionHandler.getc"><code class="name flex">
+<span>def <span class="ident">getc</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>getc</code>. Gets a single character from a string, starting at 0.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">set example &quot;Hello&quot;
+print $(getc $example 4) # prints 'o'
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getc(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `getc`. Gets a single character from a string, starting at 0.
+
+    **Usage**
+    ```scrolls
+    set example &#34;Hello&#34;
+    print $(getc $example 4) # prints &#39;o&#39;
+    ```
+    &#34;&#34;&#34;
+    datatypes.require_arg_length(context, 2)
+    n = int(datatypes.require_numeric(context, context.args[1])[0])
+
+    return context.args[0][n]</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.StringExpansionHandler.len"><code class="name flex">
+<span>def <span class="ident">len</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>len</code>. Gets the length of the passed string.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">print $(len &quot;hello&quot;) # prints 5
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def len(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `len`. Gets the length of the passed string.
+
+    **Usage**
+    ```scrolls
+    print $(len &#34;hello&#34;) # prints 5
+    ```
+    &#34;&#34;&#34;
+    datatypes.require_arg_length(context, 1)
+    return str(len(context.args[0]))</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.StringExpansionHandler.ord"><code class="name flex">
+<span>def <span class="ident">ord</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>ord</code>. Converts a single character to its integer equivalent.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">print $(ord &quot;h&quot;) # prints 104
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ord(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `ord`. Converts a single character to its integer equivalent.
+
+    **Usage**
+    ```scrolls
+    print $(ord &#34;h&#34;) # prints 104
+    ```
+    &#34;&#34;&#34;
+    datatypes.require_arg_length(context, 1)
+    return str(ord(context.args[0]))</code></pre>
 </details>
 </dd>
 <dt id="scrolls.builtins.StringExpansionHandler.rangev"><code class="name flex">
@@ -3592,6 +4206,7 @@ print $(vtail $vec) # prints 4 8 16.
 <li><h3><a href="#header-variables">Global variables</a></h3>
 <ul class="">
 <li><code><a title="scrolls.builtins.base_config" href="#scrolls.builtins.base_config">base_config</a></code></li>
+<li><code><a title="scrolls.builtins.file_config" href="#scrolls.builtins.file_config">file_config</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
@@ -3646,6 +4261,19 @@ print $(vtail $vec) # prints 4 8 16.
 </ul>
 </li>
 <li>
+<h4><code><a title="scrolls.builtins.FileCommandHandler" href="#scrolls.builtins.FileCommandHandler">FileCommandHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.FileCommandHandler.close" href="#scrolls.builtins.FileCommandHandler.close">close</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.builtins.FileExpansionHandler" href="#scrolls.builtins.FileExpansionHandler">FileExpansionHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.FileExpansionHandler.open" href="#scrolls.builtins.FileExpansionHandler.open">open</a></code></li>
+<li><code><a title="scrolls.builtins.FileExpansionHandler.read" href="#scrolls.builtins.FileExpansionHandler.read">read</a></code></li>
+</ul>
+</li>
+<li>
 <h4><code><a title="scrolls.builtins.LogicExpansionHandler" href="#scrolls.builtins.LogicExpansionHandler">LogicExpansionHandler</a></code></h4>
 <ul class="">
 <li><code><a title="scrolls.builtins.LogicExpansionHandler.and_" href="#scrolls.builtins.LogicExpansionHandler.and_">and_</a></code></li>
@@ -3667,12 +4295,17 @@ print $(vtail $vec) # prints 4 8 16.
 <ul class="">
 <li><code><a title="scrolls.builtins.StdIoCommandHandler.input" href="#scrolls.builtins.StdIoCommandHandler.input">input</a></code></li>
 <li><code><a title="scrolls.builtins.StdIoCommandHandler.print" href="#scrolls.builtins.StdIoCommandHandler.print">print</a></code></li>
+<li><code><a title="scrolls.builtins.StdIoCommandHandler.write" href="#scrolls.builtins.StdIoCommandHandler.write">write</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="scrolls.builtins.StringExpansionHandler" href="#scrolls.builtins.StringExpansionHandler">StringExpansionHandler</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="scrolls.builtins.StringExpansionHandler.chr" href="#scrolls.builtins.StringExpansionHandler.chr">chr</a></code></li>
 <li><code><a title="scrolls.builtins.StringExpansionHandler.concat" href="#scrolls.builtins.StringExpansionHandler.concat">concat</a></code></li>
+<li><code><a title="scrolls.builtins.StringExpansionHandler.getc" href="#scrolls.builtins.StringExpansionHandler.getc">getc</a></code></li>
+<li><code><a title="scrolls.builtins.StringExpansionHandler.len" href="#scrolls.builtins.StringExpansionHandler.len">len</a></code></li>
+<li><code><a title="scrolls.builtins.StringExpansionHandler.ord" href="#scrolls.builtins.StringExpansionHandler.ord">ord</a></code></li>
 <li><code><a title="scrolls.builtins.StringExpansionHandler.rangev" href="#scrolls.builtins.StringExpansionHandler.rangev">rangev</a></code></li>
 <li><code><a title="scrolls.builtins.StringExpansionHandler.vempty" href="#scrolls.builtins.StringExpansionHandler.vempty">vempty</a></code></li>
 <li><code><a title="scrolls.builtins.StringExpansionHandler.vhead" href="#scrolls.builtins.StringExpansionHandler.vhead">vhead</a></code></li>
