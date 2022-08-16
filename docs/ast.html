@@ -814,9 +814,19 @@ class Tokenizer:
         }
 
         # Set up stop chars for unquoted string literals.
-        self._string_literal_always_stop = self.whitespace + COMMENT_SIGIL
-        self._string_literal_stop_single_char = &#34;&#34;.join(self.charmap.keys())
+        self._string_literal_always_stop = self.whitespace
         self._string_literal_stop_quoted = QUOTE
+        self._string_literal_stop_comment = COMMENT_SIGIL
+
+        # Note: Add an exception for newlines. Even when we don&#39;t consider newlines to be command separators,
+        # we would normally want newlines to separate string literals. So remove \n from this switch.
+        self._string_literal_stop_single_char = str_remove(
+            &#34;&#34;.join(self.charmap.keys()),
+            &#34;\n&#34;
+        )
+
+        # Override flag for behavior when single_char_token_enable is False.
+        self.newlines_separate_strings = True
 
         self.string_literal_stop: str = self._string_literal_always_stop
         self.single_char_token_enable = True
@@ -831,6 +841,11 @@ class Tokenizer:
         self.quoted_literal_stop: str = QUOTE  # For now, quoted literals ONLY stop on another quote.
         self.quoted_literal_enable = True
         self.set_quoted_literals_enable(True)
+
+        # Set up stop chars for comments. (Note: No need for specific comment stop char here, it&#39;s hardcoded to
+        # be \n at the moment.)
+        self.comments_enable = True
+        self.set_comments_enable(True)
 
     def _unicode_escape(self) -&gt; str:
         code_point = &#34;&#34;  # Initialization not needed, just satisfies some linters.
@@ -883,12 +898,24 @@ class Tokenizer:
         If `False`, then all special characters that would otherwise be their own token will be rolled
         into string literals.
         &#34;&#34;&#34;
+        if self.newlines_separate_strings and not self.single_char_token_enable and en:
+            # If we&#39;re re-enabling single char tokens and the newline separator behavior is still on,
+            # we need to undo that first.
+            self.set_newlines_separate_strings(False)
+
         self.single_char_token_enable = en
+
         self.string_literal_stop = str_switch(
             self.string_literal_stop,
             self._string_literal_stop_single_char,
             en
         )
+
+        if not en:
+            self.set_newlines_separate_strings(True)
+        else:
+            # If single char tokens are enabled, newlines must stop string literals for this to work properly.
+            self.string_literal_stop = str_ensure(self.string_literal_stop, &#34;\n&#34;)
 
     def set_quoted_literals_enable(self, en: bool) -&gt; None:
         &#34;&#34;&#34;
@@ -901,6 +928,44 @@ class Tokenizer:
         self.string_literal_stop = str_switch(
             self.string_literal_stop,
             self._string_literal_stop_quoted,
+            en
+        )
+
+    def set_comments_enable(self, en: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Set whether comments are enabled. If disabled, the comment character will be ignored, and anything that
+        would be a comment will be treated as ordinary code.
+        &#34;&#34;&#34;
+        self.comments_enable = en
+        self.string_literal_stop = str_switch(
+            self.string_literal_stop,
+            self._string_literal_stop_comment,
+            en
+        )
+
+    def set_newlines_separate_strings(self, en: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Set whether newlines separate string literals. This can only be modified if
+        `Tokenizer.set_single_char_token_enable` has been set to `False`, and will raise a `ScrollsError` otherwise.
+
+        By default, when `Tokenizer.set_single_char_token_enable` is set to `False`, newlines will instead be
+        considered whitespace, and will separate strings without producing `TokenType.COMMAND_SEP` tokens.
+
+        To override this behavior, this function may be set to `False`. In this case, newlines will be rolled into
+        string literals, and ONLY spaces and tabs will separate string literals.
+        &#34;&#34;&#34;
+        if self.single_char_token_enable:
+            raise errors.ScrollError(&#34;Cannot use set_newlines_separate_strings when single char tokens are enabled.&#34;)
+
+        self.newlines_separate_strings = en
+        self.string_literal_stop = str_switch(
+            self.string_literal_stop,
+            &#34;\n&#34;,
+            en
+        )
+        self.whitespace = str_switch(
+            self.whitespace,
+            &#34;\n&#34;,
             en
         )
 
@@ -1068,6 +1133,9 @@ class Tokenizer:
         )
 
     def accept_comment(self) -&gt; t.Optional[Token]:
+        if not self.comments_enable:
+            return None
+
         char = self.stream.get_char()
         pos = self.stream.current_pos()
         line = self.stream.current_line()
@@ -1110,6 +1178,9 @@ class Tokenizer:
 
     # Accept a quoted string literal.
     def accept_string_literal_quoted(self) -&gt; t.Optional[Token]:
+        if not self.quoted_literal_enable:
+            return None
+
         if self.stream.get_char() != QUOTE:
             return None
         else:
@@ -3195,9 +3266,19 @@ from a user.</p>
         }
 
         # Set up stop chars for unquoted string literals.
-        self._string_literal_always_stop = self.whitespace + COMMENT_SIGIL
-        self._string_literal_stop_single_char = &#34;&#34;.join(self.charmap.keys())
+        self._string_literal_always_stop = self.whitespace
         self._string_literal_stop_quoted = QUOTE
+        self._string_literal_stop_comment = COMMENT_SIGIL
+
+        # Note: Add an exception for newlines. Even when we don&#39;t consider newlines to be command separators,
+        # we would normally want newlines to separate string literals. So remove \n from this switch.
+        self._string_literal_stop_single_char = str_remove(
+            &#34;&#34;.join(self.charmap.keys()),
+            &#34;\n&#34;
+        )
+
+        # Override flag for behavior when single_char_token_enable is False.
+        self.newlines_separate_strings = True
 
         self.string_literal_stop: str = self._string_literal_always_stop
         self.single_char_token_enable = True
@@ -3212,6 +3293,11 @@ from a user.</p>
         self.quoted_literal_stop: str = QUOTE  # For now, quoted literals ONLY stop on another quote.
         self.quoted_literal_enable = True
         self.set_quoted_literals_enable(True)
+
+        # Set up stop chars for comments. (Note: No need for specific comment stop char here, it&#39;s hardcoded to
+        # be \n at the moment.)
+        self.comments_enable = True
+        self.set_comments_enable(True)
 
     def _unicode_escape(self) -&gt; str:
         code_point = &#34;&#34;  # Initialization not needed, just satisfies some linters.
@@ -3264,12 +3350,24 @@ from a user.</p>
         If `False`, then all special characters that would otherwise be their own token will be rolled
         into string literals.
         &#34;&#34;&#34;
+        if self.newlines_separate_strings and not self.single_char_token_enable and en:
+            # If we&#39;re re-enabling single char tokens and the newline separator behavior is still on,
+            # we need to undo that first.
+            self.set_newlines_separate_strings(False)
+
         self.single_char_token_enable = en
+
         self.string_literal_stop = str_switch(
             self.string_literal_stop,
             self._string_literal_stop_single_char,
             en
         )
+
+        if not en:
+            self.set_newlines_separate_strings(True)
+        else:
+            # If single char tokens are enabled, newlines must stop string literals for this to work properly.
+            self.string_literal_stop = str_ensure(self.string_literal_stop, &#34;\n&#34;)
 
     def set_quoted_literals_enable(self, en: bool) -&gt; None:
         &#34;&#34;&#34;
@@ -3282,6 +3380,44 @@ from a user.</p>
         self.string_literal_stop = str_switch(
             self.string_literal_stop,
             self._string_literal_stop_quoted,
+            en
+        )
+
+    def set_comments_enable(self, en: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Set whether comments are enabled. If disabled, the comment character will be ignored, and anything that
+        would be a comment will be treated as ordinary code.
+        &#34;&#34;&#34;
+        self.comments_enable = en
+        self.string_literal_stop = str_switch(
+            self.string_literal_stop,
+            self._string_literal_stop_comment,
+            en
+        )
+
+    def set_newlines_separate_strings(self, en: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Set whether newlines separate string literals. This can only be modified if
+        `Tokenizer.set_single_char_token_enable` has been set to `False`, and will raise a `ScrollsError` otherwise.
+
+        By default, when `Tokenizer.set_single_char_token_enable` is set to `False`, newlines will instead be
+        considered whitespace, and will separate strings without producing `TokenType.COMMAND_SEP` tokens.
+
+        To override this behavior, this function may be set to `False`. In this case, newlines will be rolled into
+        string literals, and ONLY spaces and tabs will separate string literals.
+        &#34;&#34;&#34;
+        if self.single_char_token_enable:
+            raise errors.ScrollError(&#34;Cannot use set_newlines_separate_strings when single char tokens are enabled.&#34;)
+
+        self.newlines_separate_strings = en
+        self.string_literal_stop = str_switch(
+            self.string_literal_stop,
+            &#34;\n&#34;,
+            en
+        )
+        self.whitespace = str_switch(
+            self.whitespace,
+            &#34;\n&#34;,
             en
         )
 
@@ -3449,6 +3585,9 @@ from a user.</p>
         )
 
     def accept_comment(self) -&gt; t.Optional[Token]:
+        if not self.comments_enable:
+            return None
+
         char = self.stream.get_char()
         pos = self.stream.current_pos()
         line = self.stream.current_line()
@@ -3491,6 +3630,9 @@ from a user.</p>
 
     # Accept a quoted string literal.
     def accept_string_literal_quoted(self) -&gt; t.Optional[Token]:
+        if not self.quoted_literal_enable:
+            return None
+
         if self.stream.get_char() != QUOTE:
             return None
         else:
@@ -3708,6 +3850,9 @@ def accept_any_of(*f: t.Callable[[], t.Optional[Token]]) -&gt; t.Optional[Token]
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def accept_comment(self) -&gt; t.Optional[Token]:
+    if not self.comments_enable:
+        return None
+
     char = self.stream.get_char()
     pos = self.stream.current_pos()
     line = self.stream.current_line()
@@ -3885,6 +4030,9 @@ def accept_any_of(*f: t.Callable[[], t.Optional[Token]]) -&gt; t.Optional[Token]
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def accept_string_literal_quoted(self) -&gt; t.Optional[Token]:
+    if not self.quoted_literal_enable:
+        return None
+
     if self.stream.get_char() != QUOTE:
         return None
     else:
@@ -4233,6 +4381,29 @@ will always end with a token of type <code><a title="scrolls.ast.TokenType.EOF" 
                 return tok</code></pre>
 </details>
 </dd>
+<dt id="scrolls.ast.Tokenizer.set_comments_enable"><code class="name flex">
+<span>def <span class="ident">set_comments_enable</span></span>(<span>self, en: bool) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set whether comments are enabled. If disabled, the comment character will be ignored, and anything that
+would be a comment will be treated as ordinary code.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_comments_enable(self, en: bool) -&gt; None:
+    &#34;&#34;&#34;
+    Set whether comments are enabled. If disabled, the comment character will be ignored, and anything that
+    would be a comment will be treated as ordinary code.
+    &#34;&#34;&#34;
+    self.comments_enable = en
+    self.string_literal_stop = str_switch(
+        self.string_literal_stop,
+        self._string_literal_stop_comment,
+        en
+    )</code></pre>
+</details>
+</dd>
 <dt id="scrolls.ast.Tokenizer.set_consume_rest_all"><code class="name flex">
 <span>def <span class="ident">set_consume_rest_all</span></span>(<span>self, consume_all: bool) ‑> None</span>
 </code></dt>
@@ -4256,6 +4427,47 @@ will always end with a token of type <code><a title="scrolls.ast.TokenType.EOF" 
         self.consume_rest_stop,
         self._consume_rest_stop_switch,
         not consume_all
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.Tokenizer.set_newlines_separate_strings"><code class="name flex">
+<span>def <span class="ident">set_newlines_separate_strings</span></span>(<span>self, en: bool) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set whether newlines separate string literals. This can only be modified if
+<code><a title="scrolls.ast.Tokenizer.set_single_char_token_enable" href="#scrolls.ast.Tokenizer.set_single_char_token_enable">Tokenizer.set_single_char_token_enable()</a></code> has been set to <code>False</code>, and will raise a <code>ScrollsError</code> otherwise.</p>
+<p>By default, when <code><a title="scrolls.ast.Tokenizer.set_single_char_token_enable" href="#scrolls.ast.Tokenizer.set_single_char_token_enable">Tokenizer.set_single_char_token_enable()</a></code> is set to <code>False</code>, newlines will instead be
+considered whitespace, and will separate strings without producing <code><a title="scrolls.ast.TokenType.COMMAND_SEP" href="#scrolls.ast.TokenType.COMMAND_SEP">TokenType.COMMAND_SEP</a></code> tokens.</p>
+<p>To override this behavior, this function may be set to <code>False</code>. In this case, newlines will be rolled into
+string literals, and ONLY spaces and tabs will separate string literals.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_newlines_separate_strings(self, en: bool) -&gt; None:
+    &#34;&#34;&#34;
+    Set whether newlines separate string literals. This can only be modified if
+    `Tokenizer.set_single_char_token_enable` has been set to `False`, and will raise a `ScrollsError` otherwise.
+
+    By default, when `Tokenizer.set_single_char_token_enable` is set to `False`, newlines will instead be
+    considered whitespace, and will separate strings without producing `TokenType.COMMAND_SEP` tokens.
+
+    To override this behavior, this function may be set to `False`. In this case, newlines will be rolled into
+    string literals, and ONLY spaces and tabs will separate string literals.
+    &#34;&#34;&#34;
+    if self.single_char_token_enable:
+        raise errors.ScrollError(&#34;Cannot use set_newlines_separate_strings when single char tokens are enabled.&#34;)
+
+    self.newlines_separate_strings = en
+    self.string_literal_stop = str_switch(
+        self.string_literal_stop,
+        &#34;\n&#34;,
+        en
+    )
+    self.whitespace = str_switch(
+        self.whitespace,
+        &#34;\n&#34;,
+        en
     )</code></pre>
 </details>
 </dd>
@@ -4305,12 +4517,24 @@ into string literals.</p></div>
     If `False`, then all special characters that would otherwise be their own token will be rolled
     into string literals.
     &#34;&#34;&#34;
+    if self.newlines_separate_strings and not self.single_char_token_enable and en:
+        # If we&#39;re re-enabling single char tokens and the newline separator behavior is still on,
+        # we need to undo that first.
+        self.set_newlines_separate_strings(False)
+
     self.single_char_token_enable = en
+
     self.string_literal_stop = str_switch(
         self.string_literal_stop,
         self._string_literal_stop_single_char,
         en
-    )</code></pre>
+    )
+
+    if not en:
+        self.set_newlines_separate_strings(True)
+    else:
+        # If single char tokens are enabled, newlines must stop string literals for this to work properly.
+        self.string_literal_stop = str_ensure(self.string_literal_stop, &#34;\n&#34;)</code></pre>
 </details>
 </dd>
 <dt id="scrolls.ast.Tokenizer.try_consume_escape"><code class="name flex">
@@ -4499,7 +4723,9 @@ into string literals.</p></div>
 <li><code><a title="scrolls.ast.Tokenizer.handle_consume_rest_off" href="#scrolls.ast.Tokenizer.handle_consume_rest_off">handle_consume_rest_off</a></code></li>
 <li><code><a title="scrolls.ast.Tokenizer.next_n_chars" href="#scrolls.ast.Tokenizer.next_n_chars">next_n_chars</a></code></li>
 <li><code><a title="scrolls.ast.Tokenizer.next_token" href="#scrolls.ast.Tokenizer.next_token">next_token</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.set_comments_enable" href="#scrolls.ast.Tokenizer.set_comments_enable">set_comments_enable</a></code></li>
 <li><code><a title="scrolls.ast.Tokenizer.set_consume_rest_all" href="#scrolls.ast.Tokenizer.set_consume_rest_all">set_consume_rest_all</a></code></li>
+<li><code><a title="scrolls.ast.Tokenizer.set_newlines_separate_strings" href="#scrolls.ast.Tokenizer.set_newlines_separate_strings">set_newlines_separate_strings</a></code></li>
 <li><code><a title="scrolls.ast.Tokenizer.set_quoted_literals_enable" href="#scrolls.ast.Tokenizer.set_quoted_literals_enable">set_quoted_literals_enable</a></code></li>
 <li><code><a title="scrolls.ast.Tokenizer.set_single_char_token_enable" href="#scrolls.ast.Tokenizer.set_single_char_token_enable">set_single_char_token_enable</a></code></li>
 <li><code><a title="scrolls.ast.Tokenizer.try_consume_escape" href="#scrolls.ast.Tokenizer.try_consume_escape">try_consume_escape</a></code></li>

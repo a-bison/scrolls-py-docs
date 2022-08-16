@@ -362,7 +362,10 @@ class CallBase(abc.ABC, t.Generic[T_co]):
         idx = 0
 
         for option in self.options:
-            if nodes:
+            if idx in nodes:
+                # Update current_node for error reporting purposes, but only if idx is pointing to
+                # a valid node. idx may be greater than the max if we&#39;re consuming a non-required
+                # option the user didn&#39;t specify.
                 context.current_node = nodes[idx]
 
             try:
@@ -385,7 +388,7 @@ class CallBase(abc.ABC, t.Generic[T_co]):
                     f&#34;{option.name}: {e}&#34;
                 )
 
-            if len(_result) == 1:
+            if len(_result) == 1 and option.modifier != OptionModifier.GREEDY:
                 result = _result[0]
             else:
                 result = _result
@@ -830,7 +833,10 @@ method.</p>
         idx = 0
 
         for option in self.options:
-            if nodes:
+            if idx in nodes:
+                # Update current_node for error reporting purposes, but only if idx is pointing to
+                # a valid node. idx may be greater than the max if we&#39;re consuming a non-required
+                # option the user didn&#39;t specify.
                 context.current_node = nodes[idx]
 
             try:
@@ -853,7 +859,7 @@ method.</p>
                     f&#34;{option.name}: {e}&#34;
                 )
 
-            if len(_result) == 1:
+            if len(_result) == 1 and option.modifier != OptionModifier.GREEDY:
                 result = _result[0]
             else:
                 result = _result
@@ -928,7 +934,10 @@ in the passed context object.</p></div>
     idx = 0
 
     for option in self.options:
-        if nodes:
+        if idx in nodes:
+            # Update current_node for error reporting purposes, but only if idx is pointing to
+            # a valid node. idx may be greater than the max if we&#39;re consuming a non-required
+            # option the user didn&#39;t specify.
             context.current_node = nodes[idx]
 
         try:
@@ -951,7 +960,7 @@ in the passed context object.</p></div>
                 f&#34;{option.name}: {e}&#34;
             )
 
-        if len(_result) == 1:
+        if len(_result) == 1 and option.modifier != OptionModifier.GREEDY:
             result = _result[0]
         else:
             result = _result
