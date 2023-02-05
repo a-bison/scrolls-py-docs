@@ -55,6 +55,7 @@ __all__ = (
     &#34;BuiltinInitializer&#34;,
     &#34;FileCommandHandler&#34;,
     &#34;FileExpansionHandler&#34;,
+    &#34;UnifiedCommandSettingHandler&#34;,
     &#34;base_config&#34;,
     &#34;file_config&#34;,
     &#34;unified_config&#34;
@@ -94,7 +95,7 @@ the same name as an expansion,
 
 Consists of:
 
-
+- `UnifiedCommandSettingHandler`
 &#34;&#34;&#34;
 
 
@@ -1454,7 +1455,10 @@ Consists of:</p>
 <div class="desc"><p>Adds <code>use-unified-commands</code>. After this command is called, all expansions may be called
 as commands. Their return value will be discarded. Note that if a command exists with
 the same name as an expansion, </p>
-<p>Consists of:</p></div>
+<p>Consists of:</p>
+<ul>
+<li><code><a title="scrolls.builtins.UnifiedCommandSettingHandler" href="#scrolls.builtins.UnifiedCommandSettingHandler">UnifiedCommandSettingHandler</a></code></li>
+</ul></div>
 </dd>
 </dl>
 </section>
@@ -4886,6 +4890,201 @@ print $(vtail $vec) # prints 4 8 16.
 </li>
 </ul>
 </dd>
+<dt id="scrolls.builtins.UnifiedCommandSettingHandler"><code class="flex name class">
+<span>class <span class="ident">UnifiedCommandSettingHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>A basic call handler that uses <code>typing.Callable</code> (<code>ScrollCallback</code>) to
+implement a call handler.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@unified_config.commandhandler
+class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;use-unified-commands&#34;, self.use_unified_commands)
+
+        self.enable_unified_commands = False
+        self.expansion_handler: t.Optional[interpreter.CallHandlerContainer[str]] = None
+
+    def use_unified_commands(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements the `use-unified-commands` command. When used, unified commands
+        will be enabled for the rest of the script, allowing all expansions
+        to be used as commands. The most common way this would be used is if
+        you have expansions with side-effects, and don&#39;t care about the return
+        value.
+
+        **Usage**
+        ```scrolls
+        use-unified-commands
+
+        set some-global-variable &#34;before&#34;
+
+        !def(test) {
+            set some-global-variable &#34;after&#34;
+            return &#34;blah&#34;
+        }
+
+        print $some-global-variable
+        test # test may be used as command here despite being defined as an expansion
+        print $some-global-variable
+        ```
+        &#34;&#34;&#34;
+        self.enable_unified_commands = True
+
+        # workaround: need to store reference to the context to access
+        # expansion handlers in __contains__ override. For now this is OK,
+        # since it&#39;s not expected that the context will change mid-script.
+
+        # FIXME: Construct this once in the context object.
+        # It&#39;s constructed on the fly on *every call*... not great, and doesn&#39;t
+        # let extensions access the whole thing.
+        self.expansion_handler = interpreter.ChoiceCallHandlerContainer(
+            context.runtime_expansions,
+            context.interpreter.expansion_handlers
+        )
+
+    # override
+    def __contains__(self, command_name: str) -&gt; bool:
+        super_contains = super().__contains__(command_name)
+
+        if super_contains:
+            return True
+        elif self.enable_unified_commands:
+            try:
+                self.expansion_handler.get_for_call(command_name)
+                return True
+            except KeyError:
+                return False
+        else:
+            return False
+
+    # override
+    def handle_call(self, context: interpreter.InterpreterContext) -&gt; None:
+        # If no unified commands, defer to super.
+        if not self.enable_unified_commands:
+            super().handle_call(context)
+            return
+
+        # For unified, proceed normally if superclass contains the call.
+        # Otherwise, call an expansion and discard the return value.
+        if super().__contains__(context.call_name):
+            super().handle_call(context)
+        else:
+            self.expansion_handler.get_for_call(context.call_name).handle_call(context)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.UnifiedCommandSettingHandler.handle_call"><code class="name flex">
+<span>def <span class="ident">handle_call</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_call(self, context: interpreter.InterpreterContext) -&gt; None:
+    # If no unified commands, defer to super.
+    if not self.enable_unified_commands:
+        super().handle_call(context)
+        return
+
+    # For unified, proceed normally if superclass contains the call.
+    # Otherwise, call an expansion and discard the return value.
+    if super().__contains__(context.call_name):
+        super().handle_call(context)
+    else:
+        self.expansion_handler.get_for_call(context.call_name).handle_call(context)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.UnifiedCommandSettingHandler.use_unified_commands"><code class="name flex">
+<span>def <span class="ident">use_unified_commands</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements the <code>use-unified-commands</code> command. When used, unified commands
+will be enabled for the rest of the script, allowing all expansions
+to be used as commands. The most common way this would be used is if
+you have expansions with side-effects, and don't care about the return
+value.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">use-unified-commands
+
+set some-global-variable &quot;before&quot;
+
+!def(test) {
+    set some-global-variable &quot;after&quot;
+    return &quot;blah&quot;
+}
+
+print $some-global-variable
+test # test may be used as command here despite being defined as an expansion
+print $some-global-variable
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def use_unified_commands(self, context: interpreter.InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;
+    Implements the `use-unified-commands` command. When used, unified commands
+    will be enabled for the rest of the script, allowing all expansions
+    to be used as commands. The most common way this would be used is if
+    you have expansions with side-effects, and don&#39;t care about the return
+    value.
+
+    **Usage**
+    ```scrolls
+    use-unified-commands
+
+    set some-global-variable &#34;before&#34;
+
+    !def(test) {
+        set some-global-variable &#34;after&#34;
+        return &#34;blah&#34;
+    }
+
+    print $some-global-variable
+    test # test may be used as command here despite being defined as an expansion
+    print $some-global-variable
+    ```
+    &#34;&#34;&#34;
+    self.enable_unified_commands = True
+
+    # workaround: need to store reference to the context to access
+    # expansion handlers in __contains__ override. For now this is OK,
+    # since it&#39;s not expected that the context will change mid-script.
+
+    # FIXME: Construct this once in the context object.
+    # It&#39;s constructed on the fly on *every call*... not great, and doesn&#39;t
+    # let extensions access the whole thing.
+    self.expansion_handler = interpreter.ChoiceCallHandlerContainer(
+        context.runtime_expansions,
+        context.interpreter.expansion_handlers
+    )</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
 </dl>
 </section>
 </article>
@@ -5018,6 +5217,13 @@ print $(vtail $vec) # prints 4 8 16.
 <li><code><a title="scrolls.builtins.StringExpansionHandler.vhead" href="#scrolls.builtins.StringExpansionHandler.vhead">vhead</a></code></li>
 <li><code><a title="scrolls.builtins.StringExpansionHandler.vlen" href="#scrolls.builtins.StringExpansionHandler.vlen">vlen</a></code></li>
 <li><code><a title="scrolls.builtins.StringExpansionHandler.vtail" href="#scrolls.builtins.StringExpansionHandler.vtail">vtail</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.builtins.UnifiedCommandSettingHandler" href="#scrolls.builtins.UnifiedCommandSettingHandler">UnifiedCommandSettingHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.UnifiedCommandSettingHandler.handle_call" href="#scrolls.builtins.UnifiedCommandSettingHandler.handle_call">handle_call</a></code></li>
+<li><code><a title="scrolls.builtins.UnifiedCommandSettingHandler.use_unified_commands" href="#scrolls.builtins.UnifiedCommandSettingHandler.use_unified_commands">use_unified_commands</a></code></li>
 </ul>
 </li>
 </ul>
