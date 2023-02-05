@@ -78,10 +78,17 @@ do-something 10 20
 <h3 id="control">Control</h3>
 <pre><code class="language-scrolls"># syntax:
 !NAME(SPACE_DELIMITED_ARGUMENTS) STATEMENT
+
+# or if no arguments needed:
+!NAME STATEMENT
 </code></pre>
 <p>Control structures all follow the same syntax in Scrolls. <code>!</code>, followed by the control name,
 followed by arguments, followed by a single statement. Scrolls supports a number of traditional
-control structures, including <code>while</code>, <code>if</code>, and <code>for</code>. </p>
+control structures, including <code>while</code>, <code>if</code>, and <code>for</code>.</p>
+<p>If no arguments need to be passed into the control call, as in <code>!control() STATEMENT</code>,
+the parenthesis may be omitted: <code>!control STATEMENT</code>. This is intended as syntactic sugar
+to make <code>!else</code> more sensible, but any added control structures will support this
+as well.</p>
 <p>In Scrolls, control structures are pluggable. Adding new ones does not increase the
 complexity of syntax; they're technically function calls, not keywords.
 Because of this, some shorthand structures are provided as well, such as <code>repeat</code>:</p>
@@ -320,7 +327,7 @@ from .containers import *
 from .errors import *
 from .interpreter import *
 
-__version__ = &#34;0.2.0&#34;</code></pre>
+__version__ = &#34;0.3.0&#34;</code></pre>
 </details>
 </section>
 <section>

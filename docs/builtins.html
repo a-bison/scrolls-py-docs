@@ -36,7 +36,7 @@ Built in Scrolls language features.
 
 .. include:: pdoc/builtins.md
 &#34;&#34;&#34;
-
+import math
 import operator
 import random
 import typing as t
@@ -56,7 +56,8 @@ __all__ = (
     &#34;FileCommandHandler&#34;,
     &#34;FileExpansionHandler&#34;,
     &#34;base_config&#34;,
-    &#34;file_config&#34;
+    &#34;file_config&#34;,
+    &#34;unified_config&#34;
 )
 
 base_config: containers.DecoratorInterpreterConfig = containers.DecoratorInterpreterConfig()
@@ -84,6 +85,18 @@ Consists of:
 - `FileExpansionHandler`
 - `FileCommandHandler`
 &#34;&#34;&#34;
+
+unified_config: containers.DecoratorInterpreterConfig = containers.DecoratorInterpreterConfig()
+&#34;&#34;&#34;
+Adds `use-unified-commands`. After this command is called, all expansions may be called
+as commands. Their return value will be discarded. Note that if a command exists with
+the same name as an expansion, 
+
+Consists of:
+
+
+&#34;&#34;&#34;
+
 
 class StdIoCommandHandler(interpreter.CallbackCommandHandler):
     &#34;&#34;&#34;
@@ -393,6 +406,8 @@ class BuiltinControlHandler(interpreter.CallbackControlHandler):
         self.add_call(&#34;repeat&#34;, self.repeat)
         self.add_call(&#34;for&#34;, self.for_)
         self.add_call(&#34;if&#34;, self.if_)
+        self.add_call(&#34;elif&#34;, self.elif_)
+        self.add_call(&#34;else&#34;, self.else_)
         self.add_call(&#34;while&#34;, self.while_)
         self.add_call(&#34;def&#34;, self.def_)
 
@@ -527,10 +542,32 @@ class BuiltinControlHandler(interpreter.CallbackControlHandler):
 
         context.del_var(var_name)
 
+    def __cond_base(self, context: interpreter.InterpreterContext, respect_else_signal: bool) -&gt; None:
+        # Base conditional control call implementation
+        if len(context.args) != 1:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;if: needs one and only one argument&#34;
+            )
+
+        if respect_else_signal and not context.parent_call_context.else_signal:
+            return
+
+        check_result = datatypes.str_to_bool(context.args[0])
+
+        if datatypes.str_to_bool(context.args[0]):
+            context.interpreter.interpret_statement(context, context.control_node)
+
+        # Signal to else-like control structures
+        context.parent_call_context.else_signal = not check_result
+
     def if_(self, context: interpreter.InterpreterContext) -&gt; None:
         &#34;&#34;&#34;
         Implements the `if` control structure. Takes one argument, a boolean. If it&#39;s `scrolls.datatypes.TRUE`,
-        executes the body statement. Otherwise, the body is skipped. `else` is not supported.
+        executes the body statement. Otherwise, the body is skipped.
+        [`elif`](#scrolls.builtins.BuiltinControlHandler.elif_) and
+        [`else`](#scrolls.builtins.BuiltinControlHandler.else_) may
+        be used to execute code if the condition is false.
 
         **Usage**
         ```scrolls
@@ -542,14 +579,57 @@ class BuiltinControlHandler(interpreter.CallbackControlHandler):
         }
         ```
         &#34;&#34;&#34;
-        if len(context.args) != 1:
+        self.__cond_base(context, respect_else_signal=False)
+
+    def elif_(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements the `elif` control structure. Takes one argument, a boolean.  If it&#39;s `scrolls.datatypes.TRUE`,
+        executes the body statement. Otherwise, the body is skipped and the next
+        [`elif`](#scrolls.builtins.BuiltinControlHandler.elif_) or
+        [`else`](#scrolls.builtins.BuiltinControlHandler.else_) is
+        tried. Must be used after [`if`](#scrolls.builtins.BuiltinControlHandler.if_).
+
+        **Usage**
+        ```scrolls
+        !if($false) {
+            print &#34;if: this will not print&#34;
+        } !elif($true) {
+            print &#34;elif: this will print&#34;
+        } !else {
+            print &#34;else: this will not print&#34;
+        }
+        ```
+        &#34;&#34;&#34;
+        self.__cond_base(context, respect_else_signal=True)
+
+    def else_(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements the `else` control structure. Takes no arguments. Must be
+        paired with a conditional to execute the body. See
+        [`if`](#scrolls.builtins.BuiltinControlHandler.if_) and
+        [`elif`](#scrolls.builtins.BuiltinControlHandler.elif_).
+
+        **Usage**
+        ```scrolls
+        !if($false) {
+            print &#34;this will not print&#34;
+        } !else {
+            print &#34;this will print&#34;
+        }
+        ```
+        &#34;&#34;&#34;
+        if len(context.args) != 0:
             raise interpreter.InterpreterError(
                 context,
-                f&#34;if: needs one and only one argument&#34;
+                f&#34;else: does not take arguments&#34;
             )
 
-        if datatypes.str_to_bool(context.args[0]):
+        if context.parent_call_context.else_signal:
             context.interpreter.interpret_statement(context, context.control_node)
+
+            # Once the else signal has been interpreted, &#34;consume&#34; it so it can&#39;t be
+            # used again.
+            context.parent_call_context.else_signal = False
 
     def while_(self, context: interpreter.InterpreterContext) -&gt; None:
         &#34;&#34;&#34;
@@ -664,6 +744,11 @@ class ArithmeticExpansionHandler(interpreter.CallbackExpansionHandler):
         self.add_call(&#34;/&#34;, self.div)
         self.add_call(&#34;//&#34;, self.intdiv)
         self.add_call(&#34;%&#34;, self.mod)
+        self.add_call(&#34;**&#34;, self.power)
+        self.add_call(&#34;sqrt&#34;, self.sqrt)
+        self.add_call(&#34;round&#34;, self.round)
+        self.add_call(&#34;floor&#34;, self.floor)
+        self.add_call(&#34;ceil&#34;, self.ceil)
 
     @staticmethod
     def __unary(context: interpreter.InterpreterContext, op: datatypes.UnaryNumOpT) -&gt; str:
@@ -776,6 +861,83 @@ class ArithmeticExpansionHandler(interpreter.CallbackExpansionHandler):
         ```
         &#34;&#34;&#34;
         return self.__binary(context, operator.mod)
+
+    def power(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `**` (power). More than two arguments performs successive powers,
+        for example `$(** 2 3 4)` is equivalent to `(2^3)^4`.
+
+        **Usage**
+        ```scrolls
+        print $(** 2 3) # prints 8
+        print $(** 2 3 4) # prints 4096
+        print $(** 2.1 3) # prints
+        ```
+        &#34;&#34;&#34;
+        return self.__reduce(context, operator.pow)
+
+    def sqrt(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `sqrt` (square root). Takes one argument. Always returns a float,
+        so convert to int (see `ArithmeticExpansionHandler.toint`) if needed.
+
+        **Usage**
+        ```scrolls
+        print $(sqrt 16) # prints 4.0
+        ```
+        &#34;&#34;&#34;
+        return self.__unary(context, math.sqrt)
+
+    def round(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `round`. Takes one or two arguments.
+
+        If one argument, will round to the nearest whole number and
+        return an integer. Otherwise, rounds to the nearest decimal place
+        specified by the second argument and returns a float.
+
+        **Usage**
+        ```scrolls
+        print $(round 4.7281) # prints 5
+        print $(round 4.7281, 0) # prints 5.0
+        print $(round 4.7281, 2) # prints 4.73
+        # etc...
+        ```
+        &#34;&#34;&#34;
+        # Datatype stuff is done manually here because it&#39;s not quite like the
+        # normal arithmetic operations.
+        datatypes.require_arg_length(context, 1)
+
+        if len(context.args) == 1:
+            return str(round(float(context.args[0])))
+
+        return str(round(float(context.args[0]), int(context.args[1])))
+
+    def floor(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `floor`. Takes one argument. Returns the greatest integer less
+        than or equal to the argument.
+
+        **Usage**
+        ```scrolls
+        print $(floor 4.6) # prints 4
+        print $(floor -4.6) # prints -5
+        ```
+        &#34;&#34;&#34;
+        return self.__unary(context, math.floor)
+
+    def ceil(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `ceil`. Takes one argument. Returns the lowest integer greater
+        than or equal to the argument.
+
+        **Usage**
+        ```scrolls
+        print $(ceil 4.6) # prints 5
+        print $(ceil -4.6) #prints -4
+        ```
+        &#34;&#34;&#34;
+        return self.__unary(context, math.ceil)
 
 
 @base_config.expansionhandler
@@ -1038,6 +1200,7 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
         self.add_call(&#34;vempty?&#34;, self.vempty)
         self.add_call(&#34;vhead&#34;, self.vhead)
         self.add_call(&#34;vtail&#34;, self.vtail)
+        self.add_call(&#34;vlen&#34;, self.vlen)
         self.add_call(&#34;rangev&#34;, self.rangev)
 
     def concat(self, context: interpreter.InterpreterContext) -&gt; str:
@@ -1144,6 +1307,19 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
         datatypes.require_arg_length(context, 1)
         return &#34;&#34;.join(context.args[0].split(maxsplit=1)[1:])
 
+    def vlen(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `vlen`. Returns the number of elements in a vector.
+
+        **Usage**
+        ```scrolls
+        set vec &#34;a b c d&#34;
+        print $(vlen $vec) # prints 4.
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        return str(len(context.args[0].split()))
+
     def rangev(self, context: interpreter.InterpreterContext) -&gt; str:
         &#34;&#34;&#34;
         Implements `rangev`. Returns a vector consisting of a range of numbers.
@@ -1161,7 +1337,84 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
         a = int(a)
         b = int(b)
 
-        return &#34; &#34;.join([str(x) for x in range(a, b)])</code></pre>
+        return &#34; &#34;.join([str(x) for x in range(a, b)])
+
+
+@unified_config.commandhandler
+class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;use-unified-commands&#34;, self.use_unified_commands)
+
+        self.enable_unified_commands = False
+        self.expansion_handler: t.Optional[interpreter.CallHandlerContainer[str]] = None
+
+    def use_unified_commands(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements the `use-unified-commands` command. When used, unified commands
+        will be enabled for the rest of the script, allowing all expansions
+        to be used as commands. The most common way this would be used is if
+        you have expansions with side-effects, and don&#39;t care about the return
+        value.
+
+        **Usage**
+        ```scrolls
+        use-unified-commands
+
+        set some-global-variable &#34;before&#34;
+
+        !def(test) {
+            set some-global-variable &#34;after&#34;
+            return &#34;blah&#34;
+        }
+
+        print $some-global-variable
+        test # test may be used as command here despite being defined as an expansion
+        print $some-global-variable
+        ```
+        &#34;&#34;&#34;
+        self.enable_unified_commands = True
+
+        # workaround: need to store reference to the context to access
+        # expansion handlers in __contains__ override. For now this is OK,
+        # since it&#39;s not expected that the context will change mid-script.
+
+        # FIXME: Construct this once in the context object.
+        # It&#39;s constructed on the fly on *every call*... not great, and doesn&#39;t
+        # let extensions access the whole thing.
+        self.expansion_handler = interpreter.ChoiceCallHandlerContainer(
+            context.runtime_expansions,
+            context.interpreter.expansion_handlers
+        )
+
+    # override
+    def __contains__(self, command_name: str) -&gt; bool:
+        super_contains = super().__contains__(command_name)
+
+        if super_contains:
+            return True
+        elif self.enable_unified_commands:
+            try:
+                self.expansion_handler.get_for_call(command_name)
+                return True
+            except KeyError:
+                return False
+        else:
+            return False
+
+    # override
+    def handle_call(self, context: interpreter.InterpreterContext) -&gt; None:
+        # If no unified commands, defer to super.
+        if not self.enable_unified_commands:
+            super().handle_call(context)
+            return
+
+        # For unified, proceed normally if superclass contains the call.
+        # Otherwise, call an expansion and discard the return value.
+        if super().__contains__(context.call_name):
+            super().handle_call(context)
+        else:
+            self.expansion_handler.get_for_call(context.call_name).handle_call(context)</code></pre>
 </details>
 </section>
 <section>
@@ -1195,6 +1448,13 @@ Consists of:</p>
 <li><code><a title="scrolls.builtins.FileExpansionHandler" href="#scrolls.builtins.FileExpansionHandler">FileExpansionHandler</a></code></li>
 <li><code><a title="scrolls.builtins.FileCommandHandler" href="#scrolls.builtins.FileCommandHandler">FileCommandHandler</a></code></li>
 </ul></div>
+</dd>
+<dt id="scrolls.builtins.unified_config"><code class="name">var <span class="ident">unified_config</span> : <a title="scrolls.containers.DecoratorInterpreterConfig" href="containers.html#scrolls.containers.DecoratorInterpreterConfig">DecoratorInterpreterConfig</a></code></dt>
+<dd>
+<div class="desc"><p>Adds <code>use-unified-commands</code>. After this command is called, all expansions may be called
+as commands. Their return value will be discarded. Note that if a command exists with
+the same name as an expansion, </p>
+<p>Consists of:</p></div>
 </dd>
 </dl>
 </section>
@@ -1234,6 +1494,11 @@ class ArithmeticExpansionHandler(interpreter.CallbackExpansionHandler):
         self.add_call(&#34;/&#34;, self.div)
         self.add_call(&#34;//&#34;, self.intdiv)
         self.add_call(&#34;%&#34;, self.mod)
+        self.add_call(&#34;**&#34;, self.power)
+        self.add_call(&#34;sqrt&#34;, self.sqrt)
+        self.add_call(&#34;round&#34;, self.round)
+        self.add_call(&#34;floor&#34;, self.floor)
+        self.add_call(&#34;ceil&#34;, self.ceil)
 
     @staticmethod
     def __unary(context: interpreter.InterpreterContext, op: datatypes.UnaryNumOpT) -&gt; str:
@@ -1345,7 +1610,84 @@ class ArithmeticExpansionHandler(interpreter.CallbackExpansionHandler):
         print $(% 5 2) # prints 1.
         ```
         &#34;&#34;&#34;
-        return self.__binary(context, operator.mod)</code></pre>
+        return self.__binary(context, operator.mod)
+
+    def power(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `**` (power). More than two arguments performs successive powers,
+        for example `$(** 2 3 4)` is equivalent to `(2^3)^4`.
+
+        **Usage**
+        ```scrolls
+        print $(** 2 3) # prints 8
+        print $(** 2 3 4) # prints 4096
+        print $(** 2.1 3) # prints
+        ```
+        &#34;&#34;&#34;
+        return self.__reduce(context, operator.pow)
+
+    def sqrt(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `sqrt` (square root). Takes one argument. Always returns a float,
+        so convert to int (see `ArithmeticExpansionHandler.toint`) if needed.
+
+        **Usage**
+        ```scrolls
+        print $(sqrt 16) # prints 4.0
+        ```
+        &#34;&#34;&#34;
+        return self.__unary(context, math.sqrt)
+
+    def round(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `round`. Takes one or two arguments.
+
+        If one argument, will round to the nearest whole number and
+        return an integer. Otherwise, rounds to the nearest decimal place
+        specified by the second argument and returns a float.
+
+        **Usage**
+        ```scrolls
+        print $(round 4.7281) # prints 5
+        print $(round 4.7281, 0) # prints 5.0
+        print $(round 4.7281, 2) # prints 4.73
+        # etc...
+        ```
+        &#34;&#34;&#34;
+        # Datatype stuff is done manually here because it&#39;s not quite like the
+        # normal arithmetic operations.
+        datatypes.require_arg_length(context, 1)
+
+        if len(context.args) == 1:
+            return str(round(float(context.args[0])))
+
+        return str(round(float(context.args[0]), int(context.args[1])))
+
+    def floor(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `floor`. Takes one argument. Returns the greatest integer less
+        than or equal to the argument.
+
+        **Usage**
+        ```scrolls
+        print $(floor 4.6) # prints 4
+        print $(floor -4.6) # prints -5
+        ```
+        &#34;&#34;&#34;
+        return self.__unary(context, math.floor)
+
+    def ceil(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `ceil`. Takes one argument. Returns the lowest integer greater
+        than or equal to the argument.
+
+        **Usage**
+        ```scrolls
+        print $(ceil 4.6) # prints 5
+        print $(ceil -4.6) #prints -4
+        ```
+        &#34;&#34;&#34;
+        return self.__unary(context, math.ceil)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -1380,6 +1722,34 @@ print $(+ 1 10 34)
     return self.__reduce(context, operator.add)</code></pre>
 </details>
 </dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.ceil"><code class="name flex">
+<span>def <span class="ident">ceil</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>ceil</code>. Takes one argument. Returns the lowest integer greater
+than or equal to the argument.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">print $(ceil 4.6) # prints 5
+print $(ceil -4.6) #prints -4
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ceil(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `ceil`. Takes one argument. Returns the lowest integer greater
+    than or equal to the argument.
+
+    **Usage**
+    ```scrolls
+    print $(ceil 4.6) # prints 5
+    print $(ceil -4.6) #prints -4
+    ```
+    &#34;&#34;&#34;
+    return self.__unary(context, math.ceil)</code></pre>
+</details>
+</dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.div"><code class="name flex">
 <span>def <span class="ident">div</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
@@ -1404,6 +1774,34 @@ print $(/ 20 2 5) # divides 20 by 2, then by 5. prints 2.0
     ```
     &#34;&#34;&#34;
     return self.__mass(context, reduce_op=operator.mul, final_op=operator.truediv)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.floor"><code class="name flex">
+<span>def <span class="ident">floor</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>floor</code>. Takes one argument. Returns the greatest integer less
+than or equal to the argument.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">print $(floor 4.6) # prints 4
+print $(floor -4.6) # prints -5
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def floor(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `floor`. Takes one argument. Returns the greatest integer less
+    than or equal to the argument.
+
+    **Usage**
+    ```scrolls
+    print $(floor 4.6) # prints 4
+    print $(floor -4.6) # prints -5
+    ```
+    &#34;&#34;&#34;
+    return self.__unary(context, math.floor)</code></pre>
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.intdiv"><code class="name flex">
@@ -1480,6 +1878,106 @@ print $(* 1 10 34)
     ```
     &#34;&#34;&#34;
     return self.__reduce(context, operator.mul)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.power"><code class="name flex">
+<span>def <span class="ident">power</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>**</code> (power). More than two arguments performs successive powers,
+for example <code>$(** 2 3 4)</code> is equivalent to <code>(2^3)^4</code>.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">print $(** 2 3) # prints 8
+print $(** 2 3 4) # prints 4096
+print $(** 2.1 3) # prints
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def power(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `**` (power). More than two arguments performs successive powers,
+    for example `$(** 2 3 4)` is equivalent to `(2^3)^4`.
+
+    **Usage**
+    ```scrolls
+    print $(** 2 3) # prints 8
+    print $(** 2 3 4) # prints 4096
+    print $(** 2.1 3) # prints
+    ```
+    &#34;&#34;&#34;
+    return self.__reduce(context, operator.pow)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.round"><code class="name flex">
+<span>def <span class="ident">round</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>round</code>. Takes one or two arguments.</p>
+<p>If one argument, will round to the nearest whole number and
+return an integer. Otherwise, rounds to the nearest decimal place
+specified by the second argument and returns a float.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">print $(round 4.7281) # prints 5
+print $(round 4.7281, 0) # prints 5.0
+print $(round 4.7281, 2) # prints 4.73
+# etc...
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def round(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `round`. Takes one or two arguments.
+
+    If one argument, will round to the nearest whole number and
+    return an integer. Otherwise, rounds to the nearest decimal place
+    specified by the second argument and returns a float.
+
+    **Usage**
+    ```scrolls
+    print $(round 4.7281) # prints 5
+    print $(round 4.7281, 0) # prints 5.0
+    print $(round 4.7281, 2) # prints 4.73
+    # etc...
+    ```
+    &#34;&#34;&#34;
+    # Datatype stuff is done manually here because it&#39;s not quite like the
+    # normal arithmetic operations.
+    datatypes.require_arg_length(context, 1)
+
+    if len(context.args) == 1:
+        return str(round(float(context.args[0])))
+
+    return str(round(float(context.args[0]), int(context.args[1])))</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.ArithmeticExpansionHandler.sqrt"><code class="name flex">
+<span>def <span class="ident">sqrt</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>sqrt</code> (square root). Takes one argument. Always returns a float,
+so convert to int (see <code><a title="scrolls.builtins.ArithmeticExpansionHandler.toint" href="#scrolls.builtins.ArithmeticExpansionHandler.toint">ArithmeticExpansionHandler.toint()</a></code>) if needed.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">print $(sqrt 16) # prints 4.0
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sqrt(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `sqrt` (square root). Takes one argument. Always returns a float,
+    so convert to int (see `ArithmeticExpansionHandler.toint`) if needed.
+
+    **Usage**
+    ```scrolls
+    print $(sqrt 16) # prints 4.0
+    ```
+    &#34;&#34;&#34;
+    return self.__unary(context, math.sqrt)</code></pre>
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.sub"><code class="name flex">
@@ -2003,6 +2501,8 @@ class BuiltinControlHandler(interpreter.CallbackControlHandler):
         self.add_call(&#34;repeat&#34;, self.repeat)
         self.add_call(&#34;for&#34;, self.for_)
         self.add_call(&#34;if&#34;, self.if_)
+        self.add_call(&#34;elif&#34;, self.elif_)
+        self.add_call(&#34;else&#34;, self.else_)
         self.add_call(&#34;while&#34;, self.while_)
         self.add_call(&#34;def&#34;, self.def_)
 
@@ -2137,10 +2637,32 @@ class BuiltinControlHandler(interpreter.CallbackControlHandler):
 
         context.del_var(var_name)
 
+    def __cond_base(self, context: interpreter.InterpreterContext, respect_else_signal: bool) -&gt; None:
+        # Base conditional control call implementation
+        if len(context.args) != 1:
+            raise interpreter.InterpreterError(
+                context,
+                f&#34;if: needs one and only one argument&#34;
+            )
+
+        if respect_else_signal and not context.parent_call_context.else_signal:
+            return
+
+        check_result = datatypes.str_to_bool(context.args[0])
+
+        if datatypes.str_to_bool(context.args[0]):
+            context.interpreter.interpret_statement(context, context.control_node)
+
+        # Signal to else-like control structures
+        context.parent_call_context.else_signal = not check_result
+
     def if_(self, context: interpreter.InterpreterContext) -&gt; None:
         &#34;&#34;&#34;
         Implements the `if` control structure. Takes one argument, a boolean. If it&#39;s `scrolls.datatypes.TRUE`,
-        executes the body statement. Otherwise, the body is skipped. `else` is not supported.
+        executes the body statement. Otherwise, the body is skipped.
+        [`elif`](#scrolls.builtins.BuiltinControlHandler.elif_) and
+        [`else`](#scrolls.builtins.BuiltinControlHandler.else_) may
+        be used to execute code if the condition is false.
 
         **Usage**
         ```scrolls
@@ -2152,14 +2674,57 @@ class BuiltinControlHandler(interpreter.CallbackControlHandler):
         }
         ```
         &#34;&#34;&#34;
-        if len(context.args) != 1:
+        self.__cond_base(context, respect_else_signal=False)
+
+    def elif_(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements the `elif` control structure. Takes one argument, a boolean.  If it&#39;s `scrolls.datatypes.TRUE`,
+        executes the body statement. Otherwise, the body is skipped and the next
+        [`elif`](#scrolls.builtins.BuiltinControlHandler.elif_) or
+        [`else`](#scrolls.builtins.BuiltinControlHandler.else_) is
+        tried. Must be used after [`if`](#scrolls.builtins.BuiltinControlHandler.if_).
+
+        **Usage**
+        ```scrolls
+        !if($false) {
+            print &#34;if: this will not print&#34;
+        } !elif($true) {
+            print &#34;elif: this will print&#34;
+        } !else {
+            print &#34;else: this will not print&#34;
+        }
+        ```
+        &#34;&#34;&#34;
+        self.__cond_base(context, respect_else_signal=True)
+
+    def else_(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements the `else` control structure. Takes no arguments. Must be
+        paired with a conditional to execute the body. See
+        [`if`](#scrolls.builtins.BuiltinControlHandler.if_) and
+        [`elif`](#scrolls.builtins.BuiltinControlHandler.elif_).
+
+        **Usage**
+        ```scrolls
+        !if($false) {
+            print &#34;this will not print&#34;
+        } !else {
+            print &#34;this will print&#34;
+        }
+        ```
+        &#34;&#34;&#34;
+        if len(context.args) != 0:
             raise interpreter.InterpreterError(
                 context,
-                f&#34;if: needs one and only one argument&#34;
+                f&#34;else: does not take arguments&#34;
             )
 
-        if datatypes.str_to_bool(context.args[0]):
+        if context.parent_call_context.else_signal:
             context.interpreter.interpret_statement(context, context.control_node)
+
+            # Once the else signal has been interpreted, &#34;consume&#34; it so it can&#39;t be
+            # used again.
+            context.parent_call_context.else_signal = False
 
     def while_(self, context: interpreter.InterpreterContext) -&gt; None:
         &#34;&#34;&#34;
@@ -2296,6 +2861,100 @@ varargs_example 10 foo bar baz
         ).define(args[0], context.control_node, args[1:])</code></pre>
 </details>
 </dd>
+<dt id="scrolls.builtins.BuiltinControlHandler.elif_"><code class="name flex">
+<span>def <span class="ident">elif_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements the <code>elif</code> control structure. Takes one argument, a boolean.
+If it's <code><a title="scrolls.datatypes.TRUE" href="datatypes.html#scrolls.datatypes.TRUE">TRUE</a></code>,
+executes the body statement. Otherwise, the body is skipped and the next
+<a href="#scrolls.builtins.BuiltinControlHandler.elif_"><code>elif</code></a> or
+<a href="#scrolls.builtins.BuiltinControlHandler.else_"><code>else</code></a> is
+tried. Must be used after <a href="#scrolls.builtins.BuiltinControlHandler.if_"><code>if</code></a>.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">!if($false) {
+    print &quot;if: this will not print&quot;
+} !elif($true) {
+    print &quot;elif: this will print&quot;
+} !else {
+    print &quot;else: this will not print&quot;
+}
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def elif_(self, context: interpreter.InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;
+    Implements the `elif` control structure. Takes one argument, a boolean.  If it&#39;s `scrolls.datatypes.TRUE`,
+    executes the body statement. Otherwise, the body is skipped and the next
+    [`elif`](#scrolls.builtins.BuiltinControlHandler.elif_) or
+    [`else`](#scrolls.builtins.BuiltinControlHandler.else_) is
+    tried. Must be used after [`if`](#scrolls.builtins.BuiltinControlHandler.if_).
+
+    **Usage**
+    ```scrolls
+    !if($false) {
+        print &#34;if: this will not print&#34;
+    } !elif($true) {
+        print &#34;elif: this will print&#34;
+    } !else {
+        print &#34;else: this will not print&#34;
+    }
+    ```
+    &#34;&#34;&#34;
+    self.__cond_base(context, respect_else_signal=True)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.BuiltinControlHandler.else_"><code class="name flex">
+<span>def <span class="ident">else_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements the <code>else</code> control structure. Takes no arguments. Must be
+paired with a conditional to execute the body. See
+<a href="#scrolls.builtins.BuiltinControlHandler.if_"><code>if</code></a> and
+<a href="#scrolls.builtins.BuiltinControlHandler.elif_"><code>elif</code></a>.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">!if($false) {
+    print &quot;this will not print&quot;
+} !else {
+    print &quot;this will print&quot;
+}
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def else_(self, context: interpreter.InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;
+    Implements the `else` control structure. Takes no arguments. Must be
+    paired with a conditional to execute the body. See
+    [`if`](#scrolls.builtins.BuiltinControlHandler.if_) and
+    [`elif`](#scrolls.builtins.BuiltinControlHandler.elif_).
+
+    **Usage**
+    ```scrolls
+    !if($false) {
+        print &#34;this will not print&#34;
+    } !else {
+        print &#34;this will print&#34;
+    }
+    ```
+    &#34;&#34;&#34;
+    if len(context.args) != 0:
+        raise interpreter.InterpreterError(
+            context,
+            f&#34;else: does not take arguments&#34;
+        )
+
+    if context.parent_call_context.else_signal:
+        context.interpreter.interpret_statement(context, context.control_node)
+
+        # Once the else signal has been interpreted, &#34;consume&#34; it so it can&#39;t be
+        # used again.
+        context.parent_call_context.else_signal = False</code></pre>
+</details>
+</dd>
 <dt id="scrolls.builtins.BuiltinControlHandler.for_"><code class="name flex">
 <span>def <span class="ident">for_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
@@ -2361,7 +3020,10 @@ varargs_example 10 foo bar baz
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>if</code> control structure. Takes one argument, a boolean. If it's <code><a title="scrolls.datatypes.TRUE" href="datatypes.html#scrolls.datatypes.TRUE">TRUE</a></code>,
-executes the body statement. Otherwise, the body is skipped. <code>else</code> is not supported.</p>
+executes the body statement. Otherwise, the body is skipped.
+<a href="#scrolls.builtins.BuiltinControlHandler.elif_"><code>elif</code></a> and
+<a href="#scrolls.builtins.BuiltinControlHandler.else_"><code>else</code></a> may
+be used to execute code if the condition is false.</p>
 <p><strong>Usage</strong></p>
 <pre><code class="language-scrolls">!if($true) {
     print &quot;this will print&quot;
@@ -2377,7 +3039,10 @@ executes the body statement. Otherwise, the body is skipped. <code>else</code> i
 <pre><code class="python">def if_(self, context: interpreter.InterpreterContext) -&gt; None:
     &#34;&#34;&#34;
     Implements the `if` control structure. Takes one argument, a boolean. If it&#39;s `scrolls.datatypes.TRUE`,
-    executes the body statement. Otherwise, the body is skipped. `else` is not supported.
+    executes the body statement. Otherwise, the body is skipped.
+    [`elif`](#scrolls.builtins.BuiltinControlHandler.elif_) and
+    [`else`](#scrolls.builtins.BuiltinControlHandler.else_) may
+    be used to execute code if the condition is false.
 
     **Usage**
     ```scrolls
@@ -2389,14 +3054,7 @@ executes the body statement. Otherwise, the body is skipped. <code>else</code> i
     }
     ```
     &#34;&#34;&#34;
-    if len(context.args) != 1:
-        raise interpreter.InterpreterError(
-            context,
-            f&#34;if: needs one and only one argument&#34;
-        )
-
-    if datatypes.str_to_bool(context.args[0]):
-        context.interpreter.interpret_statement(context, context.control_node)</code></pre>
+    self.__cond_base(context, respect_else_signal=False)</code></pre>
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinControlHandler.repeat"><code class="name flex">
@@ -3794,6 +4452,7 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
         self.add_call(&#34;vempty?&#34;, self.vempty)
         self.add_call(&#34;vhead&#34;, self.vhead)
         self.add_call(&#34;vtail&#34;, self.vtail)
+        self.add_call(&#34;vlen&#34;, self.vlen)
         self.add_call(&#34;rangev&#34;, self.rangev)
 
     def concat(self, context: interpreter.InterpreterContext) -&gt; str:
@@ -3899,6 +4558,19 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
         &#34;&#34;&#34;
         datatypes.require_arg_length(context, 1)
         return &#34;&#34;.join(context.args[0].split(maxsplit=1)[1:])
+
+    def vlen(self, context: interpreter.InterpreterContext) -&gt; str:
+        &#34;&#34;&#34;
+        Implements `vlen`. Returns the number of elements in a vector.
+
+        **Usage**
+        ```scrolls
+        set vec &#34;a b c d&#34;
+        print $(vlen $vec) # prints 4.
+        ```
+        &#34;&#34;&#34;
+        datatypes.require_arg_length(context, 1)
+        return str(len(context.args[0].split()))
 
     def rangev(self, context: interpreter.InterpreterContext) -&gt; str:
         &#34;&#34;&#34;
@@ -4147,6 +4819,33 @@ print $(vhead $vec) # prints 2.
     return context.args[0].split(maxsplit=1)[0]</code></pre>
 </details>
 </dd>
+<dt id="scrolls.builtins.StringExpansionHandler.vlen"><code class="name flex">
+<span>def <span class="ident">vlen</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>vlen</code>. Returns the number of elements in a vector.</p>
+<p><strong>Usage</strong></p>
+<pre><code class="language-scrolls">set vec &quot;a b c d&quot;
+print $(vlen $vec) # prints 4.
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vlen(self, context: interpreter.InterpreterContext) -&gt; str:
+    &#34;&#34;&#34;
+    Implements `vlen`. Returns the number of elements in a vector.
+
+    **Usage**
+    ```scrolls
+    set vec &#34;a b c d&#34;
+    print $(vlen $vec) # prints 4.
+    ```
+    &#34;&#34;&#34;
+    datatypes.require_arg_length(context, 1)
+    return str(len(context.args[0].split()))</code></pre>
+</details>
+</dd>
 <dt id="scrolls.builtins.StringExpansionHandler.vtail"><code class="name flex">
 <span>def <span class="ident">vtail</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
@@ -4207,6 +4906,7 @@ print $(vtail $vec) # prints 4 8 16.
 <ul class="">
 <li><code><a title="scrolls.builtins.base_config" href="#scrolls.builtins.base_config">base_config</a></code></li>
 <li><code><a title="scrolls.builtins.file_config" href="#scrolls.builtins.file_config">file_config</a></code></li>
+<li><code><a title="scrolls.builtins.unified_config" href="#scrolls.builtins.unified_config">unified_config</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
@@ -4215,10 +4915,15 @@ print $(vtail $vec) # prints 4 8 16.
 <h4><code><a title="scrolls.builtins.ArithmeticExpansionHandler" href="#scrolls.builtins.ArithmeticExpansionHandler">ArithmeticExpansionHandler</a></code></h4>
 <ul class="two-column">
 <li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.add" href="#scrolls.builtins.ArithmeticExpansionHandler.add">add</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.ceil" href="#scrolls.builtins.ArithmeticExpansionHandler.ceil">ceil</a></code></li>
 <li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.div" href="#scrolls.builtins.ArithmeticExpansionHandler.div">div</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.floor" href="#scrolls.builtins.ArithmeticExpansionHandler.floor">floor</a></code></li>
 <li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.intdiv" href="#scrolls.builtins.ArithmeticExpansionHandler.intdiv">intdiv</a></code></li>
 <li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.mod" href="#scrolls.builtins.ArithmeticExpansionHandler.mod">mod</a></code></li>
 <li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.mul" href="#scrolls.builtins.ArithmeticExpansionHandler.mul">mul</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.power" href="#scrolls.builtins.ArithmeticExpansionHandler.power">power</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.round" href="#scrolls.builtins.ArithmeticExpansionHandler.round">round</a></code></li>
+<li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.sqrt" href="#scrolls.builtins.ArithmeticExpansionHandler.sqrt">sqrt</a></code></li>
 <li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.sub" href="#scrolls.builtins.ArithmeticExpansionHandler.sub">sub</a></code></li>
 <li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.tofloat" href="#scrolls.builtins.ArithmeticExpansionHandler.tofloat">tofloat</a></code></li>
 <li><code><a title="scrolls.builtins.ArithmeticExpansionHandler.toint" href="#scrolls.builtins.ArithmeticExpansionHandler.toint">toint</a></code></li>
@@ -4237,8 +4942,10 @@ print $(vtail $vec) # prints 4 8 16.
 </li>
 <li>
 <h4><code><a title="scrolls.builtins.BuiltinControlHandler" href="#scrolls.builtins.BuiltinControlHandler">BuiltinControlHandler</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="scrolls.builtins.BuiltinControlHandler.def_" href="#scrolls.builtins.BuiltinControlHandler.def_">def_</a></code></li>
+<li><code><a title="scrolls.builtins.BuiltinControlHandler.elif_" href="#scrolls.builtins.BuiltinControlHandler.elif_">elif_</a></code></li>
+<li><code><a title="scrolls.builtins.BuiltinControlHandler.else_" href="#scrolls.builtins.BuiltinControlHandler.else_">else_</a></code></li>
 <li><code><a title="scrolls.builtins.BuiltinControlHandler.for_" href="#scrolls.builtins.BuiltinControlHandler.for_">for_</a></code></li>
 <li><code><a title="scrolls.builtins.BuiltinControlHandler.if_" href="#scrolls.builtins.BuiltinControlHandler.if_">if_</a></code></li>
 <li><code><a title="scrolls.builtins.BuiltinControlHandler.repeat" href="#scrolls.builtins.BuiltinControlHandler.repeat">repeat</a></code></li>
@@ -4309,6 +5016,7 @@ print $(vtail $vec) # prints 4 8 16.
 <li><code><a title="scrolls.builtins.StringExpansionHandler.rangev" href="#scrolls.builtins.StringExpansionHandler.rangev">rangev</a></code></li>
 <li><code><a title="scrolls.builtins.StringExpansionHandler.vempty" href="#scrolls.builtins.StringExpansionHandler.vempty">vempty</a></code></li>
 <li><code><a title="scrolls.builtins.StringExpansionHandler.vhead" href="#scrolls.builtins.StringExpansionHandler.vhead">vhead</a></code></li>
+<li><code><a title="scrolls.builtins.StringExpansionHandler.vlen" href="#scrolls.builtins.StringExpansionHandler.vlen">vlen</a></code></li>
 <li><code><a title="scrolls.builtins.StringExpansionHandler.vtail" href="#scrolls.builtins.StringExpansionHandler.vtail">vtail</a></code></li>
 </ul>
 </li>

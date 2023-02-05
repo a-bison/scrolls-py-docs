@@ -297,6 +297,12 @@ class CallContext:
     runtime_call: bool = False
     &#34;&#34;&#34;A runtime call is a call defined while the interpreter is running, such as through `!def`.&#34;&#34;&#34;
 
+    else_signal: bool = False
+    &#34;&#34;&#34;
+    Read by the `!else` builtin. If True, the !else control call executes
+    its body. If False, !else calls are skipped. Should not be set manually,
+    use the 
+    &#34;&#34;&#34;
 
 class VarScope:
     &#34;&#34;&#34;
@@ -655,6 +661,20 @@ class InterpreterContext:
         return t.cast(CallContext, self._call_context)
 
     @property
+    def parent_call_context(self) -&gt; CallContext:
+        &#34;&#34;&#34;
+        Get the context of the call that called the current one. Can be used to
+        influence signals in the parent context.
+        &#34;&#34;&#34;
+        self._call_check()
+        if not self.call_stack:
+            raise InternalInterpreterError(
+                self, f&#34;Cannot get parent of base call \&#34;{self.call_context.call_name}\&#34;&#34;
+            )
+
+        return self.call_stack[-1]
+
+    @property
     def call_name(self) -&gt; str:
         &#34;&#34;&#34;
         The name of the current call.
@@ -693,6 +713,23 @@ class InterpreterContext:
 
         return self.call_context.control_node
 
+    def set_base_call(
+        self
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the current call context to the base call context for top level code.
+
+        .. WARNING::
+            Provided for advanced usage, this is usually done automatically. Typical users will never need to call this.
+        &#34;&#34;&#34;
+        logger.debug(&#34;set_base_call&#34;)
+        self._call_context = CallContext(
+            &#34;__main__&#34;,
+            [],
+            ArgSourceMap(),
+            None
+        )
+
     def set_call(
         self,
         command: str,
@@ -713,21 +750,6 @@ class InterpreterContext:
             arg_nodes,
             control_node
         )
-
-    def in_call(self) -&gt; bool:
-        &#34;&#34;&#34;
-        Checks if the current context is in a call or not.
-        &#34;&#34;&#34;
-        return self._call_context is not None
-
-    def reset_call(self) -&gt; None:
-        &#34;&#34;&#34;
-        Destroys the current call context.
-
-        .. WARNING::
-            Provided for advanced usage, this is usually done automatically. Typical users will never need to call this.
-        &#34;&#34;&#34;
-        self._call_context = None
 
     def push_call(self) -&gt; None:
         &#34;&#34;&#34;
@@ -1296,6 +1318,7 @@ class Interpreter:
         Initialize a context for this interpreter.
         &#34;&#34;&#34;
         context.interpreter = self
+        context.set_base_call()
         self.apply_initializers(context)
 
     def run_statement(
@@ -1415,8 +1438,7 @@ class Interpreter:
         if context is None:
             context = self.context_cls(tree.root)
 
-        context.interpreter = self
-        self.apply_initializers(context)
+        self.init_context(context)
 
         try:
             self.interpret_root(context, tree.root)
@@ -1499,13 +1521,12 @@ class Interpreter:
         else:
             control_node = None
 
-        if context.in_call():
-            context.push_call()
-            if self.over_call_depth_limit(context):
-                raise InterpreterError(
-                    context,
-                    f&#34;Maximum call stack depth ({self.call_depth_limit}) exceeded.&#34;
-                )
+        context.push_call()
+        if self.over_call_depth_limit(context):
+            raise InterpreterError(
+                context,
+                f&#34;Maximum call stack depth ({self.call_depth_limit}) exceeded.&#34;
+            )
 
         context.set_call(call_name, call_args, arg_node_map, control_node=control_node)
 
@@ -1519,17 +1540,11 @@ class Interpreter:
             result: T_co = handler.handle_call(context)
         except InterpreterReturn:
             # Ensure call stack is properly changed even on returns
-            if context.call_stack:
-                context.pop_call()
-            else:
-                context.reset_call()
+            context.pop_call()
 
             raise
 
-        if context.call_stack:
-            context.pop_call()
-        else:
-            context.reset_call()
+        context.pop_call()
 
         return result
 
@@ -1990,7 +2005,7 @@ arg_2_src = source_map[2]
 </dd>
 <dt id="scrolls.interpreter.CallContext"><code class="flex name class">
 <span>class <span class="ident">CallContext</span></span>
-<span>(</span><span>call_name: str, args: Sequence[str], arg_nodes: <a title="scrolls.interpreter.ArgSourceMap" href="#scrolls.interpreter.ArgSourceMap">ArgSourceMap</a>, control_node: Optional[<a title="scrolls.ast.ASTNode" href="ast.html#scrolls.ast.ASTNode">ASTNode</a>] = None, return_value: Optional[Any] = None, runtime_call: bool = False)</span>
+<span>(</span><span>call_name: str, args: Sequence[str], arg_nodes: <a title="scrolls.interpreter.ArgSourceMap" href="#scrolls.interpreter.ArgSourceMap">ArgSourceMap</a>, control_node: Optional[<a title="scrolls.ast.ASTNode" href="ast.html#scrolls.ast.ASTNode">ASTNode</a>] = None, return_value: Optional[Any] = None, runtime_call: bool = False, else_signal: bool = False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>The context of a call. Contains all information necessary to run a call. Under normal circumstances,
@@ -2041,7 +2056,14 @@ class CallContext:
     &#34;&#34;&#34;The return value set by a runtime call.&#34;&#34;&#34;
 
     runtime_call: bool = False
-    &#34;&#34;&#34;A runtime call is a call defined while the interpreter is running, such as through `!def`.&#34;&#34;&#34;</code></pre>
+    &#34;&#34;&#34;A runtime call is a call defined while the interpreter is running, such as through `!def`.&#34;&#34;&#34;
+
+    else_signal: bool = False
+    &#34;&#34;&#34;
+    Read by the `!else` builtin. If True, the !else control call executes
+    its body. If False, !else calls are skipped. Should not be set manually,
+    use the 
+    &#34;&#34;&#34;</code></pre>
 </details>
 <h3>Class variables</h3>
 <dl>
@@ -2060,6 +2082,12 @@ class CallContext:
 <dt id="scrolls.interpreter.CallContext.control_node"><code class="name">var <span class="ident">control_node</span> : Optional[<a title="scrolls.ast.ASTNode" href="ast.html#scrolls.ast.ASTNode">ASTNode</a>]</code></dt>
 <dd>
 <div class="desc"><p>If this call is a control call, this will contain the call's <code><a title="scrolls.ast.ASTNode" href="ast.html#scrolls.ast.ASTNode">ASTNode</a></code> parameter.</p></div>
+</dd>
+<dt id="scrolls.interpreter.CallContext.else_signal"><code class="name">var <span class="ident">else_signal</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Read by the <code>!else</code> builtin. If True, the !else control call executes
+its body. If False, !else calls are skipped. Should not be set manually,
+use the</p></div>
 </dd>
 <dt id="scrolls.interpreter.CallContext.return_value"><code class="name">var <span class="ident">return_value</span> : Optional[Any]</code></dt>
 <dd>
@@ -2252,6 +2280,7 @@ implement a call handler.</p></div>
 <li><a title="scrolls.builtins.RandomExpansionHandler" href="builtins.html#scrolls.builtins.RandomExpansionHandler">RandomExpansionHandler</a></li>
 <li><a title="scrolls.builtins.StdIoCommandHandler" href="builtins.html#scrolls.builtins.StdIoCommandHandler">StdIoCommandHandler</a></li>
 <li><a title="scrolls.builtins.StringExpansionHandler" href="builtins.html#scrolls.builtins.StringExpansionHandler">StringExpansionHandler</a></li>
+<li>scrolls.builtins.UnifiedCommandSettingHandler</li>
 <li><a title="scrolls.ext.callbase.CallBaseCallHandler" href="ext/callbase.html#scrolls.ext.callbase.CallBaseCallHandler">CallBaseCallHandler</a></li>
 </ul>
 <h3>Methods</h3>
@@ -2656,6 +2685,7 @@ denial of service through infinite recursion. If zero, then call depth is unlimi
         Initialize a context for this interpreter.
         &#34;&#34;&#34;
         context.interpreter = self
+        context.set_base_call()
         self.apply_initializers(context)
 
     def run_statement(
@@ -2775,8 +2805,7 @@ denial of service through infinite recursion. If zero, then call depth is unlimi
         if context is None:
             context = self.context_cls(tree.root)
 
-        context.interpreter = self
-        self.apply_initializers(context)
+        self.init_context(context)
 
         try:
             self.interpret_root(context, tree.root)
@@ -2859,13 +2888,12 @@ denial of service through infinite recursion. If zero, then call depth is unlimi
         else:
             control_node = None
 
-        if context.in_call():
-            context.push_call()
-            if self.over_call_depth_limit(context):
-                raise InterpreterError(
-                    context,
-                    f&#34;Maximum call stack depth ({self.call_depth_limit}) exceeded.&#34;
-                )
+        context.push_call()
+        if self.over_call_depth_limit(context):
+            raise InterpreterError(
+                context,
+                f&#34;Maximum call stack depth ({self.call_depth_limit}) exceeded.&#34;
+            )
 
         context.set_call(call_name, call_args, arg_node_map, control_node=control_node)
 
@@ -2879,17 +2907,11 @@ denial of service through infinite recursion. If zero, then call depth is unlimi
             result: T_co = handler.handle_call(context)
         except InterpreterReturn:
             # Ensure call stack is properly changed even on returns
-            if context.call_stack:
-                context.pop_call()
-            else:
-                context.reset_call()
+            context.pop_call()
 
             raise
 
-        if context.call_stack:
-            context.pop_call()
-        else:
-            context.reset_call()
+        context.pop_call()
 
         return result
 
@@ -3156,6 +3178,7 @@ def initializers(self) -&gt; BaseCallHandlerContainer[None]:
     Initialize a context for this interpreter.
     &#34;&#34;&#34;
     context.interpreter = self
+    context.set_base_call()
     self.apply_initializers(context)</code></pre>
 </details>
 </dd>
@@ -3199,8 +3222,7 @@ it will be the automatically created <code><a title="scrolls.interpreter.Interpr
     if context is None:
         context = self.context_cls(tree.root)
 
-    context.interpreter = self
-    self.apply_initializers(context)
+    self.init_context(context)
 
     try:
         self.interpret_root(context, tree.root)
@@ -3324,13 +3346,12 @@ this only applies to control calls. See <code><a title="scrolls.interpreter.Inte
     else:
         control_node = None
 
-    if context.in_call():
-        context.push_call()
-        if self.over_call_depth_limit(context):
-            raise InterpreterError(
-                context,
-                f&#34;Maximum call stack depth ({self.call_depth_limit}) exceeded.&#34;
-            )
+    context.push_call()
+    if self.over_call_depth_limit(context):
+        raise InterpreterError(
+            context,
+            f&#34;Maximum call stack depth ({self.call_depth_limit}) exceeded.&#34;
+        )
 
     context.set_call(call_name, call_args, arg_node_map, control_node=control_node)
 
@@ -3344,17 +3365,11 @@ this only applies to control calls. See <code><a title="scrolls.interpreter.Inte
         result: T_co = handler.handle_call(context)
     except InterpreterReturn:
         # Ensure call stack is properly changed even on returns
-        if context.call_stack:
-            context.pop_call()
-        else:
-            context.reset_call()
+        context.pop_call()
 
         raise
 
-    if context.call_stack:
-        context.pop_call()
-    else:
-        context.reset_call()
+    context.pop_call()
 
     return result</code></pre>
 </details>
@@ -3993,6 +4008,20 @@ This is also the main interface plugin writers will use to interact with the int
         return t.cast(CallContext, self._call_context)
 
     @property
+    def parent_call_context(self) -&gt; CallContext:
+        &#34;&#34;&#34;
+        Get the context of the call that called the current one. Can be used to
+        influence signals in the parent context.
+        &#34;&#34;&#34;
+        self._call_check()
+        if not self.call_stack:
+            raise InternalInterpreterError(
+                self, f&#34;Cannot get parent of base call \&#34;{self.call_context.call_name}\&#34;&#34;
+            )
+
+        return self.call_stack[-1]
+
+    @property
     def call_name(self) -&gt; str:
         &#34;&#34;&#34;
         The name of the current call.
@@ -4031,6 +4060,23 @@ This is also the main interface plugin writers will use to interact with the int
 
         return self.call_context.control_node
 
+    def set_base_call(
+        self
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the current call context to the base call context for top level code.
+
+        .. WARNING::
+            Provided for advanced usage, this is usually done automatically. Typical users will never need to call this.
+        &#34;&#34;&#34;
+        logger.debug(&#34;set_base_call&#34;)
+        self._call_context = CallContext(
+            &#34;__main__&#34;,
+            [],
+            ArgSourceMap(),
+            None
+        )
+
     def set_call(
         self,
         command: str,
@@ -4051,21 +4097,6 @@ This is also the main interface plugin writers will use to interact with the int
             arg_nodes,
             control_node
         )
-
-    def in_call(self) -&gt; bool:
-        &#34;&#34;&#34;
-        Checks if the current context is in a call or not.
-        &#34;&#34;&#34;
-        return self._call_context is not None
-
-    def reset_call(self) -&gt; None:
-        &#34;&#34;&#34;
-        Destroys the current call context.
-
-        .. WARNING::
-            Provided for advanced usage, this is usually done automatically. Typical users will never need to call this.
-        &#34;&#34;&#34;
-        self._call_context = None
 
     def push_call(self) -&gt; None:
         &#34;&#34;&#34;
@@ -4301,6 +4332,29 @@ def interpreter(self) -&gt; &#39;Interpreter&#39;:
     return self._interpreter</code></pre>
 </details>
 </dd>
+<dt id="scrolls.interpreter.InterpreterContext.parent_call_context"><code class="name">var <span class="ident">parent_call_context</span> : <a title="scrolls.interpreter.CallContext" href="#scrolls.interpreter.CallContext">CallContext</a></code></dt>
+<dd>
+<div class="desc"><p>Get the context of the call that called the current one. Can be used to
+influence signals in the parent context.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def parent_call_context(self) -&gt; CallContext:
+    &#34;&#34;&#34;
+    Get the context of the call that called the current one. Can be used to
+    influence signals in the parent context.
+    &#34;&#34;&#34;
+    self._call_check()
+    if not self.call_stack:
+        raise InternalInterpreterError(
+            self, f&#34;Cannot get parent of base call \&#34;{self.call_context.call_name}\&#34;&#34;
+        )
+
+    return self.call_stack[-1]</code></pre>
+</details>
+</dd>
 <dt id="scrolls.interpreter.InterpreterContext.runtime_commands"><code class="name">var <span class="ident">runtime_commands</span> : <a title="scrolls.interpreter.BaseCallHandlerContainer" href="#scrolls.interpreter.BaseCallHandlerContainer">BaseCallHandlerContainer</a>[None]</code></dt>
 <dd>
 <div class="desc"><p>The call handler container for runtime command handlers. Runtime commands are defined while the interpreter
@@ -4446,22 +4500,6 @@ def vars(self) -&gt; ScopedVarStore:
     return self.vars.get_var(name)</code></pre>
 </details>
 </dd>
-<dt id="scrolls.interpreter.InterpreterContext.in_call"><code class="name flex">
-<span>def <span class="ident">in_call</span></span>(<span>self) ‑> bool</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Checks if the current context is in a call or not.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def in_call(self) -&gt; bool:
-    &#34;&#34;&#34;
-    Checks if the current context is in a call or not.
-    &#34;&#34;&#34;
-    return self._call_context is not None</code></pre>
-</details>
-</dd>
 <dt id="scrolls.interpreter.InterpreterContext.open_file"><code class="name flex">
 <span>def <span class="ident">open_file</span></span>(<span>self, path: str, mode: str) ‑> int</span>
 </code></dt>
@@ -4573,11 +4611,11 @@ for <code><a title="scrolls.interpreter.InterpreterContext" href="#scrolls.inter
     self._call_stack.append(self.call_context)</code></pre>
 </details>
 </dd>
-<dt id="scrolls.interpreter.InterpreterContext.reset_call"><code class="name flex">
-<span>def <span class="ident">reset_call</span></span>(<span>self) ‑> None</span>
+<dt id="scrolls.interpreter.InterpreterContext.set_base_call"><code class="name flex">
+<span>def <span class="ident">set_base_call</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Destroys the current call context.</p>
+<div class="desc"><p>Sets the current call context to the base call context for top level code.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Provided for advanced usage, this is usually done automatically. Typical users will never need to call this.</p>
@@ -4586,14 +4624,22 @@ for <code><a title="scrolls.interpreter.InterpreterContext" href="#scrolls.inter
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def reset_call(self) -&gt; None:
+<pre><code class="python">def set_base_call(
+    self
+) -&gt; None:
     &#34;&#34;&#34;
-    Destroys the current call context.
+    Sets the current call context to the base call context for top level code.
 
     .. WARNING::
         Provided for advanced usage, this is usually done automatically. Typical users will never need to call this.
     &#34;&#34;&#34;
-    self._call_context = None</code></pre>
+    logger.debug(&#34;set_base_call&#34;)
+    self._call_context = CallContext(
+        &#34;__main__&#34;,
+        [],
+        ArgSourceMap(),
+        None
+    )</code></pre>
 </details>
 </dd>
 <dt id="scrolls.interpreter.InterpreterContext.set_call"><code class="name flex">
@@ -5689,6 +5735,7 @@ after searching up the stack.</p>
 <li><code><a title="scrolls.interpreter.CallContext.args" href="#scrolls.interpreter.CallContext.args">args</a></code></li>
 <li><code><a title="scrolls.interpreter.CallContext.call_name" href="#scrolls.interpreter.CallContext.call_name">call_name</a></code></li>
 <li><code><a title="scrolls.interpreter.CallContext.control_node" href="#scrolls.interpreter.CallContext.control_node">control_node</a></code></li>
+<li><code><a title="scrolls.interpreter.CallContext.else_signal" href="#scrolls.interpreter.CallContext.else_signal">else_signal</a></code></li>
 <li><code><a title="scrolls.interpreter.CallContext.return_value" href="#scrolls.interpreter.CallContext.return_value">return_value</a></code></li>
 <li><code><a title="scrolls.interpreter.CallContext.runtime_call" href="#scrolls.interpreter.CallContext.runtime_call">runtime_call</a></code></li>
 </ul>
@@ -5776,14 +5823,14 @@ after searching up the stack.</p>
 <li><code><a title="scrolls.interpreter.InterpreterContext.del_var" href="#scrolls.interpreter.InterpreterContext.del_var">del_var</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.get_file" href="#scrolls.interpreter.InterpreterContext.get_file">get_file</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.get_var" href="#scrolls.interpreter.InterpreterContext.get_var">get_var</a></code></li>
-<li><code><a title="scrolls.interpreter.InterpreterContext.in_call" href="#scrolls.interpreter.InterpreterContext.in_call">in_call</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.interpreter" href="#scrolls.interpreter.InterpreterContext.interpreter">interpreter</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.open_file" href="#scrolls.interpreter.InterpreterContext.open_file">open_file</a></code></li>
+<li><code><a title="scrolls.interpreter.InterpreterContext.parent_call_context" href="#scrolls.interpreter.InterpreterContext.parent_call_context">parent_call_context</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.pop_call" href="#scrolls.interpreter.InterpreterContext.pop_call">pop_call</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.push_call" href="#scrolls.interpreter.InterpreterContext.push_call">push_call</a></code></li>
-<li><code><a title="scrolls.interpreter.InterpreterContext.reset_call" href="#scrolls.interpreter.InterpreterContext.reset_call">reset_call</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.runtime_commands" href="#scrolls.interpreter.InterpreterContext.runtime_commands">runtime_commands</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.runtime_expansions" href="#scrolls.interpreter.InterpreterContext.runtime_expansions">runtime_expansions</a></code></li>
+<li><code><a title="scrolls.interpreter.InterpreterContext.set_base_call" href="#scrolls.interpreter.InterpreterContext.set_base_call">set_base_call</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.set_call" href="#scrolls.interpreter.InterpreterContext.set_call">set_call</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.set_retval" href="#scrolls.interpreter.InterpreterContext.set_retval">set_retval</a></code></li>
 <li><code><a title="scrolls.interpreter.InterpreterContext.set_var" href="#scrolls.interpreter.InterpreterContext.set_var">set_var</a></code></li>
