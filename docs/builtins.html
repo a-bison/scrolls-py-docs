@@ -36,6 +36,7 @@ Built in Scrolls language features.
 
 .. include:: pdoc/builtins.md
 &#34;&#34;&#34;
+import code
 import math
 import operator
 import random
@@ -56,6 +57,7 @@ __all__ = (
     &#34;FileCommandHandler&#34;,
     &#34;FileExpansionHandler&#34;,
     &#34;UnifiedCommandSettingHandler&#34;,
+    &#34;DebugCommandHandler&#34;,
     &#34;base_config&#34;,
     &#34;file_config&#34;,
     &#34;unified_config&#34;
@@ -1343,12 +1345,20 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
 
 @unified_config.commandhandler
 class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
+    &#34;&#34;&#34;
+    Implements settings related to unified commands. See
+    `UnifiedCommandSettingHandler.use_unified_commands`.
+    &#34;&#34;&#34;
+
     def __init__(self) -&gt; None:
         super().__init__()
         self.add_call(&#34;use-unified-commands&#34;, self.use_unified_commands)
+        self.add_call(&#34;use-print-on-unified&#34;, self.use_print_on_unified)
 
         self.enable_unified_commands = False
-        self.expansion_handler: t.Optional[interpreter.CallHandlerContainer[str]] = None
+        self.print_unified = False
+
+        self.stored_context: t.Optional[interpreter.InterpreterContext] = None
 
     def use_unified_commands(self, context: interpreter.InterpreterContext) -&gt; None:
         &#34;&#34;&#34;
@@ -1379,14 +1389,31 @@ class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
         # workaround: need to store reference to the context to access
         # expansion handlers in __contains__ override. For now this is OK,
         # since it&#39;s not expected that the context will change mid-script.
+        self.stored_context = context
 
-        # FIXME: Construct this once in the context object.
-        # It&#39;s constructed on the fly on *every call*... not great, and doesn&#39;t
-        # let extensions access the whole thing.
-        self.expansion_handler = interpreter.ChoiceCallHandlerContainer(
-            context.runtime_expansions,
-            context.interpreter.expansion_handlers
-        )
+    def use_print_on_unified(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements the `use-print-on-unified` command. Only meaningful when
+        `use-unified-commands` is also used.
+
+        With this setting active, when an expansion is used as a command,
+        a debug message will be printed showing the arguments and return value.
+
+        Only usable if the executing interpreter has `scrolls.builtins.StdIoCommandHandler`
+        loaded.
+        &#34;&#34;&#34;
+        if self.print_unified:
+            return
+
+        for command_handler in context.all_commands:
+            if isinstance(command_handler, StdIoCommandHandler):
+                self.print_unified = True
+                break
+        else:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;Cannot use use-print-on-unified when StdIo is disabled.&#34;
+            )
 
     # override
     def __contains__(self, command_name: str) -&gt; bool:
@@ -1396,7 +1423,7 @@ class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
             return True
         elif self.enable_unified_commands:
             try:
-                self.expansion_handler.get_for_call(command_name)
+                self.stored_context.all_expansions.get_for_call(command_name)
                 return True
             except KeyError:
                 return False
@@ -1415,7 +1442,62 @@ class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
         if super().__contains__(context.call_name):
             super().handle_call(context)
         else:
-            self.expansion_handler.get_for_call(context.call_name).handle_call(context)</code></pre>
+            result = context.all_expansions.get_for_call(context.call_name).handle_call(context)
+
+            if self.print_unified:
+                options = &#34; &#34;.join([f&#34;\&#34;{arg}\&#34;&#34; for arg in context.call_context.args])
+                print(f&#34;$({context.call_name} {options}): returned \&#34;{result}\&#34;&#34;)
+
+
+class DebugCommandHandler(interpreter.CallbackCommandHandler):
+    &#34;&#34;&#34;
+    Implements debug commands.
+
+    .. WARNING::
+        DO NOT LOAD THIS HANDLER FOR REMOTE USES. IT ALLOWS ACCESS TO A
+        PYTHON PROMPT, THROUGH WHICH ARBITRARY CODE MAY BE EXECUTED.
+    &#34;&#34;&#34;
+
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;python&#34;, self.python)
+        self.add_call(&#34;backtrace&#34;, self.backtrace)
+
+    def _exit_console(self) -&gt; t.NoReturn:
+        print(&#34;Returning to scrolls.&#34;)
+        raise SystemExit()
+
+    def python(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements `python`. Drops into a python prompt, allowing
+        inspection of the state of the interpreter for debug purposes.
+
+        Takes no arguments.
+        &#34;&#34;&#34;
+        py_vars = dict(locals())
+        py_vars[&#34;quit&#34;] = self._exit_console
+        console = code.InteractiveConsole(locals=py_vars)
+
+        banner = (
+            &#34;Entering debug python interpreter.\n&#34;
+            &#34;Context may be accessed through \&#34;context\&#34;.\n&#34;
+            &#34;\&#34;quit()\&#34; to return to scrolls.&#34;
+        )
+        try:
+            console.interact(banner=banner)
+        except SystemExit:
+            pass
+
+    def backtrace(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements &#34;backtrace&#34;. Prints the contents of the call stack to stout.
+
+        .. NOTE::
+            This is the same backtrace that is printed on error.
+
+        Takes no arguments.
+        &#34;&#34;&#34;
+        print(context.get_backtrace())</code></pre>
 </details>
 </section>
 <section>
@@ -1695,13 +1777,13 @@ class ArithmeticExpansionHandler(interpreter.CallbackExpansionHandler):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.add"><code class="name flex">
-<span>def <span class="ident">add</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">add</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>+</code>. <code>+</code> will take 2 or more arguments, and sum them all together.</p>
@@ -1727,7 +1809,7 @@ print $(+ 1 10 34)
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.ceil"><code class="name flex">
-<span>def <span class="ident">ceil</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">ceil</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>ceil</code>. Takes one argument. Returns the lowest integer greater
@@ -1755,7 +1837,7 @@ print $(ceil -4.6) #prints -4
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.div"><code class="name flex">
-<span>def <span class="ident">div</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">div</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>/</code>.</p>
@@ -1781,7 +1863,7 @@ print $(/ 20 2 5) # divides 20 by 2, then by 5. prints 2.0
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.floor"><code class="name flex">
-<span>def <span class="ident">floor</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">floor</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>floor</code>. Takes one argument. Returns the greatest integer less
@@ -1809,7 +1891,7 @@ print $(floor -4.6) # prints -5
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.intdiv"><code class="name flex">
-<span>def <span class="ident">intdiv</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">intdiv</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>//</code> (integer division).</p>
@@ -1835,7 +1917,7 @@ print $(// 20 2 3) # divides 20 by 2*3 (6), (3.3333...), then truncates float pa
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.mod"><code class="name flex">
-<span>def <span class="ident">mod</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">mod</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>%</code> (modulo). Takes only two arguments.</p>
@@ -1859,7 +1941,7 @@ print $(// 20 2 3) # divides 20 by 2*3 (6), (3.3333...), then truncates float pa
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.mul"><code class="name flex">
-<span>def <span class="ident">mul</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">mul</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>*</code>. <code>*</code> will take 2 or more arguments, and multiplies them all together.</p>
@@ -1885,7 +1967,7 @@ print $(* 1 10 34)
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.power"><code class="name flex">
-<span>def <span class="ident">power</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">power</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>**</code> (power). More than two arguments performs successive powers,
@@ -1915,7 +1997,7 @@ print $(** 2.1 3) # prints
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.round"><code class="name flex">
-<span>def <span class="ident">round</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">round</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>round</code>. Takes one or two arguments.</p>
@@ -1959,7 +2041,7 @@ print $(round 4.7281, 2) # prints 4.73
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.sqrt"><code class="name flex">
-<span>def <span class="ident">sqrt</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">sqrt</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>sqrt</code> (square root). Takes one argument. Always returns a float,
@@ -1985,7 +2067,7 @@ so convert to int (see <code><a title="scrolls.builtins.ArithmeticExpansionHandl
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.sub"><code class="name flex">
-<span>def <span class="ident">sub</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">sub</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>-</code>.</p>
@@ -2017,7 +2099,7 @@ print $(- 10 1 2 3) # subtract 1, 2, and 3 from 10.
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.tofloat"><code class="name flex">
-<span>def <span class="ident">tofloat</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">tofloat</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>tofloat</code>. Forces a number to be a float.</p></div>
@@ -2033,7 +2115,7 @@ print $(- 10 1 2 3) # subtract 1, 2, and 3 from 10.
 </details>
 </dd>
 <dt id="scrolls.builtins.ArithmeticExpansionHandler.toint"><code class="name flex">
-<span>def <span class="ident">toint</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">toint</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>toint</code>. Forces a number to be an integer. If the input is a float, the decimal point
@@ -2053,12 +2135,12 @@ will be truncated.</p></div>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -2219,13 +2301,13 @@ class BuiltinCommandHandler(interpreter.CallbackCommandHandler):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.BuiltinCommandHandler.global_"><code class="name flex">
-<span>def <span class="ident">global_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">global_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>global</code> command. Declares a variable as global, which allows variable references to modify
@@ -2276,7 +2358,7 @@ print $example
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinCommandHandler.nonlocal_"><code class="name flex">
-<span>def <span class="ident">nonlocal_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">nonlocal_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>nonlocal</code> command. Declares a variable as nonlocal, which allows variable references to modify
@@ -2339,7 +2421,7 @@ print $example
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinCommandHandler.return_"><code class="name flex">
-<span>def <span class="ident">return_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">return_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>return</code> command. Returns all arguments passed to it as a single string, joined by spaces.
@@ -2378,7 +2460,7 @@ print $(example &quot;hello world&quot;)
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinCommandHandler.set"><code class="name flex">
-<span>def <span class="ident">set</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">set</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>set</code> command. Sets a variable. The first argument is the name of the variable. The rest of the
@@ -2412,7 +2494,7 @@ print $varname # prints arg1 arg2 arg3
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinCommandHandler.stop"><code class="name flex">
-<span>def <span class="ident">stop</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">stop</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>stop</code> command. Stops the script execution. Takes no arguments.</p></div>
@@ -2428,7 +2510,7 @@ print $varname # prints arg1 arg2 arg3
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinCommandHandler.unset"><code class="name flex">
-<span>def <span class="ident">unset</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">unset</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>unset</code> command. Deletes a variable. The first argument is the name of the variable to delete.</p>
@@ -2472,12 +2554,12 @@ print $varname # ERROR
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -2763,13 +2845,13 @@ class BuiltinControlHandler(interpreter.CallbackControlHandler):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.BuiltinControlHandler.def_"><code class="name flex">
-<span>def <span class="ident">def_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">def_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>def</code> control structure. Allows the definition of new commands and expansion calls.
@@ -2866,7 +2948,7 @@ varargs_example 10 foo bar baz
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinControlHandler.elif_"><code class="name flex">
-<span>def <span class="ident">elif_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">elif_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>elif</code> control structure. Takes one argument, a boolean.
@@ -2911,7 +2993,7 @@ tried. Must be used after <a href="#scrolls.builtins.BuiltinControlHandler.if_">
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinControlHandler.else_"><code class="name flex">
-<span>def <span class="ident">else_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">else_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>else</code> control structure. Takes no arguments. Must be
@@ -2960,7 +3042,7 @@ paired with a conditional to execute the body. See
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinControlHandler.for_"><code class="name flex">
-<span>def <span class="ident">for_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">for_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>for</code> control structure. The syntax is as follows: <code>!for(VARNAME in VECTOR) ...</code></p>
@@ -3020,7 +3102,7 @@ paired with a conditional to execute the body. See
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinControlHandler.if_"><code class="name flex">
-<span>def <span class="ident">if_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">if_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>if</code> control structure. Takes one argument, a boolean. If it's <code><a title="scrolls.datatypes.TRUE" href="datatypes.html#scrolls.datatypes.TRUE">TRUE</a></code>,
@@ -3062,7 +3144,7 @@ be used to execute code if the condition is false.</p>
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinControlHandler.repeat"><code class="name flex">
-<span>def <span class="ident">repeat</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">repeat</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>repeat</code> control structure. Takes a single integer argument, that repeats the body n times.</p>
@@ -3110,7 +3192,7 @@ be used to execute code if the condition is false.</p>
 </details>
 </dd>
 <dt id="scrolls.builtins.BuiltinControlHandler.while_"><code class="name flex">
-<span>def <span class="ident">while_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">while_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>while</code> control structure. Takes one argument, a boolean. Repeats the body while
@@ -3162,12 +3244,12 @@ set i 10
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -3207,14 +3289,14 @@ class BuiltinInitializer(interpreter.Initializer):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.Initializer" href="interpreter.html#scrolls.interpreter.Initializer">Initializer</a></li>
+<li><a title="scrolls.interpreter.callhandler.Initializer" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.Initializer">Initializer</a></li>
 <li>abc.ABC</li>
 </ul>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.Initializer" href="interpreter.html#scrolls.interpreter.Initializer">Initializer</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.Initializer" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.Initializer">Initializer</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.Initializer.handle_call" href="interpreter.html#scrolls.interpreter.Initializer.handle_call">handle_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.Initializer.handle_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.Initializer.handle_call">handle_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -3398,13 +3480,13 @@ class ComparisonExpansionHandler(interpreter.CallbackExpansionHandler):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.ComparisonExpansionHandler.equals"><code class="name flex">
-<span>def <span class="ident">equals</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">equals</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>==</code>, or <code>eq?</code>. Takes only two arguments.</p>
@@ -3438,7 +3520,7 @@ print $(eq? hello hello) # prints 1, string comparison
 </details>
 </dd>
 <dt id="scrolls.builtins.ComparisonExpansionHandler.gt"><code class="name flex">
-<span>def <span class="ident">gt</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">gt</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>&gt;</code>. Takes only two arguments, both must be numeric.</p>
@@ -3463,7 +3545,7 @@ print $(eq? hello hello) # prints 1, string comparison
 </details>
 </dd>
 <dt id="scrolls.builtins.ComparisonExpansionHandler.gte"><code class="name flex">
-<span>def <span class="ident">gte</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">gte</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>&gt;=</code>. Takes only two arguments, both must be numeric.</p>
@@ -3490,7 +3572,7 @@ print $(&gt;= 4 4) # prints 1.
 </details>
 </dd>
 <dt id="scrolls.builtins.ComparisonExpansionHandler.lt"><code class="name flex">
-<span>def <span class="ident">lt</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">lt</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>&lt;</code>. Takes only two arguments, both must be numeric.</p>
@@ -3515,7 +3597,7 @@ print $(&gt;= 4 4) # prints 1.
 </details>
 </dd>
 <dt id="scrolls.builtins.ComparisonExpansionHandler.lte"><code class="name flex">
-<span>def <span class="ident">lte</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">lte</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>&lt;=</code>. Takes only two arguments, both must be numeric.</p>
@@ -3542,7 +3624,7 @@ print $(&lt;= 4 4) # prints 1.
 </details>
 </dd>
 <dt id="scrolls.builtins.ComparisonExpansionHandler.not_equals"><code class="name flex">
-<span>def <span class="ident">not_equals</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">not_equals</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>ne?</code>. Note this is not aliased to <code>!=</code> due to <code>!</code> being a reserved character. Takes only two arguments.</p>
@@ -3571,7 +3653,7 @@ print $(ne? hello world) # prints 1, string comparison
 </details>
 </dd>
 <dt id="scrolls.builtins.ComparisonExpansionHandler.str_equals"><code class="name flex">
-<span>def <span class="ident">str_equals</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">str_equals</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>===</code>. Takes only two arguments.</p>
@@ -3614,12 +3696,155 @@ print $(=== hello hello) # prints 0
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.builtins.DebugCommandHandler"><code class="flex name class">
+<span>class <span class="ident">DebugCommandHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements debug commands.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>DO NOT LOAD THIS HANDLER FOR REMOTE USES. IT ALLOWS ACCESS TO A
+PYTHON PROMPT, THROUGH WHICH ARBITRARY CODE MAY BE EXECUTED.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DebugCommandHandler(interpreter.CallbackCommandHandler):
+    &#34;&#34;&#34;
+    Implements debug commands.
+
+    .. WARNING::
+        DO NOT LOAD THIS HANDLER FOR REMOTE USES. IT ALLOWS ACCESS TO A
+        PYTHON PROMPT, THROUGH WHICH ARBITRARY CODE MAY BE EXECUTED.
+    &#34;&#34;&#34;
+
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.add_call(&#34;python&#34;, self.python)
+        self.add_call(&#34;backtrace&#34;, self.backtrace)
+
+    def _exit_console(self) -&gt; t.NoReturn:
+        print(&#34;Returning to scrolls.&#34;)
+        raise SystemExit()
+
+    def python(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements `python`. Drops into a python prompt, allowing
+        inspection of the state of the interpreter for debug purposes.
+
+        Takes no arguments.
+        &#34;&#34;&#34;
+        py_vars = dict(locals())
+        py_vars[&#34;quit&#34;] = self._exit_console
+        console = code.InteractiveConsole(locals=py_vars)
+
+        banner = (
+            &#34;Entering debug python interpreter.\n&#34;
+            &#34;Context may be accessed through \&#34;context\&#34;.\n&#34;
+            &#34;\&#34;quit()\&#34; to return to scrolls.&#34;
+        )
+        try:
+            console.interact(banner=banner)
+        except SystemExit:
+            pass
+
+    def backtrace(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements &#34;backtrace&#34;. Prints the contents of the call stack to stout.
+
+        .. NOTE::
+            This is the same backtrace that is printed on error.
+
+        Takes no arguments.
+        &#34;&#34;&#34;
+        print(context.get_backtrace())</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.builtins.DebugCommandHandler.backtrace"><code class="name flex">
+<span>def <span class="ident">backtrace</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements "backtrace". Prints the contents of the call stack to stout.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is the same backtrace that is printed on error.</p>
+</div>
+<p>Takes no arguments.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def backtrace(self, context: interpreter.InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;
+    Implements &#34;backtrace&#34;. Prints the contents of the call stack to stout.
+
+    .. NOTE::
+        This is the same backtrace that is printed on error.
+
+    Takes no arguments.
+    &#34;&#34;&#34;
+    print(context.get_backtrace())</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.DebugCommandHandler.python"><code class="name flex">
+<span>def <span class="ident">python</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements <code>python</code>. Drops into a python prompt, allowing
+inspection of the state of the interpreter for debug purposes.</p>
+<p>Takes no arguments.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def python(self, context: interpreter.InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;
+    Implements `python`. Drops into a python prompt, allowing
+    inspection of the state of the interpreter for debug purposes.
+
+    Takes no arguments.
+    &#34;&#34;&#34;
+    py_vars = dict(locals())
+    py_vars[&#34;quit&#34;] = self._exit_console
+    console = code.InteractiveConsole(locals=py_vars)
+
+    banner = (
+        &#34;Entering debug python interpreter.\n&#34;
+        &#34;Context may be accessed through \&#34;context\&#34;.\n&#34;
+        &#34;\&#34;quit()\&#34; to return to scrolls.&#34;
+    )
+    try:
+        console.interact(banner=banner)
+    except SystemExit:
+        pass</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -3660,13 +3885,13 @@ class FileCommandHandler(interpreter.CallbackCommandHandler):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.FileCommandHandler.close"><code class="name flex">
-<span>def <span class="ident">close</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">close</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>file-close</code>. If you're looking for <code>file-open</code>, see
@@ -3700,12 +3925,12 @@ file-close $f
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -3773,13 +3998,13 @@ class FileExpansionHandler(interpreter.CallbackExpansionHandler):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.FileExpansionHandler.open"><code class="name flex">
-<span>def <span class="ident">open</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">open</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>file-open</code>. If you're looking for <code>file-close</code>, see
@@ -3822,7 +4047,7 @@ file-close $f
 </details>
 </dd>
 <dt id="scrolls.builtins.FileExpansionHandler.read"><code class="name flex">
-<span>def <span class="ident">read</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">read</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>file-read</code>. Reads an entire file and returns a string.</p>
@@ -3856,12 +4081,12 @@ file-close $f
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -3954,13 +4179,13 @@ class LogicExpansionHandler(interpreter.CallbackExpansionHandler):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.LogicExpansionHandler.and_"><code class="name flex">
-<span>def <span class="ident">and_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">and_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>and</code> operator. Takes 2 or more arguments, and <code>and</code>s them all together.</p>
@@ -3986,7 +4211,7 @@ print $(and $true $true) # prints 1.
 </details>
 </dd>
 <dt id="scrolls.builtins.LogicExpansionHandler.not_"><code class="name flex">
-<span>def <span class="ident">not_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">not_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>not</code> operator.</p>
@@ -4010,7 +4235,7 @@ print $(and $true $true) # prints 1.
 </details>
 </dd>
 <dt id="scrolls.builtins.LogicExpansionHandler.or_"><code class="name flex">
-<span>def <span class="ident">or_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">or_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>or</code> operator. Takes 2 or more arguments, and <code>or</code>s them all together.</p>
@@ -4036,7 +4261,7 @@ print $(or $false $false) # prints 0.
 </details>
 </dd>
 <dt id="scrolls.builtins.LogicExpansionHandler.xor_"><code class="name flex">
-<span>def <span class="ident">xor_</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">xor_</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>xor</code> operator. Takes 2 or more arguments. With 2 arguments, <code>xor</code> performs a standard XOR
@@ -4070,12 +4295,12 @@ print $(xor $true $false $true) # prints 0.
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -4152,13 +4377,13 @@ print $(xor $true $false $true) # prints 0.
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.RandomExpansionHandler.select"><code class="name flex">
-<span>def <span class="ident">select</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">select</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>select</code> expansion. Randomly selects one of the arguments and returns it.</p>
@@ -4184,7 +4409,7 @@ print $(select foo bar baz)
 </details>
 </dd>
 <dt id="scrolls.builtins.RandomExpansionHandler.shuffle"><code class="name flex">
-<span>def <span class="ident">shuffle</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">shuffle</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>shuffle</code> expansion. Shuffle the arguments given and return them.</p>
@@ -4210,7 +4435,7 @@ print $(select foo bar baz)
 </details>
 </dd>
 <dt id="scrolls.builtins.RandomExpansionHandler.uniform"><code class="name flex">
-<span>def <span class="ident">uniform</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">uniform</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>uniform</code> expansion. Returns a random floating point number between two bounds, inclusive.</p>
@@ -4251,12 +4476,12 @@ print $(select foo bar baz)
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -4326,13 +4551,13 @@ print $(select foo bar baz)
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.StdIoCommandHandler.input"><code class="name flex">
-<span>def <span class="ident">input</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">input</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>input</code> command. Reads <code>stdin</code> for input, and stores the input in a variable named
@@ -4367,7 +4592,7 @@ print $foo # prints what you entered
 </details>
 </dd>
 <dt id="scrolls.builtins.StdIoCommandHandler.print"><code class="name flex">
-<span>def <span class="ident">print</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">print</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>print</code> command. Prints all arguments passed to it, joined by spaces.</p>
@@ -4391,7 +4616,7 @@ print $foo # prints what you entered
 </details>
 </dd>
 <dt id="scrolls.builtins.StdIoCommandHandler.write"><code class="name flex">
-<span>def <span class="ident">write</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">write</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>write</code> command. Prints all arguments passed to it, joined
@@ -4421,12 +4646,12 @@ while <code>write</code> does not.</p>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -4597,13 +4822,13 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.StringExpansionHandler.chr"><code class="name flex">
-<span>def <span class="ident">chr</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">chr</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>chr</code>. Converts a number into the character it corresponds to.</p>
@@ -4629,7 +4854,7 @@ class StringExpansionHandler(interpreter.CallbackExpansionHandler):
 </details>
 </dd>
 <dt id="scrolls.builtins.StringExpansionHandler.concat"><code class="name flex">
-<span>def <span class="ident">concat</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">concat</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>cat</code>. Concatenates all arguments into one string and returns it. Commonly used to concatenate
@@ -4657,7 +4882,7 @@ print $(cat $example &quot;!&quot;) # prints Hello World!
 </details>
 </dd>
 <dt id="scrolls.builtins.StringExpansionHandler.getc"><code class="name flex">
-<span>def <span class="ident">getc</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">getc</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>getc</code>. Gets a single character from a string, starting at 0.</p>
@@ -4686,7 +4911,7 @@ print $(getc $example 4) # prints 'o'
 </details>
 </dd>
 <dt id="scrolls.builtins.StringExpansionHandler.len"><code class="name flex">
-<span>def <span class="ident">len</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">len</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>len</code>. Gets the length of the passed string.</p>
@@ -4711,7 +4936,7 @@ print $(getc $example 4) # prints 'o'
 </details>
 </dd>
 <dt id="scrolls.builtins.StringExpansionHandler.ord"><code class="name flex">
-<span>def <span class="ident">ord</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">ord</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>ord</code>. Converts a single character to its integer equivalent.</p>
@@ -4736,7 +4961,7 @@ print $(getc $example 4) # prints 'o'
 </details>
 </dd>
 <dt id="scrolls.builtins.StringExpansionHandler.rangev"><code class="name flex">
-<span>def <span class="ident">rangev</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">rangev</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>rangev</code>. Returns a vector consisting of a range of numbers.</p>
@@ -4770,7 +4995,7 @@ print $(rangev $min $max) # prints 0 1 2 3
 </details>
 </dd>
 <dt id="scrolls.builtins.StringExpansionHandler.vempty"><code class="name flex">
-<span>def <span class="ident">vempty</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">vempty</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>vempty?</code>. Returns <code><a title="scrolls.datatypes.TRUE" href="datatypes.html#scrolls.datatypes.TRUE">TRUE</a></code> if the passed vector is empty.</p>
@@ -4797,7 +5022,7 @@ print $(vempty? $empty_vec) # prints 1.
 </details>
 </dd>
 <dt id="scrolls.builtins.StringExpansionHandler.vhead"><code class="name flex">
-<span>def <span class="ident">vhead</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">vhead</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>vhead</code>. Returns the first element of a vector (the leftmost element).</p>
@@ -4824,7 +5049,7 @@ print $(vhead $vec) # prints 2.
 </details>
 </dd>
 <dt id="scrolls.builtins.StringExpansionHandler.vlen"><code class="name flex">
-<span>def <span class="ident">vlen</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">vlen</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>vlen</code>. Returns the number of elements in a vector.</p>
@@ -4851,7 +5076,7 @@ print $(vlen $vec) # prints 4.
 </details>
 </dd>
 <dt id="scrolls.builtins.StringExpansionHandler.vtail"><code class="name flex">
-<span>def <span class="ident">vtail</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> str</span>
+<span>def <span class="ident">vtail</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements <code>vtail</code>. Returns every element of a vector except the first.</p>
@@ -4880,12 +5105,12 @@ print $(vtail $vec) # prints 4 8 16.
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -4894,20 +5119,28 @@ print $(vtail $vec) # prints 4 8 16.
 <span>class <span class="ident">UnifiedCommandSettingHandler</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>A basic call handler that uses <code>typing.Callable</code> (<code>ScrollCallback</code>) to
-implement a call handler.</p></div>
+<div class="desc"><p>Implements settings related to unified commands. See
+<code><a title="scrolls.builtins.UnifiedCommandSettingHandler.use_unified_commands" href="#scrolls.builtins.UnifiedCommandSettingHandler.use_unified_commands">UnifiedCommandSettingHandler.use_unified_commands()</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@unified_config.commandhandler
 class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
+    &#34;&#34;&#34;
+    Implements settings related to unified commands. See
+    `UnifiedCommandSettingHandler.use_unified_commands`.
+    &#34;&#34;&#34;
+
     def __init__(self) -&gt; None:
         super().__init__()
         self.add_call(&#34;use-unified-commands&#34;, self.use_unified_commands)
+        self.add_call(&#34;use-print-on-unified&#34;, self.use_print_on_unified)
 
         self.enable_unified_commands = False
-        self.expansion_handler: t.Optional[interpreter.CallHandlerContainer[str]] = None
+        self.print_unified = False
+
+        self.stored_context: t.Optional[interpreter.InterpreterContext] = None
 
     def use_unified_commands(self, context: interpreter.InterpreterContext) -&gt; None:
         &#34;&#34;&#34;
@@ -4938,14 +5171,31 @@ class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
         # workaround: need to store reference to the context to access
         # expansion handlers in __contains__ override. For now this is OK,
         # since it&#39;s not expected that the context will change mid-script.
+        self.stored_context = context
 
-        # FIXME: Construct this once in the context object.
-        # It&#39;s constructed on the fly on *every call*... not great, and doesn&#39;t
-        # let extensions access the whole thing.
-        self.expansion_handler = interpreter.ChoiceCallHandlerContainer(
-            context.runtime_expansions,
-            context.interpreter.expansion_handlers
-        )
+    def use_print_on_unified(self, context: interpreter.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Implements the `use-print-on-unified` command. Only meaningful when
+        `use-unified-commands` is also used.
+
+        With this setting active, when an expansion is used as a command,
+        a debug message will be printed showing the arguments and return value.
+
+        Only usable if the executing interpreter has `scrolls.builtins.StdIoCommandHandler`
+        loaded.
+        &#34;&#34;&#34;
+        if self.print_unified:
+            return
+
+        for command_handler in context.all_commands:
+            if isinstance(command_handler, StdIoCommandHandler):
+                self.print_unified = True
+                break
+        else:
+            raise interpreter.InterpreterError(
+                context,
+                &#34;Cannot use use-print-on-unified when StdIo is disabled.&#34;
+            )
 
     # override
     def __contains__(self, command_name: str) -&gt; bool:
@@ -4955,7 +5205,7 @@ class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
             return True
         elif self.enable_unified_commands:
             try:
-                self.expansion_handler.get_for_call(command_name)
+                self.stored_context.all_expansions.get_for_call(command_name)
                 return True
             except KeyError:
                 return False
@@ -4974,17 +5224,21 @@ class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
         if super().__contains__(context.call_name):
             super().handle_call(context)
         else:
-            self.expansion_handler.get_for_call(context.call_name).handle_call(context)</code></pre>
+            result = context.all_expansions.get_for_call(context.call_name).handle_call(context)
+
+            if self.print_unified:
+                options = &#34; &#34;.join([f&#34;\&#34;{arg}\&#34;&#34; for arg in context.call_context.args])
+                print(f&#34;$({context.call_name} {options}): returned \&#34;{result}\&#34;&#34;)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.builtins.UnifiedCommandSettingHandler.handle_call"><code class="name flex">
-<span>def <span class="ident">handle_call</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">handle_call</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -5003,11 +5257,54 @@ class UnifiedCommandSettingHandler(interpreter.CallbackCommandHandler):
     if super().__contains__(context.call_name):
         super().handle_call(context)
     else:
-        self.expansion_handler.get_for_call(context.call_name).handle_call(context)</code></pre>
+        result = context.all_expansions.get_for_call(context.call_name).handle_call(context)
+
+        if self.print_unified:
+            options = &#34; &#34;.join([f&#34;\&#34;{arg}\&#34;&#34; for arg in context.call_context.args])
+            print(f&#34;$({context.call_name} {options}): returned \&#34;{result}\&#34;&#34;)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.builtins.UnifiedCommandSettingHandler.use_print_on_unified"><code class="name flex">
+<span>def <span class="ident">use_print_on_unified</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements the <code>use-print-on-unified</code> command. Only meaningful when
+<code>use-unified-commands</code> is also used.</p>
+<p>With this setting active, when an expansion is used as a command,
+a debug message will be printed showing the arguments and return value.</p>
+<p>Only usable if the executing interpreter has <code><a title="scrolls.builtins.StdIoCommandHandler" href="#scrolls.builtins.StdIoCommandHandler">StdIoCommandHandler</a></code>
+loaded.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def use_print_on_unified(self, context: interpreter.InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;
+    Implements the `use-print-on-unified` command. Only meaningful when
+    `use-unified-commands` is also used.
+
+    With this setting active, when an expansion is used as a command,
+    a debug message will be printed showing the arguments and return value.
+
+    Only usable if the executing interpreter has `scrolls.builtins.StdIoCommandHandler`
+    loaded.
+    &#34;&#34;&#34;
+    if self.print_unified:
+        return
+
+    for command_handler in context.all_commands:
+        if isinstance(command_handler, StdIoCommandHandler):
+            self.print_unified = True
+            break
+    else:
+        raise interpreter.InterpreterError(
+            context,
+            &#34;Cannot use use-print-on-unified when StdIo is disabled.&#34;
+        )</code></pre>
 </details>
 </dd>
 <dt id="scrolls.builtins.UnifiedCommandSettingHandler.use_unified_commands"><code class="name flex">
-<span>def <span class="ident">use_unified_commands</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+<span>def <span class="ident">use_unified_commands</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements the <code>use-unified-commands</code> command. When used, unified commands
@@ -5062,25 +5359,18 @@ print $some-global-variable
     # workaround: need to store reference to the context to access
     # expansion handlers in __contains__ override. For now this is OK,
     # since it&#39;s not expected that the context will change mid-script.
-
-    # FIXME: Construct this once in the context object.
-    # It&#39;s constructed on the fly on *every call*... not great, and doesn&#39;t
-    # let extensions access the whole thing.
-    self.expansion_handler = interpreter.ChoiceCallHandlerContainer(
-        context.runtime_expansions,
-        context.interpreter.expansion_handlers
-    )</code></pre>
+    self.stored_context = context</code></pre>
 </details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
@@ -5167,6 +5457,13 @@ print $some-global-variable
 </ul>
 </li>
 <li>
+<h4><code><a title="scrolls.builtins.DebugCommandHandler" href="#scrolls.builtins.DebugCommandHandler">DebugCommandHandler</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.builtins.DebugCommandHandler.backtrace" href="#scrolls.builtins.DebugCommandHandler.backtrace">backtrace</a></code></li>
+<li><code><a title="scrolls.builtins.DebugCommandHandler.python" href="#scrolls.builtins.DebugCommandHandler.python">python</a></code></li>
+</ul>
+</li>
+<li>
 <h4><code><a title="scrolls.builtins.FileCommandHandler" href="#scrolls.builtins.FileCommandHandler">FileCommandHandler</a></code></h4>
 <ul class="">
 <li><code><a title="scrolls.builtins.FileCommandHandler.close" href="#scrolls.builtins.FileCommandHandler.close">close</a></code></li>
@@ -5223,6 +5520,7 @@ print $some-global-variable
 <h4><code><a title="scrolls.builtins.UnifiedCommandSettingHandler" href="#scrolls.builtins.UnifiedCommandSettingHandler">UnifiedCommandSettingHandler</a></code></h4>
 <ul class="">
 <li><code><a title="scrolls.builtins.UnifiedCommandSettingHandler.handle_call" href="#scrolls.builtins.UnifiedCommandSettingHandler.handle_call">handle_call</a></code></li>
+<li><code><a title="scrolls.builtins.UnifiedCommandSettingHandler.use_print_on_unified" href="#scrolls.builtins.UnifiedCommandSettingHandler.use_print_on_unified">use_print_on_unified</a></code></li>
 <li><code><a title="scrolls.builtins.UnifiedCommandSettingHandler.use_unified_commands" href="#scrolls.builtins.UnifiedCommandSettingHandler.use_unified_commands">use_unified_commands</a></code></li>
 </ul>
 </li>

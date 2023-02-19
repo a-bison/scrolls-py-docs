@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>scrolls.datatypes API documentation</title>
-<meta name="description" content="Datatype conversions for Scrolls. This module defines tools for writing `scrolls.interpreter.CallHandler` implementations
-that act like the built-in …" />
+<meta name="description" content="Datatype conversions for Scrolls. This module defines tools for writing `scrolls.interpreter.callhandler.CallHandler` implementations
+that act like …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -23,7 +23,7 @@ that act like the built-in …" />
 <h1 class="title">Module <code>scrolls.datatypes</code></h1>
 </header>
 <section id="section-intro">
-<p>Datatype conversions for Scrolls. This module defines tools for writing <code><a title="scrolls.interpreter.CallHandler" href="interpreter.html#scrolls.interpreter.CallHandler">CallHandler</a></code> implementations
+<p>Datatype conversions for Scrolls. This module defines tools for writing <code><a title="scrolls.interpreter.callhandler.CallHandler" href="interpreter/callhandler.html#scrolls.interpreter.callhandler.CallHandler">CallHandler</a></code> implementations
 that act like the built-in ones. Including:</p>
 <ul>
 <li>Implicit type conversion logic.</li>
@@ -40,7 +40,7 @@ that act like the built-in ones. Including:</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-Datatype conversions for Scrolls. This module defines tools for writing `scrolls.interpreter.CallHandler` implementations
+Datatype conversions for Scrolls. This module defines tools for writing `scrolls.interpreter.callhandler.CallHandler` implementations
 that act like the built-in ones. Including:
 
 - Implicit type conversion logic.
@@ -161,7 +161,7 @@ def require_numeric(context: interpreter.InterpreterContext, s: str) -&gt; Scrol
         - `(float, NumericType.FLOAT)` if `s` is a float
 
     Raises:
-        `scrolls.interpreter.InterpreterError` if no number is found.
+        `scrolls.interpreter.interpreter_errors.InterpreterError` if no number is found.
     &#34;&#34;&#34;
     n, t = str_to_numeric(s)
 
@@ -187,7 +187,7 @@ def require_all_numeric(
           In this case, *all* returned numbers will be floats.
 
     Raises:
-        `scrolls.interpreter.InterpreterError` if any of `strs` could not be parsed as a number.
+        `scrolls.interpreter.interpreter_errors.InterpreterError` if any of `strs` could not be parsed as a number.
     &#34;&#34;&#34;
     out = []
     convert_to_float = False
@@ -209,7 +209,7 @@ def require_arg_length(context: interpreter.InterpreterContext, n: int, args: t.
     Require that the current call was passed at least `n` arguments.
 
     Raises:
-        `scrolls.interpreter.InterpreterError` if this is not the case.
+        `scrolls.interpreter.interpreter_errors.InterpreterError` if this is not the case.
     &#34;&#34;&#34;
     if not args:
         args = context.args
@@ -423,7 +423,7 @@ def apply_reduce_bool_op(
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="scrolls.datatypes.apply_binary_bool_op"><code class="name flex">
-<span>def <span class="ident">apply_binary_bool_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[bool, bool], bool], len_check: bool = False) ‑> bool</span>
+<span>def <span class="ident">apply_binary_bool_op</span></span>(<span>context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, op: Callable[[bool, bool], bool], len_check: bool = False) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply a binary boolean operator to the arguments of the current call. For example, <code>and</code>, <code>or</code>, etc.</p></div>
@@ -446,7 +446,7 @@ def apply_reduce_bool_op(
 </details>
 </dd>
 <dt id="scrolls.datatypes.apply_binary_num_op"><code class="name flex">
-<span>def <span class="ident">apply_binary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], args: Sequence[str] = (), len_check: bool = False) ‑> Tuple[Union[int, float], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
+<span>def <span class="ident">apply_binary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], args: Sequence[str] = (), len_check: bool = False) ‑> Tuple[Union[int, float], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply a binary numeric operator to the arguments of the current call. An example of such an operator would be
@@ -508,7 +508,7 @@ addition, i.e. <code>3 + 4</code>.</p>
 </details>
 </dd>
 <dt id="scrolls.datatypes.apply_mass_binary_num_op"><code class="name flex">
-<span>def <span class="ident">apply_mass_binary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, reduce_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], final_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], len_check: bool = False) ‑> Tuple[Union[int, float], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
+<span>def <span class="ident">apply_mass_binary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, reduce_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], final_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], len_check: bool = False) ‑> Tuple[Union[int, float], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements a mass operator with two binary numeric operators. This is used to implement operations like mass
@@ -597,7 +597,7 @@ mass subtraction operator above is calculated like so: <code>10 - ((4 + 2) + 5)<
 </details>
 </dd>
 <dt id="scrolls.datatypes.apply_reduce_binary_num_op"><code class="name flex">
-<span>def <span class="ident">apply_reduce_binary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, reduce_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], args: Sequence[str] = (), len_check: bool = False) ‑> Tuple[Union[int, float], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
+<span>def <span class="ident">apply_reduce_binary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, reduce_op: Callable[[+NumT, +NumU], Union[+NumT, +NumU]], args: Sequence[str] = (), len_check: bool = False) ‑> Tuple[Union[int, float], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply a binary operator to a sequence of inputs through reduction. Say we have a binary operator <code>+</code>, and inputs
@@ -664,7 +664,7 @@ mass subtraction operator above is calculated like so: <code>10 - ((4 + 2) + 5)<
 </details>
 </dd>
 <dt id="scrolls.datatypes.apply_reduce_bool_op"><code class="name flex">
-<span>def <span class="ident">apply_reduce_bool_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[bool, bool], bool], len_check: bool = False) ‑> bool</span>
+<span>def <span class="ident">apply_reduce_bool_op</span></span>(<span>context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, op: Callable[[bool, bool], bool], len_check: bool = False) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply a binary boolean operator to the arguments of the current call by reduction. See <code><a title="scrolls.datatypes.apply_reduce_binary_num_op" href="#scrolls.datatypes.apply_reduce_binary_num_op">apply_reduce_binary_num_op()</a></code>.</p></div>
@@ -688,7 +688,7 @@ mass subtraction operator above is calculated like so: <code>10 - ((4 + 2) + 5)<
 </details>
 </dd>
 <dt id="scrolls.datatypes.apply_unary_bool_op"><code class="name flex">
-<span>def <span class="ident">apply_unary_bool_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[bool], bool], len_check: bool = False) ‑> bool</span>
+<span>def <span class="ident">apply_unary_bool_op</span></span>(<span>context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, op: Callable[[bool], bool], len_check: bool = False) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply a unary boolean operator to the arguments of the current call. For example, <code>not</code>.</p></div>
@@ -711,7 +711,7 @@ mass subtraction operator above is calculated like so: <code>10 - ((4 + 2) + 5)<
 </details>
 </dd>
 <dt id="scrolls.datatypes.apply_unary_num_op"><code class="name flex">
-<span>def <span class="ident">apply_unary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, op: Callable[[+NumT], +NumT]) ‑> Tuple[Union[int, float], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
+<span>def <span class="ident">apply_unary_num_op</span></span>(<span>context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, op: Callable[[+NumT], +NumT]) ‑> Tuple[Union[int, float], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply a unary numeric operator to the arguments of the current call. An example of an operator would be
@@ -756,7 +756,7 @@ negation, as in the <code>-</code> in <code>-4</code>.</p></div>
 </details>
 </dd>
 <dt id="scrolls.datatypes.require_all_numeric"><code class="name flex">
-<span>def <span class="ident">require_all_numeric</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, strs: Sequence[str]) ‑> Tuple[Sequence[Union[int, float]], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
+<span>def <span class="ident">require_all_numeric</span></span>(<span>context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, strs: Sequence[str]) ‑> Tuple[Sequence[Union[int, float]], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Convert a sequence of strings to numbers.</p>
@@ -767,7 +767,7 @@ negation, as in the <code>-</code> in <code>-4</code>.</p></div>
 In this case, <em>all</em> returned numbers will be floats.</li>
 </ul>
 <h2 id="raises">Raises</h2>
-<p><code><a title="scrolls.interpreter.InterpreterError" href="interpreter.html#scrolls.interpreter.InterpreterError">InterpreterError</a></code> if any of <code>strs</code> could not be parsed as a number.</p></div>
+<p><code><a title="scrolls.interpreter.interpreter_errors.InterpreterError" href="interpreter/interpreter_errors.html#scrolls.interpreter.interpreter_errors.InterpreterError">InterpreterError</a></code> if any of <code>strs</code> could not be parsed as a number.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -785,7 +785,7 @@ In this case, <em>all</em> returned numbers will be floats.</li>
           In this case, *all* returned numbers will be floats.
 
     Raises:
-        `scrolls.interpreter.InterpreterError` if any of `strs` could not be parsed as a number.
+        `scrolls.interpreter.interpreter_errors.InterpreterError` if any of `strs` could not be parsed as a number.
     &#34;&#34;&#34;
     out = []
     convert_to_float = False
@@ -803,12 +803,12 @@ In this case, <em>all</em> returned numbers will be floats.</li>
 </details>
 </dd>
 <dt id="scrolls.datatypes.require_arg_length"><code class="name flex">
-<span>def <span class="ident">require_arg_length</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, n: int, args: Sequence[str] = ()) ‑> None</span>
+<span>def <span class="ident">require_arg_length</span></span>(<span>context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, n: int, args: Sequence[str] = ()) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Require that the current call was passed at least <code>n</code> arguments.</p>
 <h2 id="raises">Raises</h2>
-<p><code><a title="scrolls.interpreter.InterpreterError" href="interpreter.html#scrolls.interpreter.InterpreterError">InterpreterError</a></code> if this is not the case.</p></div>
+<p><code><a title="scrolls.interpreter.interpreter_errors.InterpreterError" href="interpreter/interpreter_errors.html#scrolls.interpreter.interpreter_errors.InterpreterError">InterpreterError</a></code> if this is not the case.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -818,7 +818,7 @@ In this case, <em>all</em> returned numbers will be floats.</li>
     Require that the current call was passed at least `n` arguments.
 
     Raises:
-        `scrolls.interpreter.InterpreterError` if this is not the case.
+        `scrolls.interpreter.interpreter_errors.InterpreterError` if this is not the case.
     &#34;&#34;&#34;
     if not args:
         args = context.args
@@ -831,7 +831,7 @@ In this case, <em>all</em> returned numbers will be floats.</li>
 </details>
 </dd>
 <dt id="scrolls.datatypes.require_numeric"><code class="name flex">
-<span>def <span class="ident">require_numeric</span></span>(<span>context: <a title="scrolls.interpreter.InterpreterContext" href="interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, s: str) ‑> Tuple[Union[int, float], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
+<span>def <span class="ident">require_numeric</span></span>(<span>context: <a title="scrolls.interpreter.state.InterpreterContext" href="interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, s: str) ‑> Tuple[Union[int, float], <a title="scrolls.datatypes.NumericType" href="#scrolls.datatypes.NumericType">NumericType</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Convert a Scrolls numeric string to a number, raising an error if no number is found.</p>
@@ -841,7 +841,7 @@ In this case, <em>all</em> returned numbers will be floats.</li>
 <li><code>(float, <a title="scrolls.datatypes.NumericType.FLOAT" href="#scrolls.datatypes.NumericType.FLOAT">NumericType.FLOAT</a>)</code> if <code>s</code> is a float</li>
 </ul>
 <h2 id="raises">Raises</h2>
-<p><code><a title="scrolls.interpreter.InterpreterError" href="interpreter.html#scrolls.interpreter.InterpreterError">InterpreterError</a></code> if no number is found.</p></div>
+<p><code><a title="scrolls.interpreter.interpreter_errors.InterpreterError" href="interpreter/interpreter_errors.html#scrolls.interpreter.interpreter_errors.InterpreterError">InterpreterError</a></code> if no number is found.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -855,7 +855,7 @@ In this case, <em>all</em> returned numbers will be floats.</li>
         - `(float, NumericType.FLOAT)` if `s` is a float
 
     Raises:
-        `scrolls.interpreter.InterpreterError` if no number is found.
+        `scrolls.interpreter.interpreter_errors.InterpreterError` if no number is found.
     &#34;&#34;&#34;
     n, t = str_to_numeric(s)
 

@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>scrolls.ast.streams API documentation</title>
+<meta name="description" content="Character streams for feeding `scrolls.ast.tokenizer.Tokenizer` objects." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scrolls.ast.streams</code></h1>
+</header>
+<section id="section-intro">
+<p>Character streams for feeding <code><a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a></code> objects.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Character streams for feeding `scrolls.ast.tokenizer.Tokenizer` objects.
+&#34;&#34;&#34;
+
+import logging
+import typing
+
+from . import ast_errors
+
+__all__ = (
+    &#34;CharStream&#34;,
+    &#34;StringStream&#34;,
+    &#34;REPLStream&#34;
+)
+
+
+logger = logging.getLogger(__name__)
+
+
+class CharStream(typing.Protocol):
+    &#34;&#34;&#34;
+    A character stream. Used as a generic source of characters to tokenize in
+    a `scrolls.ast.tokenizer.Tokenizer`.
+    &#34;&#34;&#34;
+
+    def dump_state(self) -&gt; None:
+        &#34;&#34;&#34;
+        Prints internal state for debug purposes. Content of the message
+        is entirely dependent on the `CharStream` implementation.
+        &#34;&#34;&#34;
+        ...
+
+    def current_line(self) -&gt; int:
+        &#34;&#34;&#34;
+        Get the line this stream is on. Increments when a newline (`\n`) character
+        is encountered.
+        &#34;&#34;&#34;
+        ...
+
+    def current_pos(self) -&gt; int:
+        &#34;&#34;&#34;
+        Get the character within the current line this stream is on. Resets to 0
+        when a new line is encountered.
+        &#34;&#34;&#34;
+        ...
+
+    def get_char(self) -&gt; str:
+        &#34;&#34;&#34;
+        Get the current character this stream is on.
+        &#34;&#34;&#34;
+        ...
+
+    def next_char(self) -&gt; None:
+        &#34;&#34;&#34;
+        Advance to the next character.
+        &#34;&#34;&#34;
+        ...
+
+    def at_eof(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Returns `True` if `CharStream.next_char` just advanced from the last character.
+        `CharStream.get_char` should not be called in this state. Since EOF is
+        considered a token, at_eof can effectively be considered a virtual character.
+        It is always the last one.
+        &#34;&#34;&#34;
+        ...
+
+    def after_eof(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Returns `True` if `CharStream.next_char` just advanced from the EOF state.
+        This is the true end of the stream, after all characters and EOF have been
+        streamed.
+        &#34;&#34;&#34;
+        ...
+
+    def history(self) -&gt; str:
+        &#34;&#34;&#34;
+        Get the history of this stream. Guaranteed to return at least all
+        text returned through `CharStream.get_char` and `CharStream.next_char`.
+
+        May return text not yet streamed, depending on the implementation.
+        &#34;&#34;&#34;
+        ...
+
+
+class StringStream(CharStream):
+    &#34;&#34;&#34;
+    A `CharStream` that streams an existing string. This is the default implementation
+    used by `scrolls.ast.tokenizer.Tokenizer` instances if no stream is specified.
+    &#34;&#34;&#34;
+    def __init__(self, string: str):
+        self._current_line = 0
+        self._current_pos = 0
+        self._string = &#34;&#34;
+        self._stringlen = 0
+        self._more_chars = True
+
+        self.feed(string)
+        self._char = 0
+
+    def dump_state(self) -&gt; None:
+        print(
+            f&#34;current line: {self._current_line}\n&#34;
+            f&#34;current pos:  {self._current_pos}\n&#34;
+            f&#34;more chars:   {self._more_chars}\n&#34;
+        )
+
+    def current_line(self) -&gt; int:
+        return self._current_line
+
+    def current_pos(self) -&gt; int:
+        return self._current_pos
+
+    def at_eof(self) -&gt; bool:
+        off_end = self._char &gt;= self._stringlen
+
+        if off_end and self.after_eof():
+            return False
+
+        return off_end
+
+    def get_char(self) -&gt; str:
+        if self.after_eof():
+            raise ast_errors.StreamEofError(&#34;Cannot read from stream stream after EOF.&#34;)
+        elif self.at_eof():
+            raise ast_errors.StreamEofError(&#34;Cannot read from string stream at EOF.&#34;)
+
+        return self._string[self._char]
+
+    def next_char(self) -&gt; None:
+        # If we&#39;re at EOF, and try to get the next character, we&#39;ve
+        # exhausted everything.
+        if self.at_eof():
+            logger.debug(&#34;StringStream: set _more_chars False&#34;)
+            self._more_chars = False
+            return
+
+        if self.after_eof():
+            raise ast_errors.StreamEofError(&#34;Cannot read from string stream after EOF.&#34;)
+
+        char = self.get_char()
+        if char == &#34;\n&#34;:
+            self._current_line += 1
+            self._current_pos = 0
+        else:
+            self._current_pos += 1
+
+        self._char += 1
+
+    def after_eof(self) -&gt; bool:
+        return not self._more_chars
+
+    def history(self) -&gt; str:
+        return self._string
+
+    def feed(self, string: str) -&gt; None:
+        &#34;&#34;&#34;
+        Add additional strings to the stream. May be done at any time.
+        &#34;&#34;&#34;
+        trimmed_str = string.replace(&#34;\r&#34;, &#34;&#34;)
+        self._string += trimmed_str
+        self._stringlen += len(trimmed_str)
+        self._more_chars = True
+
+        logging.debug(f&#34;StringStream: Fed with \n{string}&#34;)
+
+
+class REPLStream(StringStream):
+    &#34;&#34;&#34;
+    A `CharStream` that streams input from stdin. If an EOF is ever encountered,
+    instead of entering an EOF state, more input is requested from the user.
+
+    This is done on a per-line basis.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__(&#34;&#34;)
+        self.prefix = &#34;&#34;
+        self.set_statement()
+
+    def set_statement(self) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the input prefix of the REPL to &#34;&gt;&gt;&gt;&#34;. Must be
+        called manually on successful execution of a statement.
+        &#34;&#34;&#34;
+        self.prefix = &#34;&gt;&gt;&gt; &#34;
+
+    def set_continuation(self) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the input prefix of the REPL to &#34;...&#34;. Typically, this is
+        done automatically.
+        &#34;&#34;&#34;
+        self.prefix = &#34;... &#34;
+
+    def consume_line(self) -&gt; None:
+        &#34;&#34;&#34;
+        Consume the next line of user input.
+        &#34;&#34;&#34;
+        logger.debug(&#34;REPLStream: Requesting additional input.&#34;)
+
+        # Get new line, ignoring empty lines.
+        next_str = &#34;&#34;
+        while not next_str.strip():
+            next_str = input(self.prefix) + &#34;\n&#34;
+
+        self.feed(next_str)
+        self.set_continuation()
+
+    def get_char(self) -&gt; str:
+        if self.at_eof():
+            logger.debug(&#34;REPLStream: get_char: consuming new line&#34;)
+            self.consume_line()
+
+        return super().get_char()
+
+    def next_char(self) -&gt; None:
+        if self.at_eof():
+            logger.debug(&#34;REPLStream: next_char: consuming new line&#34;)
+            self.consume_line()
+
+        super().next_char()
+
+    def next_line(self) -&gt; None:
+        &#34;&#34;&#34;
+        Skip forward until the next line.
+        &#34;&#34;&#34;
+        logger.debug(&#34;REPLStream: Skipping current line.&#34;)
+
+        # if at EOF, then we&#39;re already at a new line, so stream in a new one
+        if self.at_eof():
+            logger.debug(&#34;REPLStream: next_line: consuming new line&#34;)
+            self.consume_line()
+            return
+
+        # Otherwise, skip forward in the current line until we&#39;re at a new one.
+        # inefficient implementation for now, since this is only needed for
+        # errors in the REPL.
+        current_line = self.current_line()
+        while self.current_line() == current_line:
+            self.next_char()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="scrolls.ast.streams.CharStream"><code class="flex name class">
+<span>class <span class="ident">CharStream</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A character stream. Used as a generic source of characters to tokenize in
+a <code><a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CharStream(typing.Protocol):
+    &#34;&#34;&#34;
+    A character stream. Used as a generic source of characters to tokenize in
+    a `scrolls.ast.tokenizer.Tokenizer`.
+    &#34;&#34;&#34;
+
+    def dump_state(self) -&gt; None:
+        &#34;&#34;&#34;
+        Prints internal state for debug purposes. Content of the message
+        is entirely dependent on the `CharStream` implementation.
+        &#34;&#34;&#34;
+        ...
+
+    def current_line(self) -&gt; int:
+        &#34;&#34;&#34;
+        Get the line this stream is on. Increments when a newline (`\n`) character
+        is encountered.
+        &#34;&#34;&#34;
+        ...
+
+    def current_pos(self) -&gt; int:
+        &#34;&#34;&#34;
+        Get the character within the current line this stream is on. Resets to 0
+        when a new line is encountered.
+        &#34;&#34;&#34;
+        ...
+
+    def get_char(self) -&gt; str:
+        &#34;&#34;&#34;
+        Get the current character this stream is on.
+        &#34;&#34;&#34;
+        ...
+
+    def next_char(self) -&gt; None:
+        &#34;&#34;&#34;
+        Advance to the next character.
+        &#34;&#34;&#34;
+        ...
+
+    def at_eof(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Returns `True` if `CharStream.next_char` just advanced from the last character.
+        `CharStream.get_char` should not be called in this state. Since EOF is
+        considered a token, at_eof can effectively be considered a virtual character.
+        It is always the last one.
+        &#34;&#34;&#34;
+        ...
+
+    def after_eof(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Returns `True` if `CharStream.next_char` just advanced from the EOF state.
+        This is the true end of the stream, after all characters and EOF have been
+        streamed.
+        &#34;&#34;&#34;
+        ...
+
+    def history(self) -&gt; str:
+        &#34;&#34;&#34;
+        Get the history of this stream. Guaranteed to return at least all
+        text returned through `CharStream.get_char` and `CharStream.next_char`.
+
+        May return text not yet streamed, depending on the implementation.
+        &#34;&#34;&#34;
+        ...</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>typing.Protocol</li>
+<li>typing.Generic</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="scrolls.ast.streams.StringStream" href="#scrolls.ast.streams.StringStream">StringStream</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.ast.streams.CharStream.after_eof"><code class="name flex">
+<span>def <span class="ident">after_eof</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns <code>True</code> if <code><a title="scrolls.ast.streams.CharStream.next_char" href="#scrolls.ast.streams.CharStream.next_char">CharStream.next_char()</a></code> just advanced from the EOF state.
+This is the true end of the stream, after all characters and EOF have been
+streamed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def after_eof(self) -&gt; bool:
+    &#34;&#34;&#34;
+    Returns `True` if `CharStream.next_char` just advanced from the EOF state.
+    This is the true end of the stream, after all characters and EOF have been
+    streamed.
+    &#34;&#34;&#34;
+    ...</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.streams.CharStream.at_eof"><code class="name flex">
+<span>def <span class="ident">at_eof</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns <code>True</code> if <code><a title="scrolls.ast.streams.CharStream.next_char" href="#scrolls.ast.streams.CharStream.next_char">CharStream.next_char()</a></code> just advanced from the last character.
+<code><a title="scrolls.ast.streams.CharStream.get_char" href="#scrolls.ast.streams.CharStream.get_char">CharStream.get_char()</a></code> should not be called in this state. Since EOF is
+considered a token, at_eof can effectively be considered a virtual character.
+It is always the last one.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def at_eof(self) -&gt; bool:
+    &#34;&#34;&#34;
+    Returns `True` if `CharStream.next_char` just advanced from the last character.
+    `CharStream.get_char` should not be called in this state. Since EOF is
+    considered a token, at_eof can effectively be considered a virtual character.
+    It is always the last one.
+    &#34;&#34;&#34;
+    ...</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.streams.CharStream.current_line"><code class="name flex">
+<span>def <span class="ident">current_line</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the line this stream is on. Increments when a newline (<code></code>) character
+is encountered.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def current_line(self) -&gt; int:
+    &#34;&#34;&#34;
+    Get the line this stream is on. Increments when a newline (`\n`) character
+    is encountered.
+    &#34;&#34;&#34;
+    ...</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.streams.CharStream.current_pos"><code class="name flex">
+<span>def <span class="ident">current_pos</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the character within the current line this stream is on. Resets to 0
+when a new line is encountered.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def current_pos(self) -&gt; int:
+    &#34;&#34;&#34;
+    Get the character within the current line this stream is on. Resets to 0
+    when a new line is encountered.
+    &#34;&#34;&#34;
+    ...</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.streams.CharStream.dump_state"><code class="name flex">
+<span>def <span class="ident">dump_state</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints internal state for debug purposes. Content of the message
+is entirely dependent on the <code><a title="scrolls.ast.streams.CharStream" href="#scrolls.ast.streams.CharStream">CharStream</a></code> implementation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dump_state(self) -&gt; None:
+    &#34;&#34;&#34;
+    Prints internal state for debug purposes. Content of the message
+    is entirely dependent on the `CharStream` implementation.
+    &#34;&#34;&#34;
+    ...</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.streams.CharStream.get_char"><code class="name flex">
+<span>def <span class="ident">get_char</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the current character this stream is on.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_char(self) -&gt; str:
+    &#34;&#34;&#34;
+    Get the current character this stream is on.
+    &#34;&#34;&#34;
+    ...</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.streams.CharStream.history"><code class="name flex">
+<span>def <span class="ident">history</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the history of this stream. Guaranteed to return at least all
+text returned through <code><a title="scrolls.ast.streams.CharStream.get_char" href="#scrolls.ast.streams.CharStream.get_char">CharStream.get_char()</a></code> and <code><a title="scrolls.ast.streams.CharStream.next_char" href="#scrolls.ast.streams.CharStream.next_char">CharStream.next_char()</a></code>.</p>
+<p>May return text not yet streamed, depending on the implementation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def history(self) -&gt; str:
+    &#34;&#34;&#34;
+    Get the history of this stream. Guaranteed to return at least all
+    text returned through `CharStream.get_char` and `CharStream.next_char`.
+
+    May return text not yet streamed, depending on the implementation.
+    &#34;&#34;&#34;
+    ...</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.streams.CharStream.next_char"><code class="name flex">
+<span>def <span class="ident">next_char</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Advance to the next character.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def next_char(self) -&gt; None:
+    &#34;&#34;&#34;
+    Advance to the next character.
+    &#34;&#34;&#34;
+    ...</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.ast.streams.REPLStream"><code class="flex name class">
+<span>class <span class="ident">REPLStream</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>A <code><a title="scrolls.ast.streams.CharStream" href="#scrolls.ast.streams.CharStream">CharStream</a></code> that streams input from stdin. If an EOF is ever encountered,
+instead of entering an EOF state, more input is requested from the user.</p>
+<p>This is done on a per-line basis.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class REPLStream(StringStream):
+    &#34;&#34;&#34;
+    A `CharStream` that streams input from stdin. If an EOF is ever encountered,
+    instead of entering an EOF state, more input is requested from the user.
+
+    This is done on a per-line basis.
+    &#34;&#34;&#34;
+    def __init__(self) -&gt; None:
+        super().__init__(&#34;&#34;)
+        self.prefix = &#34;&#34;
+        self.set_statement()
+
+    def set_statement(self) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the input prefix of the REPL to &#34;&gt;&gt;&gt;&#34;. Must be
+        called manually on successful execution of a statement.
+        &#34;&#34;&#34;
+        self.prefix = &#34;&gt;&gt;&gt; &#34;
+
+    def set_continuation(self) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the input prefix of the REPL to &#34;...&#34;. Typically, this is
+        done automatically.
+        &#34;&#34;&#34;
+        self.prefix = &#34;... &#34;
+
+    def consume_line(self) -&gt; None:
+        &#34;&#34;&#34;
+        Consume the next line of user input.
+        &#34;&#34;&#34;
+        logger.debug(&#34;REPLStream: Requesting additional input.&#34;)
+
+        # Get new line, ignoring empty lines.
+        next_str = &#34;&#34;
+        while not next_str.strip():
+            next_str = input(self.prefix) + &#34;\n&#34;
+
+        self.feed(next_str)
+        self.set_continuation()
+
+    def get_char(self) -&gt; str:
+        if self.at_eof():
+            logger.debug(&#34;REPLStream: get_char: consuming new line&#34;)
+            self.consume_line()
+
+        return super().get_char()
+
+    def next_char(self) -&gt; None:
+        if self.at_eof():
+            logger.debug(&#34;REPLStream: next_char: consuming new line&#34;)
+            self.consume_line()
+
+        super().next_char()
+
+    def next_line(self) -&gt; None:
+        &#34;&#34;&#34;
+        Skip forward until the next line.
+        &#34;&#34;&#34;
+        logger.debug(&#34;REPLStream: Skipping current line.&#34;)
+
+        # if at EOF, then we&#39;re already at a new line, so stream in a new one
+        if self.at_eof():
+            logger.debug(&#34;REPLStream: next_line: consuming new line&#34;)
+            self.consume_line()
+            return
+
+        # Otherwise, skip forward in the current line until we&#39;re at a new one.
+        # inefficient implementation for now, since this is only needed for
+        # errors in the REPL.
+        current_line = self.current_line()
+        while self.current_line() == current_line:
+            self.next_char()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.ast.streams.StringStream" href="#scrolls.ast.streams.StringStream">StringStream</a></li>
+<li><a title="scrolls.ast.streams.CharStream" href="#scrolls.ast.streams.CharStream">CharStream</a></li>
+<li>typing.Protocol</li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.ast.streams.REPLStream.consume_line"><code class="name flex">
+<span>def <span class="ident">consume_line</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Consume the next line of user input.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def consume_line(self) -&gt; None:
+    &#34;&#34;&#34;
+    Consume the next line of user input.
+    &#34;&#34;&#34;
+    logger.debug(&#34;REPLStream: Requesting additional input.&#34;)
+
+    # Get new line, ignoring empty lines.
+    next_str = &#34;&#34;
+    while not next_str.strip():
+        next_str = input(self.prefix) + &#34;\n&#34;
+
+    self.feed(next_str)
+    self.set_continuation()</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.streams.REPLStream.next_line"><code class="name flex">
+<span>def <span class="ident">next_line</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Skip forward until the next line.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def next_line(self) -&gt; None:
+    &#34;&#34;&#34;
+    Skip forward until the next line.
+    &#34;&#34;&#34;
+    logger.debug(&#34;REPLStream: Skipping current line.&#34;)
+
+    # if at EOF, then we&#39;re already at a new line, so stream in a new one
+    if self.at_eof():
+        logger.debug(&#34;REPLStream: next_line: consuming new line&#34;)
+        self.consume_line()
+        return
+
+    # Otherwise, skip forward in the current line until we&#39;re at a new one.
+    # inefficient implementation for now, since this is only needed for
+    # errors in the REPL.
+    current_line = self.current_line()
+    while self.current_line() == current_line:
+        self.next_char()</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.streams.REPLStream.set_continuation"><code class="name flex">
+<span>def <span class="ident">set_continuation</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets the input prefix of the REPL to "&hellip;". Typically, this is
+done automatically.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_continuation(self) -&gt; None:
+    &#34;&#34;&#34;
+    Sets the input prefix of the REPL to &#34;...&#34;. Typically, this is
+    done automatically.
+    &#34;&#34;&#34;
+    self.prefix = &#34;... &#34;</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.streams.REPLStream.set_statement"><code class="name flex">
+<span>def <span class="ident">set_statement</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets the input prefix of the REPL to "&gt;&gt;&gt;". Must be
+called manually on successful execution of a statement.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_statement(self) -&gt; None:
+    &#34;&#34;&#34;
+    Sets the input prefix of the REPL to &#34;&gt;&gt;&gt;&#34;. Must be
+    called manually on successful execution of a statement.
+    &#34;&#34;&#34;
+    self.prefix = &#34;&gt;&gt;&gt; &#34;</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.ast.streams.StringStream" href="#scrolls.ast.streams.StringStream">StringStream</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.ast.streams.StringStream.after_eof" href="#scrolls.ast.streams.CharStream.after_eof">after_eof</a></code></li>
+<li><code><a title="scrolls.ast.streams.StringStream.at_eof" href="#scrolls.ast.streams.CharStream.at_eof">at_eof</a></code></li>
+<li><code><a title="scrolls.ast.streams.StringStream.current_line" href="#scrolls.ast.streams.CharStream.current_line">current_line</a></code></li>
+<li><code><a title="scrolls.ast.streams.StringStream.current_pos" href="#scrolls.ast.streams.CharStream.current_pos">current_pos</a></code></li>
+<li><code><a title="scrolls.ast.streams.StringStream.dump_state" href="#scrolls.ast.streams.CharStream.dump_state">dump_state</a></code></li>
+<li><code><a title="scrolls.ast.streams.StringStream.feed" href="#scrolls.ast.streams.StringStream.feed">feed</a></code></li>
+<li><code><a title="scrolls.ast.streams.StringStream.get_char" href="#scrolls.ast.streams.CharStream.get_char">get_char</a></code></li>
+<li><code><a title="scrolls.ast.streams.StringStream.history" href="#scrolls.ast.streams.CharStream.history">history</a></code></li>
+<li><code><a title="scrolls.ast.streams.StringStream.next_char" href="#scrolls.ast.streams.CharStream.next_char">next_char</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="scrolls.ast.streams.StringStream"><code class="flex name class">
+<span>class <span class="ident">StringStream</span></span>
+<span>(</span><span>string: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A <code><a title="scrolls.ast.streams.CharStream" href="#scrolls.ast.streams.CharStream">CharStream</a></code> that streams an existing string. This is the default implementation
+used by <code><a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a></code> instances if no stream is specified.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StringStream(CharStream):
+    &#34;&#34;&#34;
+    A `CharStream` that streams an existing string. This is the default implementation
+    used by `scrolls.ast.tokenizer.Tokenizer` instances if no stream is specified.
+    &#34;&#34;&#34;
+    def __init__(self, string: str):
+        self._current_line = 0
+        self._current_pos = 0
+        self._string = &#34;&#34;
+        self._stringlen = 0
+        self._more_chars = True
+
+        self.feed(string)
+        self._char = 0
+
+    def dump_state(self) -&gt; None:
+        print(
+            f&#34;current line: {self._current_line}\n&#34;
+            f&#34;current pos:  {self._current_pos}\n&#34;
+            f&#34;more chars:   {self._more_chars}\n&#34;
+        )
+
+    def current_line(self) -&gt; int:
+        return self._current_line
+
+    def current_pos(self) -&gt; int:
+        return self._current_pos
+
+    def at_eof(self) -&gt; bool:
+        off_end = self._char &gt;= self._stringlen
+
+        if off_end and self.after_eof():
+            return False
+
+        return off_end
+
+    def get_char(self) -&gt; str:
+        if self.after_eof():
+            raise ast_errors.StreamEofError(&#34;Cannot read from stream stream after EOF.&#34;)
+        elif self.at_eof():
+            raise ast_errors.StreamEofError(&#34;Cannot read from string stream at EOF.&#34;)
+
+        return self._string[self._char]
+
+    def next_char(self) -&gt; None:
+        # If we&#39;re at EOF, and try to get the next character, we&#39;ve
+        # exhausted everything.
+        if self.at_eof():
+            logger.debug(&#34;StringStream: set _more_chars False&#34;)
+            self._more_chars = False
+            return
+
+        if self.after_eof():
+            raise ast_errors.StreamEofError(&#34;Cannot read from string stream after EOF.&#34;)
+
+        char = self.get_char()
+        if char == &#34;\n&#34;:
+            self._current_line += 1
+            self._current_pos = 0
+        else:
+            self._current_pos += 1
+
+        self._char += 1
+
+    def after_eof(self) -&gt; bool:
+        return not self._more_chars
+
+    def history(self) -&gt; str:
+        return self._string
+
+    def feed(self, string: str) -&gt; None:
+        &#34;&#34;&#34;
+        Add additional strings to the stream. May be done at any time.
+        &#34;&#34;&#34;
+        trimmed_str = string.replace(&#34;\r&#34;, &#34;&#34;)
+        self._string += trimmed_str
+        self._stringlen += len(trimmed_str)
+        self._more_chars = True
+
+        logging.debug(f&#34;StringStream: Fed with \n{string}&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.ast.streams.CharStream" href="#scrolls.ast.streams.CharStream">CharStream</a></li>
+<li>typing.Protocol</li>
+<li>typing.Generic</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="scrolls.ast.streams.REPLStream" href="#scrolls.ast.streams.REPLStream">REPLStream</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.ast.streams.StringStream.feed"><code class="name flex">
+<span>def <span class="ident">feed</span></span>(<span>self, string: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add additional strings to the stream. May be done at any time.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def feed(self, string: str) -&gt; None:
+    &#34;&#34;&#34;
+    Add additional strings to the stream. May be done at any time.
+    &#34;&#34;&#34;
+    trimmed_str = string.replace(&#34;\r&#34;, &#34;&#34;)
+    self._string += trimmed_str
+    self._stringlen += len(trimmed_str)
+    self._more_chars = True
+
+    logging.debug(f&#34;StringStream: Fed with \n{string}&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="scrolls.ast.streams.CharStream" href="#scrolls.ast.streams.CharStream">CharStream</a></b></code>:
+<ul class="hlist">
+<li><code><a title="scrolls.ast.streams.CharStream.after_eof" href="#scrolls.ast.streams.CharStream.after_eof">after_eof</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.at_eof" href="#scrolls.ast.streams.CharStream.at_eof">at_eof</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.current_line" href="#scrolls.ast.streams.CharStream.current_line">current_line</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.current_pos" href="#scrolls.ast.streams.CharStream.current_pos">current_pos</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.dump_state" href="#scrolls.ast.streams.CharStream.dump_state">dump_state</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.get_char" href="#scrolls.ast.streams.CharStream.get_char">get_char</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.history" href="#scrolls.ast.streams.CharStream.history">history</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.next_char" href="#scrolls.ast.streams.CharStream.next_char">next_char</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scrolls.ast" href="index.html">scrolls.ast</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="scrolls.ast.streams.CharStream" href="#scrolls.ast.streams.CharStream">CharStream</a></code></h4>
+<ul class="two-column">
+<li><code><a title="scrolls.ast.streams.CharStream.after_eof" href="#scrolls.ast.streams.CharStream.after_eof">after_eof</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.at_eof" href="#scrolls.ast.streams.CharStream.at_eof">at_eof</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.current_line" href="#scrolls.ast.streams.CharStream.current_line">current_line</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.current_pos" href="#scrolls.ast.streams.CharStream.current_pos">current_pos</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.dump_state" href="#scrolls.ast.streams.CharStream.dump_state">dump_state</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.get_char" href="#scrolls.ast.streams.CharStream.get_char">get_char</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.history" href="#scrolls.ast.streams.CharStream.history">history</a></code></li>
+<li><code><a title="scrolls.ast.streams.CharStream.next_char" href="#scrolls.ast.streams.CharStream.next_char">next_char</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.ast.streams.REPLStream" href="#scrolls.ast.streams.REPLStream">REPLStream</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.ast.streams.REPLStream.consume_line" href="#scrolls.ast.streams.REPLStream.consume_line">consume_line</a></code></li>
+<li><code><a title="scrolls.ast.streams.REPLStream.next_line" href="#scrolls.ast.streams.REPLStream.next_line">next_line</a></code></li>
+<li><code><a title="scrolls.ast.streams.REPLStream.set_continuation" href="#scrolls.ast.streams.REPLStream.set_continuation">set_continuation</a></code></li>
+<li><code><a title="scrolls.ast.streams.REPLStream.set_statement" href="#scrolls.ast.streams.REPLStream.set_statement">set_statement</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.ast.streams.StringStream" href="#scrolls.ast.streams.StringStream">StringStream</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.ast.streams.StringStream.feed" href="#scrolls.ast.streams.StringStream.feed">feed</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

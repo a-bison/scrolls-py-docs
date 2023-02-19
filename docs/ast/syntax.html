@@ -1,0 +1,1278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>scrolls.ast.syntax API documentation</title>
+<meta name="description" content="Syntactic analysis …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scrolls.ast.syntax</code></h1>
+</header>
+<section id="section-intro">
+<p>Syntactic analysis.</p>
+<p>See <a href="index.html#syntactic-analysis">ast: Syntactic Analysis</a></p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Syntactic analysis.
+
+See [ast: Syntactic Analysis](index.html#syntactic-analysis)
+&#34;&#34;&#34;
+
+import json
+import logging
+import typing as t
+
+from .. import errors as base_errors
+from . import ast_errors
+from .ast_constants import ASTNodeType, TokenType
+from .tokenizer import Token, Tokenizer
+
+__all__ = (
+    &#34;AST&#34;,
+    &#34;ASTNode&#34;,
+    &#34;ASTStateError&#34;,
+    &#34;parse_scroll&#34;,
+    &#34;parse_statement&#34;
+)
+
+
+logger = logging.getLogger(__name__)
+ParserT = t.Callable[[&#39;ParseContext&#39;], &#39;ASTNode&#39;]
+
+
+class AST:
+    &#34;&#34;&#34;An Abstract Syntax Tree.
+
+    Represents the syntactic structure of a script.
+    &#34;&#34;&#34;
+
+    def __init__(self, root: &#39;ASTNode&#39;, script: str):
+        self.root: ASTNode = root
+        &#34;&#34;&#34;The root `ASTNode` of this AST.&#34;&#34;&#34;
+
+        self.script: str = script
+        &#34;&#34;&#34;The script that generated this AST.&#34;&#34;&#34;
+
+    def prettify(self) -&gt; str:
+        &#34;&#34;&#34;Returns a JSON-formatted string showing the full structure of this AST.
+
+        .. WARNING::
+            For debugging and demonstration purposes only.
+        &#34;&#34;&#34;
+        return self.root.prettify()
+
+    def __repr__(self) -&gt; str:
+        return f&#34;ScrollAST({repr(self.root)}&#34;
+
+
+class ASTStateError(base_errors.ScrollError):
+    &#34;&#34;&#34;Generic tokenizer/parser error that includes an entire AST node.
+
+    Raised by `ASTNode` functions on invalid state.
+
+    Generally internal to the `scrolls` module. If one of these errors makes it out,
+    something is probably wrong.
+    &#34;&#34;&#34;
+    def __init__(self, node: &#39;ASTNode&#39;, message: str):
+        self.node = node
+        self.message = message
+
+    def __str__(self) -&gt; str:
+        return self.message
+
+
+class ASTNode:
+    &#34;&#34;&#34;
+    A node within an `AST`.
+    &#34;&#34;&#34;
+    __slots__ = (
+        &#34;children&#34;,
+        &#34;type&#34;,
+        &#34;_tok&#34;
+    )
+
+    def __init__(self, type: ASTNodeType, token: t.Optional[Token]):
+        self.children: t.MutableSequence[&#39;ASTNode&#39;] = []
+        &#34;&#34;&#34;The child `ASTNode` objects of this node.&#34;&#34;&#34;
+
+        self.type = type
+        &#34;&#34;&#34;The `ASTNodeType` of this node.&#34;&#34;&#34;
+
+        self._tok: t.Optional[Token] = token
+
+    def to_dict(self) -&gt; t.Mapping[str, t.Any]:
+        &#34;&#34;&#34;
+        Converts this object into a dict demonstrating its structure.
+
+        Returns:
+            A dictionary of the following form:
+
+            ```json
+            {
+                &#34;_type&#34;: &#34;TYPENAME&#34;,
+                &#34;_tok&#34;: &#34;TOKTYPE:&#39;TOKVALUE&#39;&#34;,
+                &#34;children&#34;: [...]
+            }
+            ```
+
+            .. WARNING::
+                This dictionary cannot be converted 1-1 back to a `ASTNode`. It is mainly meant for display
+                purposes. See `ASTNode.prettify`.
+        &#34;&#34;&#34;
+
+        mapping = {
+            &#34;_type&#34;: self.type.name,
+            &#34;_tok&#34;: str(self._tok),
+            &#34;children&#34;: [child.to_dict() for child in self.children]
+        }
+
+        return mapping
+
+    def prettify(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns a JSON-formatted string showing the full structure of this `ASTNode`.
+
+        .. WARNING::
+            For debugging and demonstration purposes only.
+        &#34;&#34;&#34;
+
+        s = json.dumps(self.to_dict(), sort_keys=True, indent=4)
+        return s
+
+    @property
+    def tok(self) -&gt; Token:
+        &#34;&#34;&#34;
+        The token that generated this node. This should always be populated by `parse_scroll` under normal
+        circumstances.
+
+        Raises:
+            ASTStateError: On get, if the token was never assigned.
+        &#34;&#34;&#34;
+
+        if self._tok is None:
+            raise ASTStateError(self, &#34;cannot get token, is None&#34;)
+
+        return self._tok
+
+    @tok.setter
+    def tok(self, token: Token) -&gt; None:
+        self._tok = token
+
+    def has_token(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Checks whether this node has a token assigned to it.
+        &#34;&#34;&#34;
+        return self._tok is not None
+
+    def wrap(self, node_type: ASTNodeType, as_child: bool = False) -&gt; &#39;ASTNode&#39;:
+        &#34;&#34;&#34;
+        Create a new node, and assign this node&#39;s token to the new node.
+
+        .. WARNING::
+            This is used internally by the parser during parsing and should generally not be called on finished ASTs.
+
+        Args:
+            node_type: The type of the new node.
+            as_child: If `True`, add this node as a child of the new wrapper node.
+
+        Returns:
+            The newly created wrapper node.
+        &#34;&#34;&#34;
+        new_node = ASTNode(
+            node_type,
+            self.tok
+        )
+
+        if as_child:
+            new_node.children.append(self)
+
+        return new_node
+
+    def str_content(self) -&gt; str:
+        &#34;&#34;&#34;
+        Gets the string value of a `scrolls.ast.ast_constants.ASTNodeType.STRING` node.
+
+        Raises:
+            ASTStateError: If this node is not `scrolls.ast.ast_constants.ASTNodeType.STRING`.
+        &#34;&#34;&#34;
+        if self.type != ASTNodeType.STRING:
+            raise ASTStateError(self, &#34;str_content requires STRING type node&#34;)
+
+        assert self._tok is not None
+        return self._tok.value
+
+    def find_all(self, func: t.Callable[[&#39;ASTNode&#39;], bool]) -&gt; t.Sequence[&#39;ASTNode&#39;]:
+        &#34;&#34;&#34;
+        Find all nodes in this tree for which `func` returns true.
+
+        Args:
+            func: A predicate which takes an `ASTNode` as input.
+
+        Returns:
+            A sequence of matching nodes.
+        &#34;&#34;&#34;
+
+        found = []
+
+        if func(self):
+            found.append(self)
+
+        for child in self.children:
+            found.extend(child.find_all(func))
+
+        return found
+
+    def __str__(self) -&gt; str:
+        return repr(self)
+
+    def __repr__(self) -&gt; str:
+        if self.type is ASTNodeType.STRING:
+            return f&#34;ScrollASTNode({self.type.name}, &#39;{str(self._tok)}&#39;)&#34;
+        else:
+            return f&#34;ScrollASTNode({self.type.name}, {repr(self.children)})&#34;
+
+
+class ParseContext:
+    def __init__(self, tokenizer: Tokenizer):
+        self.tokenizer = tokenizer
+        self.token: Token = Token(TokenType.WHITESPACE, &#34;&#34;, 0, 0, tokenizer)
+
+        self.next_token()
+
+    def current_token(self) -&gt; Token:
+        return self.token
+
+    def next_token(self) -&gt; None:
+        if self.tokenizer.stream.after_eof():
+            logger.debug(&#34;End of tokens.&#34;)
+            parse_error(
+                self,
+                ast_errors.ParseEofError,
+                &#34;Unexpected end of script.&#34;
+            )
+        else:
+            prev_token = self.token
+            self.token = self.tokenizer.next_token()
+
+            logger.debug(f&#34;Advance token: {str(prev_token)}-&gt;{str(self.token)}&#34;)
+
+
+def parse_error(
+    ctx: ParseContext,
+    error: t.Type[ast_errors.ParseError],
+    message: str,
+    fatal: bool = False
+) -&gt; t.NoReturn:
+    e = error(
+        ctx.token.line,
+        ctx.token.position,
+        ctx.tokenizer.stream.history(),
+        message
+    )
+
+    e.fatal = fatal
+
+    if not fatal:
+        logger.debug(&#34;error&#34;)
+    else:
+        logger.debug(&#34;fatal error&#34;)
+
+    raise e
+
+
+def parse_get(
+    ctx: ParseContext,
+    type: TokenType
+) -&gt; t.Optional[Token]:
+    token = ctx.current_token()
+
+    logger.debug(f&#34;parse_get: want {type.name}&#34;)
+
+    if token.type == type:
+        ctx.next_token()
+        logger.debug(f&#34;parse_get: accepted {str(token)}&#34;)
+        return token
+    else:
+        logger.debug(f&#34;parse_get: rejected {str(token)}&#34;)
+        return None
+
+
+def parse_expect(
+    ctx: ParseContext,
+    type: TokenType,
+    fatal_on_error: bool = False
+) -&gt; Token:
+    tok = parse_get(ctx, type)
+
+    if tok is None:
+        parse_error(
+            ctx,
+            ast_errors.ParseExpectError,
+            f&#34;expected {type.name} here, but got {ctx.token.type.name}({ctx.token.value})&#34;,
+            fatal=fatal_on_error
+        )
+
+    else:
+        return tok
+
+
+def parse_strtok(
+    ctx: ParseContext
+) -&gt; ASTNode:
+    node = ASTNode(
+        ASTNodeType.STRING,
+        parse_expect(ctx, TokenType.STRING_LITERAL)
+    )
+
+    return node
+
+
+def parse_greedy(
+    parser: ParserT
+) -&gt; t.Callable[[ParseContext], t.Sequence[ASTNode]]:
+    def _(ctx: ParseContext) -&gt; t.Sequence[ASTNode]:
+        nodes: t.MutableSequence[ASTNode] = []
+
+        while True:
+            try:
+                nodes.append(parser(ctx))
+                logger.debug(&#34;parse_greedy: append success&#34;)
+            except ast_errors.ParseError as e:
+                if e.fatal:
+                    raise
+
+                logger.debug(&#34;parse_greedy: append fail, return&#34;)
+                return nodes
+
+    return _
+
+
+def parse_choice(
+    *parsers: ParserT
+) -&gt; ParserT:
+    def _(ctx: ParseContext) -&gt; ASTNode:
+        last_exc: t.Optional[ast_errors.ParseError] = None
+
+        for parser in parsers:
+            try:
+                node = parser(ctx)
+                return node
+            except ast_errors.ParseError as e:
+                last_exc = e
+
+                if e.fatal:
+                    break
+
+        if last_exc is None:
+            parse_error(
+                ctx,
+                ast_errors.ParseError,
+                &#34;internal: no parsers provided for parse_choice&#34;
+            )
+        else:
+            raise last_exc
+
+    return _
+
+
+def expect(
+    t_type: TokenType,
+    fatal_on_error: bool = False
+) -&gt; ParserT:
+    def _(ctx: ParseContext) -&gt; ASTNode:
+        node = ASTNode(
+            ASTNodeType.NONE,
+            parse_expect(ctx, t_type, fatal_on_error)
+        )
+
+        return node
+
+    return _
+
+
+def parse_try(
+    parser: ParserT
+) -&gt; t.Callable[[ParseContext], bool]:
+    def _(ctx: ParseContext) -&gt; bool:
+        try:
+            parser(ctx)
+            return True
+        except ast_errors.ParseError:
+            return False
+
+    return _
+
+
+def expect_eof(ctx: ParseContext) -&gt; ASTNode:
+    try:
+        parse_expect(ctx, TokenType.EOF)
+    except ast_errors.ParseEofError:
+        pass
+
+    return ASTNode(
+        ASTNodeType.EOF,
+        ctx.token
+    )
+
+
+expect_command_separator = expect(TokenType.COMMAND_SEP)
+
+
+def parse_expansion_var(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_expansion_var&#34;)
+    var_name_node = parse_eventual_string(ctx).wrap(
+        ASTNodeType.EXPANSION_VAR, as_child=True
+    )
+
+    return var_name_node
+
+
+def parse_expansion_call_args(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_expansion_call_args&#34;)
+
+    args = parse_greedy(parse_eventual_string)(ctx)
+    first_tok: t.Optional[Token] = None
+
+    if args:
+        first_tok = args[0].tok
+
+    args_node = ASTNode(
+        ASTNodeType.EXPANSION_ARGUMENTS,
+        first_tok
+    )
+    args_node.children.extend(args)
+
+    return args_node
+
+
+def parse_expansion_call(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_expansion_call&#34;)
+    call_node = expect(TokenType.OPEN_ARGS)(ctx).wrap(
+        ASTNodeType.EXPANSION_CALL
+    )
+
+    call_node.children.append(parse_eventual_string(ctx))  # Expansion name
+    call_node.children.append(parse_expansion_call_args(ctx))
+
+    expect(TokenType.CLOSE_ARGS, fatal_on_error=True)(ctx)
+
+    return call_node
+
+
+def parse_expansion(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_expansion&#34;)
+
+    expansion_node = expect(TokenType.EXPANSION_SIGIL)(ctx).wrap(
+        ASTNodeType.EXPANSION
+    )
+
+    multi_tok = parse_get(ctx, TokenType.SPREAD_SIGIL)
+    if multi_tok is None:
+        expansion_node.children.append(
+            ASTNode(ASTNodeType.EXPANSION_SINGLE, None)
+        )
+    else:
+        expansion_node.children.append(
+            ASTNode(ASTNodeType.EXPANSION_SPREAD, multi_tok)
+        )
+
+    expansion_node.children.append(
+        parse_choice(parse_expansion_call, parse_expansion_var)(ctx)
+    )
+
+    return expansion_node
+
+
+parse_eventual_string = parse_choice(
+    parse_expansion,
+    parse_strtok
+)
+
+
+def parse_command_args(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_command_args&#34;)
+    args_node = ASTNode(ASTNodeType.COMMAND_ARGUMENTS, None)
+    args_node.children.extend(parse_greedy(parse_eventual_string)(ctx))
+
+    if args_node.children:
+        args_node.tok = args_node.children[0].tok
+
+    return args_node
+
+
+def parse_command(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_command&#34;)
+
+    command_node = parse_eventual_string(ctx).wrap(
+        ASTNodeType.COMMAND_CALL,
+        as_child=True
+    )
+    command_node.children.append(parse_command_args(ctx))
+
+    return command_node
+
+
+def parse_control_args(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_control_args&#34;)
+    args_node = expect(TokenType.OPEN_ARGS)(ctx).wrap(
+        ASTNodeType.CONTROL_ARGUMENTS
+    )
+    args_node.children.extend(parse_greedy(parse_eventual_string)(ctx))
+    expect(
+        TokenType.CLOSE_ARGS,
+        fatal_on_error=True
+    )(ctx)
+
+    return args_node
+
+
+def parse_control(ctx: ParseContext) -&gt; ASTNode:
+    logger.debug(&#34;parse_control&#34;)
+
+    control_node = expect(TokenType.CONTROL_SIGIL)(ctx).wrap(
+        ASTNodeType.CONTROL_CALL
+    )
+    control_node.children.append(parse_strtok(ctx))
+
+    try:
+        # Try to parse statement first, and count no () as no arguments
+        statement_node = _parse_statement(ctx)
+        args_node = ASTNode(ASTNodeType.CONTROL_ARGUMENTS, statement_node.tok)
+
+        control_node.children.append(args_node)
+        control_node.children.append(statement_node)
+    except ast_errors.ParseError:
+        control_node.children.append(parse_control_args(ctx))
+        control_node.children.append(_parse_statement(ctx))
+
+    return control_node
+
+
+def parse_block_body(ctx: ParseContext, top_level: bool = False) -&gt; t.Sequence[ASTNode]:
+    logger.debug(&#34;parse_block_body&#34;)
+
+    nodes: t.MutableSequence[ASTNode] = []
+
+    while True:
+        if ctx.token.type == TokenType.CLOSE_BLOCK:
+            if top_level:
+                parse_error(
+                    ctx,
+                    ast_errors.ParseError,
+                    &#34;Unexpected block close.&#34;,
+                    fatal=True
+                )
+            else:
+                return nodes
+
+        if ctx.token.type == TokenType.EOF:
+            if top_level:
+                return nodes
+            else:
+                parse_error(
+                    ctx,
+                    ast_errors.ParseEofError,
+                    &#34;Unexpected end of script while parsing block.&#34;,
+                    fatal=True
+                )
+
+        # If we hit a command separator, just consume it and continue.
+        if parse_try(expect_command_separator)(ctx):
+            continue
+
+        # Actually try to parse the next statement. If that fails, it means we found some non-statement
+        # structure inside a block, which is not legal. Error out with something more descriptive.
+        try:
+            node = _parse_statement(ctx)
+        except ast_errors.ParseError:
+            parse_error(
+                ctx,
+                ast_errors.ParseError,
+                &#34;Expected statement or block here.&#34;,
+                fatal=True
+            )
+            raise  # Not necessary, but satisfies linters.
+
+        nodes.append(node)
+
+
+def parse_block(ctx: ParseContext) -&gt; ASTNode:
+    node = expect(TokenType.OPEN_BLOCK)(ctx).wrap(
+        ASTNodeType.BLOCK
+    )
+    node.children.extend(parse_block_body(ctx))
+    expect(
+        TokenType.CLOSE_BLOCK,
+        fatal_on_error=True
+    )(ctx)
+
+    return node
+
+
+_parse_statement = parse_choice(
+    parse_block,
+    parse_control,
+    parse_command
+)
+
+
+def parse_root(tokenizer: Tokenizer) -&gt; ASTNode:
+    ctx = ParseContext(tokenizer)
+    root_node = ASTNode(ASTNodeType.ROOT, None)
+    root_node.children.extend(parse_block_body(ctx, top_level=True))
+
+    return root_node
+
+
+def parse_scroll(tokenizer: Tokenizer) -&gt; AST:
+    &#34;&#34;&#34;
+    Parse a script (wrapped in a `scrolls.ast.tokenizer.Tokenizer`) and convert it to an `scrolls.ast.syntax.AST`.
+    See [Using The Parser](index.html#using-the-parser).
+    &#34;&#34;&#34;
+    return AST(parse_root(tokenizer), tokenizer.stream.history())
+
+
+def parse_statement(tokenizer: Tokenizer) -&gt; ASTNode:
+    &#34;&#34;&#34;
+    Parse a single statement from a `scrolls.ast.tokenizer.Tokenizer`.
+    &#34;&#34;&#34;
+    ctx = ParseContext(tokenizer)
+    return _parse_statement(ctx)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="scrolls.ast.syntax.parse_scroll"><code class="name flex">
+<span>def <span class="ident">parse_scroll</span></span>(<span>tokenizer: <a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a>) ‑> <a title="scrolls.ast.syntax.AST" href="#scrolls.ast.syntax.AST">AST</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse a script (wrapped in a <code><a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a></code>) and convert it to an <code><a title="scrolls.ast.syntax.AST" href="#scrolls.ast.syntax.AST">AST</a></code>.
+See <a href="index.html#using-the-parser">Using The Parser</a>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_scroll(tokenizer: Tokenizer) -&gt; AST:
+    &#34;&#34;&#34;
+    Parse a script (wrapped in a `scrolls.ast.tokenizer.Tokenizer`) and convert it to an `scrolls.ast.syntax.AST`.
+    See [Using The Parser](index.html#using-the-parser).
+    &#34;&#34;&#34;
+    return AST(parse_root(tokenizer), tokenizer.stream.history())</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.syntax.parse_statement"><code class="name flex">
+<span>def <span class="ident">parse_statement</span></span>(<span>tokenizer: <a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a>) ‑> <a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse a single statement from a <code><a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_statement(tokenizer: Tokenizer) -&gt; ASTNode:
+    &#34;&#34;&#34;
+    Parse a single statement from a `scrolls.ast.tokenizer.Tokenizer`.
+    &#34;&#34;&#34;
+    ctx = ParseContext(tokenizer)
+    return _parse_statement(ctx)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="scrolls.ast.syntax.AST"><code class="flex name class">
+<span>class <span class="ident">AST</span></span>
+<span>(</span><span>root: <a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a>, script: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An Abstract Syntax Tree.</p>
+<p>Represents the syntactic structure of a script.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AST:
+    &#34;&#34;&#34;An Abstract Syntax Tree.
+
+    Represents the syntactic structure of a script.
+    &#34;&#34;&#34;
+
+    def __init__(self, root: &#39;ASTNode&#39;, script: str):
+        self.root: ASTNode = root
+        &#34;&#34;&#34;The root `ASTNode` of this AST.&#34;&#34;&#34;
+
+        self.script: str = script
+        &#34;&#34;&#34;The script that generated this AST.&#34;&#34;&#34;
+
+    def prettify(self) -&gt; str:
+        &#34;&#34;&#34;Returns a JSON-formatted string showing the full structure of this AST.
+
+        .. WARNING::
+            For debugging and demonstration purposes only.
+        &#34;&#34;&#34;
+        return self.root.prettify()
+
+    def __repr__(self) -&gt; str:
+        return f&#34;ScrollAST({repr(self.root)}&#34;</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="scrolls.ast.syntax.AST.root"><code class="name">var <span class="ident">root</span></code></dt>
+<dd>
+<div class="desc"><p>The root <code><a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a></code> of this AST.</p></div>
+</dd>
+<dt id="scrolls.ast.syntax.AST.script"><code class="name">var <span class="ident">script</span></code></dt>
+<dd>
+<div class="desc"><p>The script that generated this AST.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.ast.syntax.AST.prettify"><code class="name flex">
+<span>def <span class="ident">prettify</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a JSON-formatted string showing the full structure of this AST.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For debugging and demonstration purposes only.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prettify(self) -&gt; str:
+    &#34;&#34;&#34;Returns a JSON-formatted string showing the full structure of this AST.
+
+    .. WARNING::
+        For debugging and demonstration purposes only.
+    &#34;&#34;&#34;
+    return self.root.prettify()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.ast.syntax.ASTNode"><code class="flex name class">
+<span>class <span class="ident">ASTNode</span></span>
+<span>(</span><span>type: <a title="scrolls.ast.ast_constants.ASTNodeType" href="ast_constants.html#scrolls.ast.ast_constants.ASTNodeType">ASTNodeType</a>, token: Optional[<a title="scrolls.ast.tokenizer.Token" href="tokenizer.html#scrolls.ast.tokenizer.Token">Token</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A node within an <code><a title="scrolls.ast.syntax.AST" href="#scrolls.ast.syntax.AST">AST</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ASTNode:
+    &#34;&#34;&#34;
+    A node within an `AST`.
+    &#34;&#34;&#34;
+    __slots__ = (
+        &#34;children&#34;,
+        &#34;type&#34;,
+        &#34;_tok&#34;
+    )
+
+    def __init__(self, type: ASTNodeType, token: t.Optional[Token]):
+        self.children: t.MutableSequence[&#39;ASTNode&#39;] = []
+        &#34;&#34;&#34;The child `ASTNode` objects of this node.&#34;&#34;&#34;
+
+        self.type = type
+        &#34;&#34;&#34;The `ASTNodeType` of this node.&#34;&#34;&#34;
+
+        self._tok: t.Optional[Token] = token
+
+    def to_dict(self) -&gt; t.Mapping[str, t.Any]:
+        &#34;&#34;&#34;
+        Converts this object into a dict demonstrating its structure.
+
+        Returns:
+            A dictionary of the following form:
+
+            ```json
+            {
+                &#34;_type&#34;: &#34;TYPENAME&#34;,
+                &#34;_tok&#34;: &#34;TOKTYPE:&#39;TOKVALUE&#39;&#34;,
+                &#34;children&#34;: [...]
+            }
+            ```
+
+            .. WARNING::
+                This dictionary cannot be converted 1-1 back to a `ASTNode`. It is mainly meant for display
+                purposes. See `ASTNode.prettify`.
+        &#34;&#34;&#34;
+
+        mapping = {
+            &#34;_type&#34;: self.type.name,
+            &#34;_tok&#34;: str(self._tok),
+            &#34;children&#34;: [child.to_dict() for child in self.children]
+        }
+
+        return mapping
+
+    def prettify(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns a JSON-formatted string showing the full structure of this `ASTNode`.
+
+        .. WARNING::
+            For debugging and demonstration purposes only.
+        &#34;&#34;&#34;
+
+        s = json.dumps(self.to_dict(), sort_keys=True, indent=4)
+        return s
+
+    @property
+    def tok(self) -&gt; Token:
+        &#34;&#34;&#34;
+        The token that generated this node. This should always be populated by `parse_scroll` under normal
+        circumstances.
+
+        Raises:
+            ASTStateError: On get, if the token was never assigned.
+        &#34;&#34;&#34;
+
+        if self._tok is None:
+            raise ASTStateError(self, &#34;cannot get token, is None&#34;)
+
+        return self._tok
+
+    @tok.setter
+    def tok(self, token: Token) -&gt; None:
+        self._tok = token
+
+    def has_token(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Checks whether this node has a token assigned to it.
+        &#34;&#34;&#34;
+        return self._tok is not None
+
+    def wrap(self, node_type: ASTNodeType, as_child: bool = False) -&gt; &#39;ASTNode&#39;:
+        &#34;&#34;&#34;
+        Create a new node, and assign this node&#39;s token to the new node.
+
+        .. WARNING::
+            This is used internally by the parser during parsing and should generally not be called on finished ASTs.
+
+        Args:
+            node_type: The type of the new node.
+            as_child: If `True`, add this node as a child of the new wrapper node.
+
+        Returns:
+            The newly created wrapper node.
+        &#34;&#34;&#34;
+        new_node = ASTNode(
+            node_type,
+            self.tok
+        )
+
+        if as_child:
+            new_node.children.append(self)
+
+        return new_node
+
+    def str_content(self) -&gt; str:
+        &#34;&#34;&#34;
+        Gets the string value of a `scrolls.ast.ast_constants.ASTNodeType.STRING` node.
+
+        Raises:
+            ASTStateError: If this node is not `scrolls.ast.ast_constants.ASTNodeType.STRING`.
+        &#34;&#34;&#34;
+        if self.type != ASTNodeType.STRING:
+            raise ASTStateError(self, &#34;str_content requires STRING type node&#34;)
+
+        assert self._tok is not None
+        return self._tok.value
+
+    def find_all(self, func: t.Callable[[&#39;ASTNode&#39;], bool]) -&gt; t.Sequence[&#39;ASTNode&#39;]:
+        &#34;&#34;&#34;
+        Find all nodes in this tree for which `func` returns true.
+
+        Args:
+            func: A predicate which takes an `ASTNode` as input.
+
+        Returns:
+            A sequence of matching nodes.
+        &#34;&#34;&#34;
+
+        found = []
+
+        if func(self):
+            found.append(self)
+
+        for child in self.children:
+            found.extend(child.find_all(func))
+
+        return found
+
+    def __str__(self) -&gt; str:
+        return repr(self)
+
+    def __repr__(self) -&gt; str:
+        if self.type is ASTNodeType.STRING:
+            return f&#34;ScrollASTNode({self.type.name}, &#39;{str(self._tok)}&#39;)&#34;
+        else:
+            return f&#34;ScrollASTNode({self.type.name}, {repr(self.children)})&#34;</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="scrolls.ast.syntax.ASTNode.children"><code class="name">var <span class="ident">children</span></code></dt>
+<dd>
+<div class="desc"><p>The child <code><a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a></code> objects of this node.</p></div>
+</dd>
+<dt id="scrolls.ast.syntax.ASTNode.tok"><code class="name">var <span class="ident">tok</span> : <a title="scrolls.ast.tokenizer.Token" href="tokenizer.html#scrolls.ast.tokenizer.Token">Token</a></code></dt>
+<dd>
+<div class="desc"><p>The token that generated this node. This should always be populated by <code><a title="scrolls.ast.syntax.parse_scroll" href="#scrolls.ast.syntax.parse_scroll">parse_scroll()</a></code> under normal
+circumstances.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code><a title="scrolls.ast.syntax.ASTStateError" href="#scrolls.ast.syntax.ASTStateError">ASTStateError</a></code></dt>
+<dd>On get, if the token was never assigned.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def tok(self) -&gt; Token:
+    &#34;&#34;&#34;
+    The token that generated this node. This should always be populated by `parse_scroll` under normal
+    circumstances.
+
+    Raises:
+        ASTStateError: On get, if the token was never assigned.
+    &#34;&#34;&#34;
+
+    if self._tok is None:
+        raise ASTStateError(self, &#34;cannot get token, is None&#34;)
+
+    return self._tok</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.syntax.ASTNode.type"><code class="name">var <span class="ident">type</span></code></dt>
+<dd>
+<div class="desc"><p>The <code>ASTNodeType</code> of this node.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.ast.syntax.ASTNode.find_all"><code class="name flex">
+<span>def <span class="ident">find_all</span></span>(<span>self, func: Callable[[ForwardRef('<a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a>')], bool]) ‑> Sequence[<a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find all nodes in this tree for which <code>func</code> returns true.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>func</code></strong></dt>
+<dd>A predicate which takes an <code><a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a></code> as input.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>A sequence of matching nodes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_all(self, func: t.Callable[[&#39;ASTNode&#39;], bool]) -&gt; t.Sequence[&#39;ASTNode&#39;]:
+    &#34;&#34;&#34;
+    Find all nodes in this tree for which `func` returns true.
+
+    Args:
+        func: A predicate which takes an `ASTNode` as input.
+
+    Returns:
+        A sequence of matching nodes.
+    &#34;&#34;&#34;
+
+    found = []
+
+    if func(self):
+        found.append(self)
+
+    for child in self.children:
+        found.extend(child.find_all(func))
+
+    return found</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.syntax.ASTNode.has_token"><code class="name flex">
+<span>def <span class="ident">has_token</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks whether this node has a token assigned to it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_token(self) -&gt; bool:
+    &#34;&#34;&#34;
+    Checks whether this node has a token assigned to it.
+    &#34;&#34;&#34;
+    return self._tok is not None</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.syntax.ASTNode.prettify"><code class="name flex">
+<span>def <span class="ident">prettify</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a JSON-formatted string showing the full structure of this <code><a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For debugging and demonstration purposes only.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prettify(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns a JSON-formatted string showing the full structure of this `ASTNode`.
+
+    .. WARNING::
+        For debugging and demonstration purposes only.
+    &#34;&#34;&#34;
+
+    s = json.dumps(self.to_dict(), sort_keys=True, indent=4)
+    return s</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.syntax.ASTNode.str_content"><code class="name flex">
+<span>def <span class="ident">str_content</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets the string value of a <code><a title="scrolls.ast.ast_constants.ASTNodeType.STRING" href="ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.STRING">ASTNodeType.STRING</a></code> node.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code><a title="scrolls.ast.syntax.ASTStateError" href="#scrolls.ast.syntax.ASTStateError">ASTStateError</a></code></dt>
+<dd>If this node is not <code><a title="scrolls.ast.ast_constants.ASTNodeType.STRING" href="ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.STRING">ASTNodeType.STRING</a></code>.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def str_content(self) -&gt; str:
+    &#34;&#34;&#34;
+    Gets the string value of a `scrolls.ast.ast_constants.ASTNodeType.STRING` node.
+
+    Raises:
+        ASTStateError: If this node is not `scrolls.ast.ast_constants.ASTNodeType.STRING`.
+    &#34;&#34;&#34;
+    if self.type != ASTNodeType.STRING:
+        raise ASTStateError(self, &#34;str_content requires STRING type node&#34;)
+
+    assert self._tok is not None
+    return self._tok.value</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.syntax.ASTNode.to_dict"><code class="name flex">
+<span>def <span class="ident">to_dict</span></span>(<span>self) ‑> Mapping[str, Any]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts this object into a dict demonstrating its structure.</p>
+<h2 id="returns">Returns</h2>
+<p>A dictionary of the following form:</p>
+<pre><code class="language-json">{
+    &quot;_type&quot;: &quot;TYPENAME&quot;,
+    &quot;_tok&quot;: &quot;TOKTYPE:'TOKVALUE'&quot;,
+    &quot;children&quot;: [...]
+}
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This dictionary cannot be converted 1-1 back to a <code><a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a></code>. It is mainly meant for display
+purposes. See <code><a title="scrolls.ast.syntax.ASTNode.prettify" href="#scrolls.ast.syntax.ASTNode.prettify">ASTNode.prettify()</a></code>.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_dict(self) -&gt; t.Mapping[str, t.Any]:
+    &#34;&#34;&#34;
+    Converts this object into a dict demonstrating its structure.
+
+    Returns:
+        A dictionary of the following form:
+
+        ```json
+        {
+            &#34;_type&#34;: &#34;TYPENAME&#34;,
+            &#34;_tok&#34;: &#34;TOKTYPE:&#39;TOKVALUE&#39;&#34;,
+            &#34;children&#34;: [...]
+        }
+        ```
+
+        .. WARNING::
+            This dictionary cannot be converted 1-1 back to a `ASTNode`. It is mainly meant for display
+            purposes. See `ASTNode.prettify`.
+    &#34;&#34;&#34;
+
+    mapping = {
+        &#34;_type&#34;: self.type.name,
+        &#34;_tok&#34;: str(self._tok),
+        &#34;children&#34;: [child.to_dict() for child in self.children]
+    }
+
+    return mapping</code></pre>
+</details>
+</dd>
+<dt id="scrolls.ast.syntax.ASTNode.wrap"><code class="name flex">
+<span>def <span class="ident">wrap</span></span>(<span>self, node_type: <a title="scrolls.ast.ast_constants.ASTNodeType" href="ast_constants.html#scrolls.ast.ast_constants.ASTNodeType">ASTNodeType</a>, as_child: bool = False) ‑> <a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a new node, and assign this node's token to the new node.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is used internally by the parser during parsing and should generally not be called on finished ASTs.</p>
+</div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>node_type</code></strong></dt>
+<dd>The type of the new node.</dd>
+<dt><strong><code>as_child</code></strong></dt>
+<dd>If <code>True</code>, add this node as a child of the new wrapper node.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>The newly created wrapper node.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wrap(self, node_type: ASTNodeType, as_child: bool = False) -&gt; &#39;ASTNode&#39;:
+    &#34;&#34;&#34;
+    Create a new node, and assign this node&#39;s token to the new node.
+
+    .. WARNING::
+        This is used internally by the parser during parsing and should generally not be called on finished ASTs.
+
+    Args:
+        node_type: The type of the new node.
+        as_child: If `True`, add this node as a child of the new wrapper node.
+
+    Returns:
+        The newly created wrapper node.
+    &#34;&#34;&#34;
+    new_node = ASTNode(
+        node_type,
+        self.tok
+    )
+
+    if as_child:
+        new_node.children.append(self)
+
+    return new_node</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.ast.syntax.ASTStateError"><code class="flex name class">
+<span>class <span class="ident">ASTStateError</span></span>
+<span>(</span><span>node: <a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a>, message: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generic tokenizer/parser error that includes an entire AST node.</p>
+<p>Raised by <code><a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a></code> functions on invalid state.</p>
+<p>Generally internal to the <code><a title="scrolls" href="../index.html">scrolls</a></code> module. If one of these errors makes it out,
+something is probably wrong.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ASTStateError(base_errors.ScrollError):
+    &#34;&#34;&#34;Generic tokenizer/parser error that includes an entire AST node.
+
+    Raised by `ASTNode` functions on invalid state.
+
+    Generally internal to the `scrolls` module. If one of these errors makes it out,
+    something is probably wrong.
+    &#34;&#34;&#34;
+    def __init__(self, node: &#39;ASTNode&#39;, message: str):
+        self.node = node
+        self.message = message
+
+    def __str__(self) -&gt; str:
+        return self.message</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="scrolls.errors.ScrollError" href="../errors.html#scrolls.errors.ScrollError">ScrollError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scrolls.ast" href="index.html">scrolls.ast</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="scrolls.ast.syntax.parse_scroll" href="#scrolls.ast.syntax.parse_scroll">parse_scroll</a></code></li>
+<li><code><a title="scrolls.ast.syntax.parse_statement" href="#scrolls.ast.syntax.parse_statement">parse_statement</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="scrolls.ast.syntax.AST" href="#scrolls.ast.syntax.AST">AST</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.ast.syntax.AST.prettify" href="#scrolls.ast.syntax.AST.prettify">prettify</a></code></li>
+<li><code><a title="scrolls.ast.syntax.AST.root" href="#scrolls.ast.syntax.AST.root">root</a></code></li>
+<li><code><a title="scrolls.ast.syntax.AST.script" href="#scrolls.ast.syntax.AST.script">script</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.ast.syntax.ASTNode" href="#scrolls.ast.syntax.ASTNode">ASTNode</a></code></h4>
+<ul class="two-column">
+<li><code><a title="scrolls.ast.syntax.ASTNode.children" href="#scrolls.ast.syntax.ASTNode.children">children</a></code></li>
+<li><code><a title="scrolls.ast.syntax.ASTNode.find_all" href="#scrolls.ast.syntax.ASTNode.find_all">find_all</a></code></li>
+<li><code><a title="scrolls.ast.syntax.ASTNode.has_token" href="#scrolls.ast.syntax.ASTNode.has_token">has_token</a></code></li>
+<li><code><a title="scrolls.ast.syntax.ASTNode.prettify" href="#scrolls.ast.syntax.ASTNode.prettify">prettify</a></code></li>
+<li><code><a title="scrolls.ast.syntax.ASTNode.str_content" href="#scrolls.ast.syntax.ASTNode.str_content">str_content</a></code></li>
+<li><code><a title="scrolls.ast.syntax.ASTNode.to_dict" href="#scrolls.ast.syntax.ASTNode.to_dict">to_dict</a></code></li>
+<li><code><a title="scrolls.ast.syntax.ASTNode.tok" href="#scrolls.ast.syntax.ASTNode.tok">tok</a></code></li>
+<li><code><a title="scrolls.ast.syntax.ASTNode.type" href="#scrolls.ast.syntax.ASTNode.type">type</a></code></li>
+<li><code><a title="scrolls.ast.syntax.ASTNode.wrap" href="#scrolls.ast.syntax.ASTNode.wrap">wrap</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.ast.syntax.ASTStateError" href="#scrolls.ast.syntax.ASTStateError">ASTStateError</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -53,7 +53,7 @@ def print_(ctx: scrolls.InterpreterContext, args: typing.Sequence[typing.Any]) -
 <h1 id="about">About</h1>
 <p>Callbase handles the job of parsing arguments, and allows some additional information
 to be attached to Scrolls calls. Using callbase also means you do not need to implement
-<code><a title="scrolls.interpreter.CallHandler" href="../interpreter.html#scrolls.interpreter.CallHandler">CallHandler</a></code> yourself in order to get started extending Scrolls.</p>
+<code><a title="scrolls.interpreter.callhandler.CallHandler" href="../interpreter/callhandler.html#scrolls.interpreter.callhandler.CallHandler">CallHandler</a></code> yourself in order to get started extending Scrolls.</p>
 <p>None of the calls defined in <code><a title="scrolls.builtins" href="../builtins.html">scrolls.builtins</a></code> use this extension. It is solely for
 external users.</p>
 <details class="source">
@@ -146,7 +146,7 @@ class OptionError(Exception):
     Base class for errors parsing arguments.
 
     Args:
-        node: The `scrolls.ast.ASTNode` corresponding to the argument that failed to parse.
+        node: The `scrolls.ast.syntax.ASTNode` corresponding to the argument that failed to parse.
     &#34;&#34;&#34;
     def __init__(self, node: scrolls.ASTNode):
         self.node = node
@@ -251,7 +251,7 @@ class OptionModifier(enum.Enum):
 
 class CallBaseCallHandler(scrolls.CallbackCallHandler[T_co]):
     &#34;&#34;&#34;
-    The primary `scrolls.interpreter.CallHandler` implementation for callbase.
+    The primary `scrolls.interpreter.callhandler.CallHandler` implementation for callbase.
     Only `CallBase` subclasses may be added to this handler. See
     [Basic Usage](#basic-usage)
     &#34;&#34;&#34;
@@ -301,8 +301,8 @@ class CallBaseCallHandler(scrolls.CallbackCallHandler[T_co]):
     def consume_rest_triggers(self) -&gt; t.Mapping[str, int]:
         &#34;&#34;&#34;
         Get the consume rest triggers for all `CallBase` instances attached
-        to this handler. This must be passed into the `scrolls.ast.Tokenizer`
-        used to tokenize a script. If using `scrolls.interpreter.Interpreter.run`,
+        to this handler. This must be passed into the `scrolls.ast.tokenizer.Tokenizer`
+        used to tokenize a script. If using `scrolls.interpreter.run.Interpreter.run`,
         this must be passed into the `consume_rest_triggers` argument.
         &#34;&#34;&#34;
         return self._consume_rest_triggers
@@ -558,7 +558,7 @@ def consume_option(
     Args:
         option: The option to parse.
         args: The arguments to consume from.
-        nodes: A map of argument numbers to source `scrolls.ast.ASTNode` instances.
+        nodes: A map of argument numbers to source `scrolls.ast.ast_constants.ASTNode` instances.
         arg_num: The arg number of `args[0]`.
 
     Returns:
@@ -624,7 +624,7 @@ def set_help(
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="scrolls.ext.callbase.make_callbase"><code class="name flex">
-<span>def <span class="ident">make_callbase</span></span>(<span>name: str, description: str, aliases: Sequence[str] = (), hidden: bool = False) ‑> Callable[[Callable[[<a title="scrolls.interpreter.InterpreterContext" href="../interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, Sequence[Any]], ~CallBaseCallbackReturnTV]], <a title="scrolls.ext.callbase.CallbackCallBase" href="#scrolls.ext.callbase.CallbackCallBase">CallbackCallBase</a>[~CallBaseCallbackReturnTV]]</span>
+<span>def <span class="ident">make_callbase</span></span>(<span>name: str, description: str, aliases: Sequence[str] = (), hidden: bool = False) ‑> Callable[[Callable[[<a title="scrolls.interpreter.state.InterpreterContext" href="../interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, Sequence[Any]], ~CallBaseCallbackReturnTV]], <a title="scrolls.ext.callbase.CallbackCallBase" href="#scrolls.ext.callbase.CallbackCallBase">CallbackCallBase</a>[~CallBaseCallbackReturnTV]]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Decorator that creates a <code><a title="scrolls.ext.callbase.CallbackCallBase" href="#scrolls.ext.callbase.CallbackCallBase">CallbackCallBase</a></code> out of a function.</p>
@@ -704,7 +704,7 @@ def call(context: scrolls.InterpreterContext, args: Sequence[Any]) -&gt; None:
 </details>
 </dd>
 <dt id="scrolls.ext.callbase.rangelimit"><code class="name flex">
-<span>def <span class="ident">rangelimit</span></span>(<span>node: <a title="scrolls.ast.ASTNode" href="../ast.html#scrolls.ast.ASTNode">ASTNode</a>, low: Optional[numbers.Real], val: numbers.Real, high: Optional[numbers.Real]) ‑> None</span>
+<span>def <span class="ident">rangelimit</span></span>(<span>node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>, low: Optional[numbers.Real], val: numbers.Real, high: Optional[numbers.Real]) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Check if val is between low and high. If not, raise a RangeLimitError.</p></div>
@@ -912,7 +912,7 @@ method.</p>
 </details>
 </dd>
 <dt id="scrolls.ext.callbase.CallBase.convert_options"><code class="name flex">
-<span>def <span class="ident">convert_options</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="../interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>) ‑> Sequence[Any]</span>
+<span>def <span class="ident">convert_options</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="../interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> Sequence[Any]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Using the <code><a title="scrolls.ext.callbase.Option" href="#scrolls.ext.callbase.Option">Option</a></code> instances added to this call, parse the arguments contained
@@ -974,7 +974,7 @@ in the passed context object.</p></div>
 </details>
 </dd>
 <dt id="scrolls.ext.callbase.CallBase.invoke"><code class="name flex">
-<span>def <span class="ident">invoke</span></span>(<span>self, context: <a title="scrolls.interpreter.InterpreterContext" href="../interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, args: Sequence[Any]) ‑> +T_co</span>
+<span>def <span class="ident">invoke</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="../interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, args: Sequence[Any]) ‑> +T_co</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Invoke this call.</p></div>
@@ -1012,7 +1012,7 @@ def invoke(self, context: scrolls.InterpreterContext, args: t.Sequence[t.Any]) -
 <span>class <span class="ident">CallBaseCallHandler</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>The primary <code><a title="scrolls.interpreter.CallHandler" href="../interpreter.html#scrolls.interpreter.CallHandler">CallHandler</a></code> implementation for callbase.
+<div class="desc"><p>The primary <code><a title="scrolls.interpreter.callhandler.CallHandler" href="../interpreter/callhandler.html#scrolls.interpreter.callhandler.CallHandler">CallHandler</a></code> implementation for callbase.
 Only <code><a title="scrolls.ext.callbase.CallBase" href="#scrolls.ext.callbase.CallBase">CallBase</a></code> subclasses may be added to this handler. See
 <a href="#basic-usage">Basic Usage</a></p></div>
 <details class="source">
@@ -1021,7 +1021,7 @@ Only <code><a title="scrolls.ext.callbase.CallBase" href="#scrolls.ext.callbase.
 </summary>
 <pre><code class="python">class CallBaseCallHandler(scrolls.CallbackCallHandler[T_co]):
     &#34;&#34;&#34;
-    The primary `scrolls.interpreter.CallHandler` implementation for callbase.
+    The primary `scrolls.interpreter.callhandler.CallHandler` implementation for callbase.
     Only `CallBase` subclasses may be added to this handler. See
     [Basic Usage](#basic-usage)
     &#34;&#34;&#34;
@@ -1071,15 +1071,15 @@ Only <code><a title="scrolls.ext.callbase.CallBase" href="#scrolls.ext.callbase.
     def consume_rest_triggers(self) -&gt; t.Mapping[str, int]:
         &#34;&#34;&#34;
         Get the consume rest triggers for all `CallBase` instances attached
-        to this handler. This must be passed into the `scrolls.ast.Tokenizer`
-        used to tokenize a script. If using `scrolls.interpreter.Interpreter.run`,
+        to this handler. This must be passed into the `scrolls.ast.tokenizer.Tokenizer`
+        used to tokenize a script. If using `scrolls.interpreter.run.Interpreter.run`,
         this must be passed into the `consume_rest_triggers` argument.
         &#34;&#34;&#34;
         return self._consume_rest_triggers</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="scrolls.interpreter.CallbackCallHandler" href="../interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></li>
+<li><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="../interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Instance variables</h3>
@@ -1087,8 +1087,8 @@ Only <code><a title="scrolls.ext.callbase.CallBase" href="#scrolls.ext.callbase.
 <dt id="scrolls.ext.callbase.CallBaseCallHandler.consume_rest_triggers"><code class="name">var <span class="ident">consume_rest_triggers</span> : Mapping[str, int]</code></dt>
 <dd>
 <div class="desc"><p>Get the consume rest triggers for all <code><a title="scrolls.ext.callbase.CallBase" href="#scrolls.ext.callbase.CallBase">CallBase</a></code> instances attached
-to this handler. This must be passed into the <code><a title="scrolls.ast.Tokenizer" href="../ast.html#scrolls.ast.Tokenizer">Tokenizer</a></code>
-used to tokenize a script. If using <code><a title="scrolls.interpreter.Interpreter.run" href="../interpreter.html#scrolls.interpreter.Interpreter.run">Interpreter.run()</a></code>,
+to this handler. This must be passed into the <code><a title="scrolls.ast.tokenizer.Tokenizer" href="../ast/tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a></code>
+used to tokenize a script. If using <code><a title="scrolls.interpreter.run.Interpreter.run" href="../interpreter/run.html#scrolls.interpreter.run.Interpreter.run">Interpreter.run()</a></code>,
 this must be passed into the <code>consume_rest_triggers</code> argument.</p></div>
 <details class="source">
 <summary>
@@ -1098,8 +1098,8 @@ this must be passed into the <code>consume_rest_triggers</code> argument.</p></d
 def consume_rest_triggers(self) -&gt; t.Mapping[str, int]:
     &#34;&#34;&#34;
     Get the consume rest triggers for all `CallBase` instances attached
-    to this handler. This must be passed into the `scrolls.ast.Tokenizer`
-    used to tokenize a script. If using `scrolls.interpreter.Interpreter.run`,
+    to this handler. This must be passed into the `scrolls.ast.tokenizer.Tokenizer`
+    used to tokenize a script. If using `scrolls.interpreter.run.Interpreter.run`,
     this must be passed into the `consume_rest_triggers` argument.
     &#34;&#34;&#34;
     return self._consume_rest_triggers</code></pre>
@@ -1114,7 +1114,7 @@ def consume_rest_triggers(self) -&gt; t.Mapping[str, int]:
 <dd>
 <div class="desc"><p>Add a <code><a title="scrolls.ext.callbase.CallBase" href="#scrolls.ext.callbase.CallBase">CallBase</a></code> instance to this handler. Automatically handles setting
 up aliases and consume rest triggers. If you want to bypass this automatic
-behavior, see <code><a title="scrolls.ext.callbase.CallBaseCallHandler.add_call" href="../interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">CallBaseCallHandler.add_call()</a></code>.</p></div>
+behavior, see <code><a title="scrolls.ext.callbase.CallBaseCallHandler.add_call" href="../interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">CallBaseCallHandler.add_call()</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1161,19 +1161,19 @@ behavior, see <code><a title="scrolls.ext.callbase.CallBaseCallHandler.add_call"
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="scrolls.interpreter.CallbackCallHandler" href="../interpreter.html#scrolls.interpreter.CallbackCallHandler">CallbackCallHandler</a></b></code>:
+<li><code><b><a title="scrolls.interpreter.callhandler.CallbackCallHandler" href="../interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler">CallbackCallHandler</a></b></code>:
 <ul class="hlist">
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_alias" href="../interpreter.html#scrolls.interpreter.CallbackCallHandler.add_alias">add_alias</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.add_call" href="../interpreter.html#scrolls.interpreter.CallbackCallHandler.add_call">add_call</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.get_callback" href="../interpreter.html#scrolls.interpreter.CallbackCallHandler.get_callback">get_callback</a></code></li>
-<li><code><a title="scrolls.interpreter.CallbackCallHandler.remove_call" href="../interpreter.html#scrolls.interpreter.CallbackCallHandler.remove_call">remove_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_alias" href="../interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_alias">add_alias</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.add_call" href="../interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.add_call">add_call</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.get_callback" href="../interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.get_callback">get_callback</a></code></li>
+<li><code><a title="scrolls.interpreter.callhandler.CallbackCallHandler.remove_call" href="../interpreter/callhandler.html#scrolls.interpreter.callhandler.CallbackCallHandler.remove_call">remove_call</a></code></li>
 </ul>
 </li>
 </ul>
 </dd>
 <dt id="scrolls.ext.callbase.CallbackCallBase"><code class="flex name class">
 <span>class <span class="ident">CallbackCallBase</span></span>
-<span>(</span><span>name: str, description: str, callback: Callable[[<a title="scrolls.interpreter.InterpreterContext" href="../interpreter.html#scrolls.interpreter.InterpreterContext">InterpreterContext</a>, Sequence[Any]], ~CallBaseCallbackReturnTV], aliases: Sequence[str] = (), hidden: bool = False)</span>
+<span>(</span><span>name: str, description: str, callback: Callable[[<a title="scrolls.interpreter.state.InterpreterContext" href="../interpreter/state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, Sequence[Any]], ~CallBaseCallbackReturnTV], aliases: Sequence[str] = (), hidden: bool = False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>A basic callbase that just invokes a given callback. Used for the make_callback_command decorator.</p></div>
@@ -1362,7 +1362,7 @@ errors defaults to 'strict'.</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="scrolls.ext.callbase.Option.convert_arg"><code class="name flex">
-<span>def <span class="ident">convert_arg</span></span>(<span>self, arg: str, node: <a title="scrolls.ast.ASTNode" href="../ast.html#scrolls.ast.ASTNode">ASTNode</a>) ‑> ~OptionTV</span>
+<span>def <span class="ident">convert_arg</span></span>(<span>self, arg: str, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> ~OptionTV</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Convert a string to the type specified for this option, and check:</p>
@@ -1425,7 +1425,7 @@ errors defaults to 'strict'.</p></div>
 </dd>
 <dt id="scrolls.ext.callbase.OptionChoiceError"><code class="flex name class">
 <span>class <span class="ident">OptionChoiceError</span></span>
-<span>(</span><span>node: <a title="scrolls.ast.ASTNode" href="../ast.html#scrolls.ast.ASTNode">ASTNode</a>, bad_choice: ~OptionTV, choices: Sequence[~OptionTV])</span>
+<span>(</span><span>node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>, bad_choice: ~OptionTV, choices: Sequence[~OptionTV])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Raised when an argument is not one of the choices set by the <code><a title="scrolls.ext.callbase.Option" href="#scrolls.ext.callbase.Option">Option</a></code>.</p></div>
@@ -1461,7 +1461,7 @@ errors defaults to 'strict'.</p></div>
 </dd>
 <dt id="scrolls.ext.callbase.OptionConversionError"><code class="flex name class">
 <span>class <span class="ident">OptionConversionError</span></span>
-<span>(</span><span>node: <a title="scrolls.ast.ASTNode" href="../ast.html#scrolls.ast.ASTNode">ASTNode</a>, cause: Exception)</span>
+<span>(</span><span>node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>, cause: Exception)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Raised when an option fails to convert to the type set by the <code><a title="scrolls.ext.callbase.Option" href="#scrolls.ext.callbase.Option">Option</a></code>.</p></div>
@@ -1493,14 +1493,14 @@ errors defaults to 'strict'.</p></div>
 </dd>
 <dt id="scrolls.ext.callbase.OptionError"><code class="flex name class">
 <span>class <span class="ident">OptionError</span></span>
-<span>(</span><span>node: <a title="scrolls.ast.ASTNode" href="../ast.html#scrolls.ast.ASTNode">ASTNode</a>)</span>
+<span>(</span><span>node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Base class for errors parsing arguments.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>node</code></strong></dt>
-<dd>The <code><a title="scrolls.ast.ASTNode" href="../ast.html#scrolls.ast.ASTNode">ASTNode</a></code> corresponding to the argument that failed to parse.</dd>
+<dd>The <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> corresponding to the argument that failed to parse.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -1511,7 +1511,7 @@ errors defaults to 'strict'.</p></div>
     Base class for errors parsing arguments.
 
     Args:
-        node: The `scrolls.ast.ASTNode` corresponding to the argument that failed to parse.
+        node: The `scrolls.ast.syntax.ASTNode` corresponding to the argument that failed to parse.
     &#34;&#34;&#34;
     def __init__(self, node: scrolls.ASTNode):
         self.node = node</code></pre>
@@ -1591,7 +1591,7 @@ or an argument fails to convert.</p></div>
 </dd>
 <dt id="scrolls.ext.callbase.OptionRangeLimitError"><code class="flex name class">
 <span>class <span class="ident">OptionRangeLimitError</span></span>
-<span>(</span><span>node: <a title="scrolls.ast.ASTNode" href="../ast.html#scrolls.ast.ASTNode">ASTNode</a>, low: Optional[numbers.Real], val: numbers.Real, high: Optional[numbers.Real])</span>
+<span>(</span><span>node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>, low: Optional[numbers.Real], val: numbers.Real, high: Optional[numbers.Real])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Raised when a numeric argument (int, float) is outside the bounds set

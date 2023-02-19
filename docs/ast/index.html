@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>scrolls.ast API documentation</title>
+<meta name="description" content="The parser implementation …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scrolls.ast</code></h1>
+</header>
+<section id="section-intro">
+<p>The parser implementation.</p>
+<h1 id="using-the-parser">Using The Parser</h1>
+<h2 id="quickstart">Quickstart</h2>
+<p>Often, all you need to do is parse a script and get the syntax tree. To do this:</p>
+<pre><code class="language-py">import scrolls
+
+script = &quot;...&quot;
+tokenizer = scrolls.Tokenizer(script)
+ast = scrolls.parse_scroll(tokenizer)
+</code></pre>
+<p>The <code><a title="scrolls.ast.syntax.AST" href="syntax.html#scrolls.ast.syntax.AST">AST</a></code> (<a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">Abstract Syntax Tree</a>) is a generic structure
+that represents the semantic content of a script. This structure is what is actually interpreted by
+the Scrolls interpreter. See <code><a title="scrolls.interpreter" href="../interpreter/index.html">scrolls.interpreter</a></code> for more detail on <code><a title="scrolls.ast.syntax.AST" href="syntax.html#scrolls.ast.syntax.AST">AST</a></code> interpretation. See the following
+sections for a more detailed description of the parsing process.</p>
+<h2 id="tokenizing">Tokenizing</h2>
+<p>Parsing is done in two stages, lexical analysis (tokenizing), and syntactic analysis. First, the
+<code><a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a></code> is used to break a script into a list of pieces, assigning
+meaning to each. These pieces are called tokens (see <code><a title="scrolls.ast.tokenizer.Token" href="tokenizer.html#scrolls.ast.tokenizer.Token">Token</a></code>).</p>
+<pre><code class="language-pycon">&gt;&gt;&gt; import scrolls
+&gt;&gt;&gt; script = &quot;&quot;&quot;
+... !repeat(4) {
+...     print &quot;Hello, world!&quot;
+... }
+... &quot;&quot;&quot;
+&gt;&gt;&gt; tokenizer = scrolls.Tokenizer(script)
+&gt;&gt;&gt; tokens = tokenizer.get_all_tokens()
+&gt;&gt;&gt; for tok in tokens:
+...     print(tok)
+...
+CONTROL_SIGIL:'!'
+STRING_LITERAL:'repeat'
+OPEN_PAREN:'('
+STRING_LITERAL:'4'
+CLOSE_PAREN:')'
+OPEN_BLOCK:'{'
+COMMAND_SEP:'\n'
+STRING_LITERAL:'print'
+STRING_LITERAL:'Hello, world!'
+COMMAND_SEP:'\n'
+CLOSE_BLOCK:'}'
+EOF:''
+&gt;&gt;&gt;
+</code></pre>
+<p>Each token represents a <code><a title="scrolls.ast.ast_constants.TokenType" href="ast_constants.html#scrolls.ast.ast_constants.TokenType">TokenType</a></code> and an associated value. For instance,
+the second token shown above, <code>STRING_LITERAL:'repeat'</code> is a string literal token, with the value <code>repeat</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Typically, you won't need to pull tokens from the <code><a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a></code>, just configure it. It's just
+helpful to understand what it actually does.</p>
+</div>
+<h2 id="syntactic-analysis">Syntactic Analysis</h2>
+<p>The tokens are analyzed for their syntactic structure, and a data structure is built based on it.
+The analysis starts at <code><a title="scrolls.ast.syntax.parse_scroll" href="syntax.html#scrolls.ast.syntax.parse_scroll">parse_scroll()</a></code>. This function will
+automatically pull tokens from a <code><a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a></code> object, and generate the corresponding
+<code><a title="scrolls.ast.syntax.AST" href="syntax.html#scrolls.ast.syntax.AST">AST</a></code>.</p>
+<pre><code class="language-pycon">&gt;&gt;&gt; import scrolls
+&gt;&gt;&gt; script = &quot;&quot;&quot;
+... !repeat(4) {
+...     print &quot;Hello, world!&quot;
+... }
+... &quot;&quot;&quot;
+&gt;&gt;&gt; tokenizer = scrolls.Tokenizer(script)
+&gt;&gt;&gt; ast = scrolls.parse_scroll(tokenizer)
+&gt;&gt;&gt; print(ast.prettify())
+{
+    &quot;_tok&quot;: &quot;None&quot;,
+    &quot;_type&quot;: &quot;ROOT&quot;,
+    &quot;children&quot;: [
+        {
+            &quot;_tok&quot;: &quot;CONTROL_SIGIL:'!'&quot;,
+            &quot;_type&quot;: &quot;CONTROL_CALL&quot;,
+            &quot;children&quot;: [
+                {
+                    &quot;_tok&quot;: &quot;STRING_LITERAL:'repeat'&quot;,
+                    &quot;_type&quot;: &quot;STRING&quot;,
+                    &quot;children&quot;: []
+                },
+                {
+                    &quot;_tok&quot;: &quot;OPEN_PAREN:'('&quot;,
+                    &quot;_type&quot;: &quot;CONTROL_ARGUMENTS&quot;,
+                    &quot;children&quot;: [
+                        {
+                            &quot;_tok&quot;: &quot;STRING_LITERAL:'4'&quot;,
+                            &quot;_type&quot;: &quot;STRING&quot;,
+                            &quot;children&quot;: []
+                        }
+                    ]
+                },
+                {
+                    &quot;_tok&quot;: &quot;OPEN_BLOCK:'{'&quot;,
+                    &quot;_type&quot;: &quot;BLOCK&quot;,
+                    &quot;children&quot;: [
+                        {
+                            &quot;_tok&quot;: &quot;STRING_LITERAL:'print'&quot;,
+                            &quot;_type&quot;: &quot;COMMAND_CALL&quot;,
+                            &quot;children&quot;: [
+                                {
+                                    &quot;_tok&quot;: &quot;STRING_LITERAL:'print'&quot;,
+                                    &quot;_type&quot;: &quot;STRING&quot;,
+                                    &quot;children&quot;: []
+                                },
+                                {
+                                    &quot;_tok&quot;: &quot;STRING_LITERAL:'Hello, world!'&quot;,
+                                    &quot;_type&quot;: &quot;COMMAND_ARGUMENTS&quot;,
+                                    &quot;children&quot;: [
+                                        {
+                                            &quot;_tok&quot;: &quot;STRING_LITERAL:'Hello, world!'&quot;,
+                                            &quot;_type&quot;: &quot;STRING&quot;,
+                                            &quot;children&quot;: []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+</code></pre>
+<p>AST instances consist of a tree of <code><a title="scrolls.ast.syntax.ASTNode" href="syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> objects. Each node keeps track of the token that triggered
+its generation. This is used primarily for informative display of errors during interpreter runtime.</p>
+<p>Scrolls uses a <a href="https://en.wikipedia.org/wiki/Recursive_descent_parser">recursive descent</a>
+approach, implemented with <a href="https://en.wikipedia.org/wiki/Parser_combinator">parser combinators</a>.
+The parsing scheme of Scrolls is intentionally barebones, and does not include any control structures
+at all. Instead, all identifiers are <code><a title="scrolls.ast.ast_constants.ASTNodeType.STRING" href="ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.STRING">ASTNodeType.STRING</a></code>, which are interpreted at runtime based on
+their location in the syntax tree.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+The parser implementation.
+
+.. include:: ./pdoc/ast.md
+&#34;&#34;&#34;
+
+from .ast_constants import *
+from .ast_errors import *
+from .streams import *
+from .syntax import *
+from .tokenizer import *</code></pre>
+</details>
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="scrolls.ast.ast_constants" href="ast_constants.html">scrolls.ast.ast_constants</a></code></dt>
+<dd>
+<div class="desc"><p>Numeric and string constants for the language.</p></div>
+</dd>
+<dt><code class="name"><a title="scrolls.ast.ast_errors" href="ast_errors.html">scrolls.ast.ast_errors</a></code></dt>
+<dd>
+<div class="desc"><p>Errors related to language parsing.</p></div>
+</dd>
+<dt><code class="name"><a title="scrolls.ast.streams" href="streams.html">scrolls.ast.streams</a></code></dt>
+<dd>
+<div class="desc"><p>Character streams for feeding <code><a title="scrolls.ast.tokenizer.Tokenizer" href="tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a></code> objects.</p></div>
+</dd>
+<dt><code class="name"><a title="scrolls.ast.syntax" href="syntax.html">scrolls.ast.syntax</a></code></dt>
+<dd>
+<div class="desc"><p>Syntactic analysis …</p></div>
+</dd>
+<dt><code class="name"><a title="scrolls.ast.tokenizer" href="tokenizer.html">scrolls.ast.tokenizer</a></code></dt>
+<dd>
+<div class="desc"><p>The tokenizer implementation …</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#using-the-parser">Using The Parser</a><ul>
+<li><a href="#quickstart">Quickstart</a></li>
+<li><a href="#tokenizing">Tokenizing</a></li>
+<li><a href="#syntactic-analysis">Syntactic Analysis</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scrolls" href="../index.html">scrolls</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="scrolls.ast.ast_constants" href="ast_constants.html">scrolls.ast.ast_constants</a></code></li>
+<li><code><a title="scrolls.ast.ast_errors" href="ast_errors.html">scrolls.ast.ast_errors</a></code></li>
+<li><code><a title="scrolls.ast.streams" href="streams.html">scrolls.ast.streams</a></code></li>
+<li><code><a title="scrolls.ast.syntax" href="syntax.html">scrolls.ast.syntax</a></code></li>
+<li><code><a title="scrolls.ast.tokenizer" href="tokenizer.html">scrolls.ast.tokenizer</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

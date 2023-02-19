@@ -1,0 +1,1229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>scrolls.interpreter.struct API documentation</title>
+<meta name="description" content="Data structures used to implement the interpreter state." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scrolls.interpreter.struct</code></h1>
+</header>
+<section id="section-intro">
+<p>Data structures used to implement the interpreter state.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Data structures used to implement the interpreter state.
+&#34;&#34;&#34;
+
+import dataclasses
+import logging
+import typing as t
+
+from .. import ast
+
+__all__ = (
+    &#34;ArgSourceMap&#34;,
+    &#34;CallContext&#34;,
+    &#34;VarScope&#34;,
+    &#34;ScopedVarStore&#34;,
+)
+
+
+logger = logging.getLogger(__name__)
+T = t.TypeVar(&#34;T&#34;)
+
+
+class ArgSourceMap(dict[int, T], t.Generic[T]):
+    &#34;&#34;&#34;A utility class that maps argument numbers to some source.
+
+    The main purpose of this container is to map call arguments to the `scrolls.ast.syntax.ASTNode` they came from.
+    This class is typically used to accurately point to a node in the case of a call error.
+
+    Usage
+    ```py
+    # Note: SourceClass is just an example here.
+    sources: typing.Sequence[SourceClass] = get_some_sources()
+    source_map: ArgSourceMap[SourceClass] = ArgSourceMap()
+
+    args = []
+    for source in sources:
+        args_from_source = source.get_args()
+        source_map.add_args(args_from_source, source)
+
+    # Now, you can use an arg number to look up which SourceClass it came from.
+    arg_2_src = source_map[2]
+    ```
+    &#34;&#34;&#34;
+
+    def __init__(self, *args: t.Any, **kwargs: t.Any):
+        super().__init__(*args, **kwargs)
+
+        self.count = 0
+
+    def add_args(self, args: t.Sequence, source: T) -&gt; None:
+        &#34;&#34;&#34;
+        Add an `(args, source)` pair to this mapping. See usage example above.
+        &#34;&#34;&#34;
+        for i, _ in enumerate(args):
+            self[i + self.count] = source
+
+        self.count += len(args)
+
+
+@dataclasses.dataclass
+class CallContext:
+    &#34;&#34;&#34;
+    The context of a call. Contains all information necessary to run a call. Under normal circumstances,
+    you won&#39;t need to create instances of this yourself. Instead access instances through:
+
+    - `scrolls.interpreter.state.InterpreterContext.call_stack`
+    - `scrolls.interpreter.state.InterpreterContext.call_context`
+
+    &lt;br/&gt;
+
+    .. NOTE::
+        Control structures such as `!for`, `!while`, etc., are also considered calls, but they do not create
+        a new `scrolls.interpreter.struct.VarScope`. So, call contexts and variable scopes are considered separately.
+    &#34;&#34;&#34;
+
+    call_name: str
+    &#34;&#34;&#34;The name of this call.&#34;&#34;&#34;
+
+    args: t.Sequence[str]
+    &#34;&#34;&#34;The arguments passed into this call.&#34;&#34;&#34;
+
+    arg_nodes: ArgSourceMap[ast.ASTNode]
+    &#34;&#34;&#34;A map of argument indices to the `scrolls.ast.syntax.ASTNode` they came from.&#34;&#34;&#34;
+
+    control_node: t.Optional[ast.ASTNode] = None
+    &#34;&#34;&#34;If this call is a control call, this will contain the call&#39;s `scrolls.ast.syntax.ASTNode` parameter.&#34;&#34;&#34;
+
+    return_value: t.Optional[t.Any] = None
+    &#34;&#34;&#34;The return value set by a runtime call.&#34;&#34;&#34;
+
+    runtime_call: bool = False
+    &#34;&#34;&#34;A runtime call is a call defined while the interpreter is running, such as through `!def`.&#34;&#34;&#34;
+
+    else_signal: bool = False
+    &#34;&#34;&#34;
+    Read by the `!else` builtin. If True, the next `!else` called in the current
+    context will execute, and set the signal back to False. From within a control
+    call, this should be set through `scrolls.interpreter.state.InterpreterContext.parent_call_context`.
+    &#34;&#34;&#34;
+
+    _id_format: t.ClassVar[str] = &#34;{id:&lt;{id_size}}&#34;
+    _str_format: t.ClassVar[str] = &#34;{flags:&lt;5} {name_and_args}&#34;
+    _trace_format: t.ClassVar[str] = f&#34;{_id_format} {_str_format}&#34;
+    _id_title: t.ClassVar[str] = &#34;ID&#34;
+
+    @classmethod
+    def _min_id_size(cls, id_size: int) -&gt; int:
+        return max(id_size, len(cls._id_title))
+
+    @classmethod
+    def trace_banner(cls, id_size: int) -&gt; str:
+        &#34;&#34;&#34;
+        Gets a banner string for a backtrace. Should be followed by a list of
+        `trace_str` outputs.
+
+        Args:
+            id_size: The size in characters of the ID field.
+        &#34;&#34;&#34;
+        return cls._trace_format.format(
+            id=cls._id_title,
+            id_size=cls._min_id_size(id_size),
+            flags=&#34;FLAGS&#34;,
+            name_and_args=&#34;NAME+ARGS&#34;
+        )
+
+    def trace_str(self, id: int, id_size: int) -&gt; str:
+        &#34;&#34;&#34;
+        Gets a string representation of this call context for the purposes
+        of printing a stack trace.
+
+        Args:
+            id: The numeric ID of the trace item.
+            id_size: The size in characters of the ID field.
+        &#34;&#34;&#34;
+        id_str = self._id_format.format(id=id, id_size=self._min_id_size(id_size))
+        return f&#34;{id_str} {self}&#34;
+
+    def __str__(self) -&gt; str:
+        flags = [
+            &#34;!&#34; if self.control_node is not None else &#34;-&#34;,
+            &#34;e&#34; if self.else_signal else &#34;-&#34;,
+            &#34;r&#34; if self.runtime_call else &#34;-&#34;
+        ]
+
+        name_and_args = [
+            f&#34;\&#34;{self.call_name}\&#34;&#34;,
+            *[f&#34;\&#34;{arg}\&#34;&#34; for arg in self.args]
+        ]
+
+        return self._str_format.format(
+            flags=&#34;&#34;.join(flags),
+            name_and_args=&#34; &#34;.join(name_and_args)
+        )
+
+
+class VarScope:
+    &#34;&#34;&#34;
+    A variable scope. See `ScopedVarStore`.
+    &#34;&#34;&#34;
+
+    def __init__(self) -&gt; None:
+        self.vars: t.MutableMapping[str, str] = {}
+        &#34;&#34;&#34;The local variables defined in this scope.
+
+        .. NOTE::
+            Generally this should not be modified directly, use `ScopedVarStore.set_var` instead.
+        &#34;&#34;&#34;
+
+        self.nonlocals: t.MutableMapping[str, bool] = {}
+        &#34;&#34;&#34;Nonlocal variables defined in this scope.
+
+        If a variable is declared nonlocal, attempts to read/write it will go to the enclosing scope.
+
+        .. NOTE::
+            Generally this should not be modified directly, use `ScopedVarStore.declare_nonlocal` instead.
+        &#34;&#34;&#34;
+
+        self.globals: t.MutableMapping[str, bool] = {}
+        &#34;&#34;&#34;Global variables defined in this scope.
+
+        If a variable is declared global, attempts to read/write it will go to the global (top level) variable scope.
+
+        .. NOTE::
+            Generally this should not be modified directly, use `ScopedVarStore.declare_global` instead.
+        &#34;&#34;&#34;
+
+
+class ScopedVarStore:
+    &#34;&#34;&#34;
+    A variable store divided into a stack of key-value pairs.
+
+    This class is used to implement the concept of local vs global variables in scrolls. Runtime calls (see
+    `scrolls.interpreter.struct.CallContext`) use scoped variable stores to allow the definition of local variables in call defs without
+    stepping on existing variables.
+
+    .. IMPORTANT::
+        Calls implemented in Python do not enter a new variable scope by default. You typically won&#39;t need to enter
+        a new scope unless you run Scrolls code during a call, i.e. for control calls, and runtime-defined calls.
+
+        Most control calls, such as `while`, `for`, `if`, etc. do not need to define a new variable scope. The option
+        is available if desired. See the source code of `scrolls.interpreter.callhandler.RuntimeCallHandler.handle_call` for an example of defining
+        a new scope.
+    &#34;&#34;&#34;
+
+    def __init__(self) -&gt; None:
+        self.scopes: t.MutableSequence[VarScope] = []
+        &#34;&#34;&#34;The `VarScope` stack. Later indices are deeper scopes. `scopes[0]` is the global scope, which is always available.&#34;&#34;&#34;
+
+        self.new_scope()  # There should always be one scope.
+
+    def new_scope(self) -&gt; None:
+        &#34;&#34;&#34;
+        Push a new scope onto the stack.
+        &#34;&#34;&#34;
+        self.scopes.append(VarScope())
+
+    def destroy_scope(self) -&gt; None:
+        &#34;&#34;&#34;
+        Destroy the current scope and return to the last one. This will delete all local variables defined in the current
+        scope.
+        &#34;&#34;&#34;
+        if len(self.scopes) == 1:
+            # there should always be at least one scope
+            raise ValueError(&#34;There must be at least one scope.&#34;)
+
+        self.scopes.pop()
+
+    def declare_nonlocal(self, name: str) -&gt; None:
+        &#34;&#34;&#34;
+        Declare a variable as nonlocal. This means that all attempts to read/write the variable will automatically
+        go to the enclosing scope.
+        &#34;&#34;&#34;
+        self.current_scope.nonlocals[name] = True
+
+    def declare_global(self, name: str) -&gt; None:
+        &#34;&#34;&#34;
+        Declare a variable as global. This means all attempts to read/write the variable will automatically go to
+        the global scope.
+        &#34;&#34;&#34;
+        self.current_scope.globals[name] = True
+
+    def search_scope(self, name: str, scopes: t.Sequence[VarScope], read_search: bool = False) -&gt; VarScope:
+        &#34;&#34;&#34;
+        Using a variable name, search up the scope stack for something to read/write. This search will honor nonlocal
+        and global declarations made for all scopes.
+
+        Args:
+            name: The name of the variable to search for.
+
+            scopes: The scopes to search. Typically, this will be `ScopedVarStore.scopes`.
+
+            read_search: Must be `True` if no writes will be performed on the scope you&#39;re searching for.
+            Adds additional logic that reads the global store as a fallback if a defined value could not be found
+            after searching up the stack.
+
+        Raises:
+            KeyError: If an appropriate scope could not be found.
+        &#34;&#34;&#34;
+        scopes = list(scopes)
+        scope = scopes[-1]
+
+        while scopes:
+            scope = scopes.pop()
+
+            if name in scope.globals:
+                # If global, immediately go to the highest scope
+                return scopes[0] if scopes else scope
+
+            if name in scope.nonlocals:
+                # If nonlocal, go to the enclosing scope.
+                continue
+
+            # Just break as soon as we step off global/nonlocal references.
+            break
+
+        if read_search:
+            # Do a little bit of extra logic for a read search. If we can&#39;t find a value in the
+            # current scope, try globals as a fallback.
+            if name in scope.vars:
+                return scope
+            elif scopes and name in scopes[0].vars:
+                return scopes[0]
+            else:
+                raise KeyError(name)
+
+        return scope
+
+    def get_scope_for_read(self, name: str) -&gt; VarScope:
+        &#34;&#34;&#34;Shortcut for `ScopedVarStore.search_scope(..., read_search=True)`
+
+        See Also: `ScopedVarStore.search_scope`
+        &#34;&#34;&#34;
+        return self.search_scope(name, self.scopes, read_search=True)
+
+    def get_scope_for_write(self, name: str) -&gt; VarScope:
+        &#34;&#34;&#34;Shortcut for `ScopedVarStore.search_scope(..., read_search=False)`
+
+        See Also: `ScopedVarStore.search_scope`
+        &#34;&#34;&#34;
+        return self.search_scope(name, self.scopes, read_search=False)
+
+    @property
+    def current_scope(self) -&gt; VarScope:
+        &#34;&#34;&#34;The current scope.&#34;&#34;&#34;
+        return self.scopes[-1]
+
+    def get_var(self, name: str) -&gt; str:
+        &#34;&#34;&#34;Get a variable from this store, following all nonlocal and global declarations.&#34;&#34;&#34;
+        return self.get_scope_for_read(name).vars[name]
+
+    def set_var(self, name: str, value: str) -&gt; None:
+        &#34;&#34;&#34;Set a variable in this store, following all nonlocal and global declarations.&#34;&#34;&#34;
+        try:
+            scope = self.get_scope_for_write(name)
+            scope.vars[name] = value
+        except KeyError:
+            self.current_scope.vars[name] = value
+
+    def del_var(self, name: str) -&gt; None:
+        &#34;&#34;&#34;Delete a variable from this store, following all nonlocal and global declarations.&#34;&#34;&#34;
+        try:
+            scope = self.get_scope_for_write(name)
+            del scope.vars[name]
+        except KeyError:
+            del self.current_scope.vars[name]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="scrolls.interpreter.struct.ArgSourceMap"><code class="flex name class">
+<span>class <span class="ident">ArgSourceMap</span></span>
+<span>(</span><span>*args: Any, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A utility class that maps argument numbers to some source.</p>
+<p>The main purpose of this container is to map call arguments to the <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> they came from.
+This class is typically used to accurately point to a node in the case of a call error.</p>
+<p>Usage</p>
+<pre><code class="language-py"># Note: SourceClass is just an example here.
+sources: typing.Sequence[SourceClass] = get_some_sources()
+source_map: ArgSourceMap[SourceClass] = ArgSourceMap()
+
+args = []
+for source in sources:
+    args_from_source = source.get_args()
+    source_map.add_args(args_from_source, source)
+
+# Now, you can use an arg number to look up which SourceClass it came from.
+arg_2_src = source_map[2]
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArgSourceMap(dict[int, T], t.Generic[T]):
+    &#34;&#34;&#34;A utility class that maps argument numbers to some source.
+
+    The main purpose of this container is to map call arguments to the `scrolls.ast.syntax.ASTNode` they came from.
+    This class is typically used to accurately point to a node in the case of a call error.
+
+    Usage
+    ```py
+    # Note: SourceClass is just an example here.
+    sources: typing.Sequence[SourceClass] = get_some_sources()
+    source_map: ArgSourceMap[SourceClass] = ArgSourceMap()
+
+    args = []
+    for source in sources:
+        args_from_source = source.get_args()
+        source_map.add_args(args_from_source, source)
+
+    # Now, you can use an arg number to look up which SourceClass it came from.
+    arg_2_src = source_map[2]
+    ```
+    &#34;&#34;&#34;
+
+    def __init__(self, *args: t.Any, **kwargs: t.Any):
+        super().__init__(*args, **kwargs)
+
+        self.count = 0
+
+    def add_args(self, args: t.Sequence, source: T) -&gt; None:
+        &#34;&#34;&#34;
+        Add an `(args, source)` pair to this mapping. See usage example above.
+        &#34;&#34;&#34;
+        for i, _ in enumerate(args):
+            self[i + self.count] = source
+
+        self.count += len(args)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.dict</li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.interpreter.struct.ArgSourceMap.add_args"><code class="name flex">
+<span>def <span class="ident">add_args</span></span>(<span>self, args: Sequence, source: ~T) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add an <code>(args, source)</code> pair to this mapping. See usage example above.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_args(self, args: t.Sequence, source: T) -&gt; None:
+    &#34;&#34;&#34;
+    Add an `(args, source)` pair to this mapping. See usage example above.
+    &#34;&#34;&#34;
+    for i, _ in enumerate(args):
+        self[i + self.count] = source
+
+    self.count += len(args)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.interpreter.struct.CallContext"><code class="flex name class">
+<span>class <span class="ident">CallContext</span></span>
+<span>(</span><span>call_name: str, args: Sequence[str], arg_nodes: <a title="scrolls.interpreter.struct.ArgSourceMap" href="#scrolls.interpreter.struct.ArgSourceMap">ArgSourceMap</a>, control_node: Optional[<a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>] = None, return_value: Optional[Any] = None, runtime_call: bool = False, else_signal: bool = False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The context of a call. Contains all information necessary to run a call. Under normal circumstances,
+you won't need to create instances of this yourself. Instead access instances through:</p>
+<ul>
+<li><code><a title="scrolls.interpreter.state.InterpreterContext.call_stack" href="state.html#scrolls.interpreter.state.InterpreterContext.call_stack">InterpreterContext.call_stack</a></code></li>
+<li><code><a title="scrolls.interpreter.state.InterpreterContext.call_context" href="state.html#scrolls.interpreter.state.InterpreterContext.call_context">InterpreterContext.call_context</a></code></li>
+</ul>
+<p><br/></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Control structures such as <code>!for</code>, <code>!while</code>, etc., are also considered calls, but they do not create
+a new <code><a title="scrolls.interpreter.struct.VarScope" href="#scrolls.interpreter.struct.VarScope">VarScope</a></code>. So, call contexts and variable scopes are considered separately.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class CallContext:
+    &#34;&#34;&#34;
+    The context of a call. Contains all information necessary to run a call. Under normal circumstances,
+    you won&#39;t need to create instances of this yourself. Instead access instances through:
+
+    - `scrolls.interpreter.state.InterpreterContext.call_stack`
+    - `scrolls.interpreter.state.InterpreterContext.call_context`
+
+    &lt;br/&gt;
+
+    .. NOTE::
+        Control structures such as `!for`, `!while`, etc., are also considered calls, but they do not create
+        a new `scrolls.interpreter.struct.VarScope`. So, call contexts and variable scopes are considered separately.
+    &#34;&#34;&#34;
+
+    call_name: str
+    &#34;&#34;&#34;The name of this call.&#34;&#34;&#34;
+
+    args: t.Sequence[str]
+    &#34;&#34;&#34;The arguments passed into this call.&#34;&#34;&#34;
+
+    arg_nodes: ArgSourceMap[ast.ASTNode]
+    &#34;&#34;&#34;A map of argument indices to the `scrolls.ast.syntax.ASTNode` they came from.&#34;&#34;&#34;
+
+    control_node: t.Optional[ast.ASTNode] = None
+    &#34;&#34;&#34;If this call is a control call, this will contain the call&#39;s `scrolls.ast.syntax.ASTNode` parameter.&#34;&#34;&#34;
+
+    return_value: t.Optional[t.Any] = None
+    &#34;&#34;&#34;The return value set by a runtime call.&#34;&#34;&#34;
+
+    runtime_call: bool = False
+    &#34;&#34;&#34;A runtime call is a call defined while the interpreter is running, such as through `!def`.&#34;&#34;&#34;
+
+    else_signal: bool = False
+    &#34;&#34;&#34;
+    Read by the `!else` builtin. If True, the next `!else` called in the current
+    context will execute, and set the signal back to False. From within a control
+    call, this should be set through `scrolls.interpreter.state.InterpreterContext.parent_call_context`.
+    &#34;&#34;&#34;
+
+    _id_format: t.ClassVar[str] = &#34;{id:&lt;{id_size}}&#34;
+    _str_format: t.ClassVar[str] = &#34;{flags:&lt;5} {name_and_args}&#34;
+    _trace_format: t.ClassVar[str] = f&#34;{_id_format} {_str_format}&#34;
+    _id_title: t.ClassVar[str] = &#34;ID&#34;
+
+    @classmethod
+    def _min_id_size(cls, id_size: int) -&gt; int:
+        return max(id_size, len(cls._id_title))
+
+    @classmethod
+    def trace_banner(cls, id_size: int) -&gt; str:
+        &#34;&#34;&#34;
+        Gets a banner string for a backtrace. Should be followed by a list of
+        `trace_str` outputs.
+
+        Args:
+            id_size: The size in characters of the ID field.
+        &#34;&#34;&#34;
+        return cls._trace_format.format(
+            id=cls._id_title,
+            id_size=cls._min_id_size(id_size),
+            flags=&#34;FLAGS&#34;,
+            name_and_args=&#34;NAME+ARGS&#34;
+        )
+
+    def trace_str(self, id: int, id_size: int) -&gt; str:
+        &#34;&#34;&#34;
+        Gets a string representation of this call context for the purposes
+        of printing a stack trace.
+
+        Args:
+            id: The numeric ID of the trace item.
+            id_size: The size in characters of the ID field.
+        &#34;&#34;&#34;
+        id_str = self._id_format.format(id=id, id_size=self._min_id_size(id_size))
+        return f&#34;{id_str} {self}&#34;
+
+    def __str__(self) -&gt; str:
+        flags = [
+            &#34;!&#34; if self.control_node is not None else &#34;-&#34;,
+            &#34;e&#34; if self.else_signal else &#34;-&#34;,
+            &#34;r&#34; if self.runtime_call else &#34;-&#34;
+        ]
+
+        name_and_args = [
+            f&#34;\&#34;{self.call_name}\&#34;&#34;,
+            *[f&#34;\&#34;{arg}\&#34;&#34; for arg in self.args]
+        ]
+
+        return self._str_format.format(
+            flags=&#34;&#34;.join(flags),
+            name_and_args=&#34; &#34;.join(name_and_args)
+        )</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="scrolls.interpreter.struct.CallContext.arg_nodes"><code class="name">var <span class="ident">arg_nodes</span> : <a title="scrolls.interpreter.struct.ArgSourceMap" href="#scrolls.interpreter.struct.ArgSourceMap">ArgSourceMap</a></code></dt>
+<dd>
+<div class="desc"><p>A map of argument indices to the <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> they came from.</p></div>
+</dd>
+<dt id="scrolls.interpreter.struct.CallContext.args"><code class="name">var <span class="ident">args</span> : Sequence[str]</code></dt>
+<dd>
+<div class="desc"><p>The arguments passed into this call.</p></div>
+</dd>
+<dt id="scrolls.interpreter.struct.CallContext.call_name"><code class="name">var <span class="ident">call_name</span> : str</code></dt>
+<dd>
+<div class="desc"><p>The name of this call.</p></div>
+</dd>
+<dt id="scrolls.interpreter.struct.CallContext.control_node"><code class="name">var <span class="ident">control_node</span> : Optional[<a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>]</code></dt>
+<dd>
+<div class="desc"><p>If this call is a control call, this will contain the call's <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> parameter.</p></div>
+</dd>
+<dt id="scrolls.interpreter.struct.CallContext.else_signal"><code class="name">var <span class="ident">else_signal</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Read by the <code>!else</code> builtin. If True, the next <code>!else</code> called in the current
+context will execute, and set the signal back to False. From within a control
+call, this should be set through <code><a title="scrolls.interpreter.state.InterpreterContext.parent_call_context" href="state.html#scrolls.interpreter.state.InterpreterContext.parent_call_context">InterpreterContext.parent_call_context</a></code>.</p></div>
+</dd>
+<dt id="scrolls.interpreter.struct.CallContext.return_value"><code class="name">var <span class="ident">return_value</span> : Optional[Any]</code></dt>
+<dd>
+<div class="desc"><p>The return value set by a runtime call.</p></div>
+</dd>
+<dt id="scrolls.interpreter.struct.CallContext.runtime_call"><code class="name">var <span class="ident">runtime_call</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>A runtime call is a call defined while the interpreter is running, such as through <code>!def</code>.</p></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="scrolls.interpreter.struct.CallContext.trace_banner"><code class="name flex">
+<span>def <span class="ident">trace_banner</span></span>(<span>id_size: int) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets a banner string for a backtrace. Should be followed by a list of
+<code>trace_str</code> outputs.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>id_size</code></strong></dt>
+<dd>The size in characters of the ID field.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def trace_banner(cls, id_size: int) -&gt; str:
+    &#34;&#34;&#34;
+    Gets a banner string for a backtrace. Should be followed by a list of
+    `trace_str` outputs.
+
+    Args:
+        id_size: The size in characters of the ID field.
+    &#34;&#34;&#34;
+    return cls._trace_format.format(
+        id=cls._id_title,
+        id_size=cls._min_id_size(id_size),
+        flags=&#34;FLAGS&#34;,
+        name_and_args=&#34;NAME+ARGS&#34;
+    )</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.interpreter.struct.CallContext.trace_str"><code class="name flex">
+<span>def <span class="ident">trace_str</span></span>(<span>self, id: int, id_size: int) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets a string representation of this call context for the purposes
+of printing a stack trace.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>id</code></strong></dt>
+<dd>The numeric ID of the trace item.</dd>
+<dt><strong><code>id_size</code></strong></dt>
+<dd>The size in characters of the ID field.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def trace_str(self, id: int, id_size: int) -&gt; str:
+    &#34;&#34;&#34;
+    Gets a string representation of this call context for the purposes
+    of printing a stack trace.
+
+    Args:
+        id: The numeric ID of the trace item.
+        id_size: The size in characters of the ID field.
+    &#34;&#34;&#34;
+    id_str = self._id_format.format(id=id, id_size=self._min_id_size(id_size))
+    return f&#34;{id_str} {self}&#34;</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore"><code class="flex name class">
+<span>class <span class="ident">ScopedVarStore</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>A variable store divided into a stack of key-value pairs.</p>
+<p>This class is used to implement the concept of local vs global variables in scrolls. Runtime calls (see
+<code><a title="scrolls.interpreter.struct.CallContext" href="#scrolls.interpreter.struct.CallContext">CallContext</a></code>) use scoped variable stores to allow the definition of local variables in call defs without
+stepping on existing variables.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Calls implemented in Python do not enter a new variable scope by default. You typically won't need to enter
+a new scope unless you run Scrolls code during a call, i.e. for control calls, and runtime-defined calls.</p>
+<p>Most control calls, such as <code>while</code>, <code>for</code>, <code>if</code>, etc. do not need to define a new variable scope. The option
+is available if desired. See the source code of <code><a title="scrolls.interpreter.callhandler.RuntimeCallHandler.handle_call" href="callhandler.html#scrolls.interpreter.callhandler.RuntimeCallHandler.handle_call">RuntimeCallHandler.handle_call()</a></code> for an example of defining
+a new scope.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ScopedVarStore:
+    &#34;&#34;&#34;
+    A variable store divided into a stack of key-value pairs.
+
+    This class is used to implement the concept of local vs global variables in scrolls. Runtime calls (see
+    `scrolls.interpreter.struct.CallContext`) use scoped variable stores to allow the definition of local variables in call defs without
+    stepping on existing variables.
+
+    .. IMPORTANT::
+        Calls implemented in Python do not enter a new variable scope by default. You typically won&#39;t need to enter
+        a new scope unless you run Scrolls code during a call, i.e. for control calls, and runtime-defined calls.
+
+        Most control calls, such as `while`, `for`, `if`, etc. do not need to define a new variable scope. The option
+        is available if desired. See the source code of `scrolls.interpreter.callhandler.RuntimeCallHandler.handle_call` for an example of defining
+        a new scope.
+    &#34;&#34;&#34;
+
+    def __init__(self) -&gt; None:
+        self.scopes: t.MutableSequence[VarScope] = []
+        &#34;&#34;&#34;The `VarScope` stack. Later indices are deeper scopes. `scopes[0]` is the global scope, which is always available.&#34;&#34;&#34;
+
+        self.new_scope()  # There should always be one scope.
+
+    def new_scope(self) -&gt; None:
+        &#34;&#34;&#34;
+        Push a new scope onto the stack.
+        &#34;&#34;&#34;
+        self.scopes.append(VarScope())
+
+    def destroy_scope(self) -&gt; None:
+        &#34;&#34;&#34;
+        Destroy the current scope and return to the last one. This will delete all local variables defined in the current
+        scope.
+        &#34;&#34;&#34;
+        if len(self.scopes) == 1:
+            # there should always be at least one scope
+            raise ValueError(&#34;There must be at least one scope.&#34;)
+
+        self.scopes.pop()
+
+    def declare_nonlocal(self, name: str) -&gt; None:
+        &#34;&#34;&#34;
+        Declare a variable as nonlocal. This means that all attempts to read/write the variable will automatically
+        go to the enclosing scope.
+        &#34;&#34;&#34;
+        self.current_scope.nonlocals[name] = True
+
+    def declare_global(self, name: str) -&gt; None:
+        &#34;&#34;&#34;
+        Declare a variable as global. This means all attempts to read/write the variable will automatically go to
+        the global scope.
+        &#34;&#34;&#34;
+        self.current_scope.globals[name] = True
+
+    def search_scope(self, name: str, scopes: t.Sequence[VarScope], read_search: bool = False) -&gt; VarScope:
+        &#34;&#34;&#34;
+        Using a variable name, search up the scope stack for something to read/write. This search will honor nonlocal
+        and global declarations made for all scopes.
+
+        Args:
+            name: The name of the variable to search for.
+
+            scopes: The scopes to search. Typically, this will be `ScopedVarStore.scopes`.
+
+            read_search: Must be `True` if no writes will be performed on the scope you&#39;re searching for.
+            Adds additional logic that reads the global store as a fallback if a defined value could not be found
+            after searching up the stack.
+
+        Raises:
+            KeyError: If an appropriate scope could not be found.
+        &#34;&#34;&#34;
+        scopes = list(scopes)
+        scope = scopes[-1]
+
+        while scopes:
+            scope = scopes.pop()
+
+            if name in scope.globals:
+                # If global, immediately go to the highest scope
+                return scopes[0] if scopes else scope
+
+            if name in scope.nonlocals:
+                # If nonlocal, go to the enclosing scope.
+                continue
+
+            # Just break as soon as we step off global/nonlocal references.
+            break
+
+        if read_search:
+            # Do a little bit of extra logic for a read search. If we can&#39;t find a value in the
+            # current scope, try globals as a fallback.
+            if name in scope.vars:
+                return scope
+            elif scopes and name in scopes[0].vars:
+                return scopes[0]
+            else:
+                raise KeyError(name)
+
+        return scope
+
+    def get_scope_for_read(self, name: str) -&gt; VarScope:
+        &#34;&#34;&#34;Shortcut for `ScopedVarStore.search_scope(..., read_search=True)`
+
+        See Also: `ScopedVarStore.search_scope`
+        &#34;&#34;&#34;
+        return self.search_scope(name, self.scopes, read_search=True)
+
+    def get_scope_for_write(self, name: str) -&gt; VarScope:
+        &#34;&#34;&#34;Shortcut for `ScopedVarStore.search_scope(..., read_search=False)`
+
+        See Also: `ScopedVarStore.search_scope`
+        &#34;&#34;&#34;
+        return self.search_scope(name, self.scopes, read_search=False)
+
+    @property
+    def current_scope(self) -&gt; VarScope:
+        &#34;&#34;&#34;The current scope.&#34;&#34;&#34;
+        return self.scopes[-1]
+
+    def get_var(self, name: str) -&gt; str:
+        &#34;&#34;&#34;Get a variable from this store, following all nonlocal and global declarations.&#34;&#34;&#34;
+        return self.get_scope_for_read(name).vars[name]
+
+    def set_var(self, name: str, value: str) -&gt; None:
+        &#34;&#34;&#34;Set a variable in this store, following all nonlocal and global declarations.&#34;&#34;&#34;
+        try:
+            scope = self.get_scope_for_write(name)
+            scope.vars[name] = value
+        except KeyError:
+            self.current_scope.vars[name] = value
+
+    def del_var(self, name: str) -&gt; None:
+        &#34;&#34;&#34;Delete a variable from this store, following all nonlocal and global declarations.&#34;&#34;&#34;
+        try:
+            scope = self.get_scope_for_write(name)
+            del scope.vars[name]
+        except KeyError:
+            del self.current_scope.vars[name]</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.current_scope"><code class="name">var <span class="ident">current_scope</span> : <a title="scrolls.interpreter.struct.VarScope" href="#scrolls.interpreter.struct.VarScope">VarScope</a></code></dt>
+<dd>
+<div class="desc"><p>The current scope.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def current_scope(self) -&gt; VarScope:
+    &#34;&#34;&#34;The current scope.&#34;&#34;&#34;
+    return self.scopes[-1]</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.scopes"><code class="name">var <span class="ident">scopes</span></code></dt>
+<dd>
+<div class="desc"><p>The <code><a title="scrolls.interpreter.struct.VarScope" href="#scrolls.interpreter.struct.VarScope">VarScope</a></code> stack. Later indices are deeper scopes. <code>scopes[0]</code> is the global scope, which is always available.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.declare_global"><code class="name flex">
+<span>def <span class="ident">declare_global</span></span>(<span>self, name: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Declare a variable as global. This means all attempts to read/write the variable will automatically go to
+the global scope.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def declare_global(self, name: str) -&gt; None:
+    &#34;&#34;&#34;
+    Declare a variable as global. This means all attempts to read/write the variable will automatically go to
+    the global scope.
+    &#34;&#34;&#34;
+    self.current_scope.globals[name] = True</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.declare_nonlocal"><code class="name flex">
+<span>def <span class="ident">declare_nonlocal</span></span>(<span>self, name: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Declare a variable as nonlocal. This means that all attempts to read/write the variable will automatically
+go to the enclosing scope.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def declare_nonlocal(self, name: str) -&gt; None:
+    &#34;&#34;&#34;
+    Declare a variable as nonlocal. This means that all attempts to read/write the variable will automatically
+    go to the enclosing scope.
+    &#34;&#34;&#34;
+    self.current_scope.nonlocals[name] = True</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.del_var"><code class="name flex">
+<span>def <span class="ident">del_var</span></span>(<span>self, name: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Delete a variable from this store, following all nonlocal and global declarations.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def del_var(self, name: str) -&gt; None:
+    &#34;&#34;&#34;Delete a variable from this store, following all nonlocal and global declarations.&#34;&#34;&#34;
+    try:
+        scope = self.get_scope_for_write(name)
+        del scope.vars[name]
+    except KeyError:
+        del self.current_scope.vars[name]</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.destroy_scope"><code class="name flex">
+<span>def <span class="ident">destroy_scope</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Destroy the current scope and return to the last one. This will delete all local variables defined in the current
+scope.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def destroy_scope(self) -&gt; None:
+    &#34;&#34;&#34;
+    Destroy the current scope and return to the last one. This will delete all local variables defined in the current
+    scope.
+    &#34;&#34;&#34;
+    if len(self.scopes) == 1:
+        # there should always be at least one scope
+        raise ValueError(&#34;There must be at least one scope.&#34;)
+
+    self.scopes.pop()</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.get_scope_for_read"><code class="name flex">
+<span>def <span class="ident">get_scope_for_read</span></span>(<span>self, name: str) ‑> <a title="scrolls.interpreter.struct.VarScope" href="#scrolls.interpreter.struct.VarScope">VarScope</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Shortcut for <code>ScopedVarStore.search_scope(..., read_search=True)</code></p>
+<p>See Also: <code><a title="scrolls.interpreter.struct.ScopedVarStore.search_scope" href="#scrolls.interpreter.struct.ScopedVarStore.search_scope">ScopedVarStore.search_scope()</a></code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_scope_for_read(self, name: str) -&gt; VarScope:
+    &#34;&#34;&#34;Shortcut for `ScopedVarStore.search_scope(..., read_search=True)`
+
+    See Also: `ScopedVarStore.search_scope`
+    &#34;&#34;&#34;
+    return self.search_scope(name, self.scopes, read_search=True)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.get_scope_for_write"><code class="name flex">
+<span>def <span class="ident">get_scope_for_write</span></span>(<span>self, name: str) ‑> <a title="scrolls.interpreter.struct.VarScope" href="#scrolls.interpreter.struct.VarScope">VarScope</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Shortcut for <code>ScopedVarStore.search_scope(..., read_search=False)</code></p>
+<p>See Also: <code><a title="scrolls.interpreter.struct.ScopedVarStore.search_scope" href="#scrolls.interpreter.struct.ScopedVarStore.search_scope">ScopedVarStore.search_scope()</a></code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_scope_for_write(self, name: str) -&gt; VarScope:
+    &#34;&#34;&#34;Shortcut for `ScopedVarStore.search_scope(..., read_search=False)`
+
+    See Also: `ScopedVarStore.search_scope`
+    &#34;&#34;&#34;
+    return self.search_scope(name, self.scopes, read_search=False)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.get_var"><code class="name flex">
+<span>def <span class="ident">get_var</span></span>(<span>self, name: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get a variable from this store, following all nonlocal and global declarations.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_var(self, name: str) -&gt; str:
+    &#34;&#34;&#34;Get a variable from this store, following all nonlocal and global declarations.&#34;&#34;&#34;
+    return self.get_scope_for_read(name).vars[name]</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.new_scope"><code class="name flex">
+<span>def <span class="ident">new_scope</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Push a new scope onto the stack.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def new_scope(self) -&gt; None:
+    &#34;&#34;&#34;
+    Push a new scope onto the stack.
+    &#34;&#34;&#34;
+    self.scopes.append(VarScope())</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.search_scope"><code class="name flex">
+<span>def <span class="ident">search_scope</span></span>(<span>self, name: str, scopes: Sequence[<a title="scrolls.interpreter.struct.VarScope" href="#scrolls.interpreter.struct.VarScope">VarScope</a>], read_search: bool = False) ‑> <a title="scrolls.interpreter.struct.VarScope" href="#scrolls.interpreter.struct.VarScope">VarScope</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Using a variable name, search up the scope stack for something to read/write. This search will honor nonlocal
+and global declarations made for all scopes.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong></dt>
+<dd>The name of the variable to search for.</dd>
+<dt><strong><code>scopes</code></strong></dt>
+<dd>The scopes to search. Typically, this will be <code><a title="scrolls.interpreter.struct.ScopedVarStore.scopes" href="#scrolls.interpreter.struct.ScopedVarStore.scopes">ScopedVarStore.scopes</a></code>.</dd>
+<dt><strong><code>read_search</code></strong></dt>
+<dd>Must be <code>True</code> if no writes will be performed on the scope you're searching for.</dd>
+</dl>
+<p>Adds additional logic that reads the global store as a fallback if a defined value could not be found
+after searching up the stack.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>KeyError</code></dt>
+<dd>If an appropriate scope could not be found.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def search_scope(self, name: str, scopes: t.Sequence[VarScope], read_search: bool = False) -&gt; VarScope:
+    &#34;&#34;&#34;
+    Using a variable name, search up the scope stack for something to read/write. This search will honor nonlocal
+    and global declarations made for all scopes.
+
+    Args:
+        name: The name of the variable to search for.
+
+        scopes: The scopes to search. Typically, this will be `ScopedVarStore.scopes`.
+
+        read_search: Must be `True` if no writes will be performed on the scope you&#39;re searching for.
+        Adds additional logic that reads the global store as a fallback if a defined value could not be found
+        after searching up the stack.
+
+    Raises:
+        KeyError: If an appropriate scope could not be found.
+    &#34;&#34;&#34;
+    scopes = list(scopes)
+    scope = scopes[-1]
+
+    while scopes:
+        scope = scopes.pop()
+
+        if name in scope.globals:
+            # If global, immediately go to the highest scope
+            return scopes[0] if scopes else scope
+
+        if name in scope.nonlocals:
+            # If nonlocal, go to the enclosing scope.
+            continue
+
+        # Just break as soon as we step off global/nonlocal references.
+        break
+
+    if read_search:
+        # Do a little bit of extra logic for a read search. If we can&#39;t find a value in the
+        # current scope, try globals as a fallback.
+        if name in scope.vars:
+            return scope
+        elif scopes and name in scopes[0].vars:
+            return scopes[0]
+        else:
+            raise KeyError(name)
+
+    return scope</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.struct.ScopedVarStore.set_var"><code class="name flex">
+<span>def <span class="ident">set_var</span></span>(<span>self, name: str, value: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set a variable in this store, following all nonlocal and global declarations.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_var(self, name: str, value: str) -&gt; None:
+    &#34;&#34;&#34;Set a variable in this store, following all nonlocal and global declarations.&#34;&#34;&#34;
+    try:
+        scope = self.get_scope_for_write(name)
+        scope.vars[name] = value
+    except KeyError:
+        self.current_scope.vars[name] = value</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="scrolls.interpreter.struct.VarScope"><code class="flex name class">
+<span>class <span class="ident">VarScope</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>A variable scope. See <code><a title="scrolls.interpreter.struct.ScopedVarStore" href="#scrolls.interpreter.struct.ScopedVarStore">ScopedVarStore</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VarScope:
+    &#34;&#34;&#34;
+    A variable scope. See `ScopedVarStore`.
+    &#34;&#34;&#34;
+
+    def __init__(self) -&gt; None:
+        self.vars: t.MutableMapping[str, str] = {}
+        &#34;&#34;&#34;The local variables defined in this scope.
+
+        .. NOTE::
+            Generally this should not be modified directly, use `ScopedVarStore.set_var` instead.
+        &#34;&#34;&#34;
+
+        self.nonlocals: t.MutableMapping[str, bool] = {}
+        &#34;&#34;&#34;Nonlocal variables defined in this scope.
+
+        If a variable is declared nonlocal, attempts to read/write it will go to the enclosing scope.
+
+        .. NOTE::
+            Generally this should not be modified directly, use `ScopedVarStore.declare_nonlocal` instead.
+        &#34;&#34;&#34;
+
+        self.globals: t.MutableMapping[str, bool] = {}
+        &#34;&#34;&#34;Global variables defined in this scope.
+
+        If a variable is declared global, attempts to read/write it will go to the global (top level) variable scope.
+
+        .. NOTE::
+            Generally this should not be modified directly, use `ScopedVarStore.declare_global` instead.
+        &#34;&#34;&#34;</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="scrolls.interpreter.struct.VarScope.globals"><code class="name">var <span class="ident">globals</span></code></dt>
+<dd>
+<div class="desc"><p>Global variables defined in this scope.</p>
+<p>If a variable is declared global, attempts to read/write it will go to the global (top level) variable scope.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generally this should not be modified directly, use <code><a title="scrolls.interpreter.struct.ScopedVarStore.declare_global" href="#scrolls.interpreter.struct.ScopedVarStore.declare_global">ScopedVarStore.declare_global()</a></code> instead.</p>
+</div></div>
+</dd>
+<dt id="scrolls.interpreter.struct.VarScope.nonlocals"><code class="name">var <span class="ident">nonlocals</span></code></dt>
+<dd>
+<div class="desc"><p>Nonlocal variables defined in this scope.</p>
+<p>If a variable is declared nonlocal, attempts to read/write it will go to the enclosing scope.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generally this should not be modified directly, use <code><a title="scrolls.interpreter.struct.ScopedVarStore.declare_nonlocal" href="#scrolls.interpreter.struct.ScopedVarStore.declare_nonlocal">ScopedVarStore.declare_nonlocal()</a></code> instead.</p>
+</div></div>
+</dd>
+<dt id="scrolls.interpreter.struct.VarScope.vars"><code class="name">var <span class="ident">vars</span></code></dt>
+<dd>
+<div class="desc"><p>The local variables defined in this scope.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generally this should not be modified directly, use <code><a title="scrolls.interpreter.struct.ScopedVarStore.set_var" href="#scrolls.interpreter.struct.ScopedVarStore.set_var">ScopedVarStore.set_var()</a></code> instead.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scrolls.interpreter" href="index.html">scrolls.interpreter</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="scrolls.interpreter.struct.ArgSourceMap" href="#scrolls.interpreter.struct.ArgSourceMap">ArgSourceMap</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.interpreter.struct.ArgSourceMap.add_args" href="#scrolls.interpreter.struct.ArgSourceMap.add_args">add_args</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.interpreter.struct.CallContext" href="#scrolls.interpreter.struct.CallContext">CallContext</a></code></h4>
+<ul class="two-column">
+<li><code><a title="scrolls.interpreter.struct.CallContext.arg_nodes" href="#scrolls.interpreter.struct.CallContext.arg_nodes">arg_nodes</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.CallContext.args" href="#scrolls.interpreter.struct.CallContext.args">args</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.CallContext.call_name" href="#scrolls.interpreter.struct.CallContext.call_name">call_name</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.CallContext.control_node" href="#scrolls.interpreter.struct.CallContext.control_node">control_node</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.CallContext.else_signal" href="#scrolls.interpreter.struct.CallContext.else_signal">else_signal</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.CallContext.return_value" href="#scrolls.interpreter.struct.CallContext.return_value">return_value</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.CallContext.runtime_call" href="#scrolls.interpreter.struct.CallContext.runtime_call">runtime_call</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.CallContext.trace_banner" href="#scrolls.interpreter.struct.CallContext.trace_banner">trace_banner</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.CallContext.trace_str" href="#scrolls.interpreter.struct.CallContext.trace_str">trace_str</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.interpreter.struct.ScopedVarStore" href="#scrolls.interpreter.struct.ScopedVarStore">ScopedVarStore</a></code></h4>
+<ul class="two-column">
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.current_scope" href="#scrolls.interpreter.struct.ScopedVarStore.current_scope">current_scope</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.declare_global" href="#scrolls.interpreter.struct.ScopedVarStore.declare_global">declare_global</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.declare_nonlocal" href="#scrolls.interpreter.struct.ScopedVarStore.declare_nonlocal">declare_nonlocal</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.del_var" href="#scrolls.interpreter.struct.ScopedVarStore.del_var">del_var</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.destroy_scope" href="#scrolls.interpreter.struct.ScopedVarStore.destroy_scope">destroy_scope</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.get_scope_for_read" href="#scrolls.interpreter.struct.ScopedVarStore.get_scope_for_read">get_scope_for_read</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.get_scope_for_write" href="#scrolls.interpreter.struct.ScopedVarStore.get_scope_for_write">get_scope_for_write</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.get_var" href="#scrolls.interpreter.struct.ScopedVarStore.get_var">get_var</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.new_scope" href="#scrolls.interpreter.struct.ScopedVarStore.new_scope">new_scope</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.scopes" href="#scrolls.interpreter.struct.ScopedVarStore.scopes">scopes</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.search_scope" href="#scrolls.interpreter.struct.ScopedVarStore.search_scope">search_scope</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.ScopedVarStore.set_var" href="#scrolls.interpreter.struct.ScopedVarStore.set_var">set_var</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="scrolls.interpreter.struct.VarScope" href="#scrolls.interpreter.struct.VarScope">VarScope</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.interpreter.struct.VarScope.globals" href="#scrolls.interpreter.struct.VarScope.globals">globals</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.VarScope.nonlocals" href="#scrolls.interpreter.struct.VarScope.nonlocals">nonlocals</a></code></li>
+<li><code><a title="scrolls.interpreter.struct.VarScope.vars" href="#scrolls.interpreter.struct.VarScope.vars">vars</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

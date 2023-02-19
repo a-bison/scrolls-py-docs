@@ -1,0 +1,1876 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>scrolls.interpreter.run API documentation</title>
+<meta name="description" content="Code relating to the execution of `scrolls.ast.syntax.AST` objects." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scrolls.interpreter.run</code></h1>
+</header>
+<section id="section-intro">
+<p>Code relating to the execution of <code><a title="scrolls.ast.syntax.AST" href="../ast/syntax.html#scrolls.ast.syntax.AST">AST</a></code> objects.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Code relating to the execution of `scrolls.ast.syntax.AST` objects.
+&#34;&#34;&#34;
+
+import logging
+import types
+import typing as t
+
+from .. import ast
+from .. import errors as base_errors
+from . import callhandler, interpreter_errors, state, struct
+
+__all__ = (
+    &#34;Interpreter&#34;,
+)
+
+
+logger = logging.getLogger(__name__)
+T = t.TypeVar(&#34;T&#34;)
+T_co = t.TypeVar(&#34;T_co&#34;, covariant=True)
+
+
+class Interpreter:
+    &#34;&#34;&#34;
+    The interpreter implementation for Scrolls. Configure through the `*_handlers` properties. Or, for a more organized
+    configuration, see `scrolls.containers.DecoratorInterpreterConfig`.
+
+    Args:
+        context_cls: The `scrolls.interpreter.state.InterpreterContext` class to use when automatically instantiating new context objects.
+            Must be `scrolls.interpreter.state.InterpreterContext` or a subclass of it.
+
+        statement_limit: The number of statements allowed while executing a script. This is counted in the
+            `scrolls.interpreter.state.InterpreterContext` object for a given run. If the number of executed statements exceeds this, an
+            `scrolls.interpreter.interpreter_errors.InterpreterError` will be raised. If set to zero, then there is no statement limit.
+
+        call_depth_limit: The number of levels deep the call stack is allowed to go. This is used to prevent
+            denial of service through infinite recursion. If zero, then call depth is unlimited.
+    &#34;&#34;&#34;
+    def __init__(
+        self,
+        context_cls: t.Type[state.InterpreterContext] = state.InterpreterContext,
+        statement_limit: int = 0,
+        call_depth_limit: int = 200
+    ):
+        self._command_handlers: callhandler.BaseCallHandlerContainer[None] = callhandler.BaseCallHandlerContainer()
+        self._control_handlers: callhandler.BaseCallHandlerContainer[None] = callhandler.BaseCallHandlerContainer()
+        self._expansion_handlers: callhandler.BaseCallHandlerContainer[str] = callhandler.BaseCallHandlerContainer()
+        self._initializers: callhandler.BaseCallHandlerContainer[None] = callhandler.BaseCallHandlerContainer()
+
+        self.context_cls = context_cls
+        &#34;&#34;&#34;
+        The `scrolls.interpreter.state.InterpreterContext` class to use when automatically instantiating new context objects.
+        Must be `scrolls.interpreter.state.InterpreterContext` or a subclass of it.
+        &#34;&#34;&#34;
+
+        self.statement_limit = statement_limit
+        self.call_depth_limit = call_depth_limit
+
+    def over_statement_limit(self, context: state.InterpreterContext) -&gt; bool:
+        &#34;&#34;&#34;
+        Utility function. Checks whether the passed context has exceeded the statement limit set for this interpreter.
+        &#34;&#34;&#34;
+        if self.statement_limit == 0:
+            return False
+        else:
+            return context.statement_count &gt; self.statement_limit
+
+    def over_call_depth_limit(self, context: state.InterpreterContext) -&gt; bool:
+        &#34;&#34;&#34;
+        Utility function. Checks whether the passed context has exceeded the call stack depth limit set for this
+        interpreter.
+        &#34;&#34;&#34;
+        if self.call_depth_limit == 0:
+            return False
+        else:
+            return len(context.call_stack) &gt; self.call_depth_limit
+
+    @property
+    def command_handlers(self) -&gt; callhandler.BaseCallHandlerContainer[None]:
+        &#34;&#34;&#34;The container of command handlers for this interpreter.&#34;&#34;&#34;
+        return self._command_handlers
+
+    @property
+    def control_handlers(self) -&gt; callhandler.BaseCallHandlerContainer[None]:
+        &#34;&#34;&#34;The container of control handlers for this interpreter.&#34;&#34;&#34;
+        return self._control_handlers
+
+    @property
+    def expansion_handlers(self) -&gt; callhandler.BaseCallHandlerContainer[str]:
+        &#34;&#34;&#34;The container of expansion handlers for this interpreter.&#34;&#34;&#34;
+        return self._expansion_handlers
+
+    @property
+    def initializers(self) -&gt; callhandler.BaseCallHandlerContainer[None]:
+        &#34;&#34;&#34;The container of `scrolls.interpreter.callhandler.Initializer` instances for this interpreter.&#34;&#34;&#34;
+        return self._initializers
+
+    def apply_initializers(self, context: state.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;Apply this interpreter&#39;s context initializers to the given context object.&#34;&#34;&#34;
+        for init in self.initializers:
+            init.handle_call(context)
+
+    def run(
+        self,
+        script: str,
+        context: t.Optional[state.InterpreterContext] = None,
+        consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({})
+    ) -&gt; state.InterpreterContext:
+        &#34;&#34;&#34;Run a Scrolls script.
+
+        Args:
+            script: The script to run.
+            context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
+                automatically. Otherwise, the passed context object will be used.
+            consume_rest_triggers: A mapping of triggers for the CONSUME_REST parsing feature.
+
+        Returns:
+            The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
+            it will be the automatically created `scrolls.interpreter.state.InterpreterContext` instance.
+        &#34;&#34;&#34;
+        tokenizer = ast.Tokenizer(script, consume_rest_triggers)
+        tree = ast.parse_scroll(tokenizer)
+        return self.interpret_ast(tree, context)
+
+    def init_context(self, context: state.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Initialize a context for this interpreter.
+        &#34;&#34;&#34;
+        context.interpreter = self
+        context.set_base_call()
+        context.init_handlers(
+            self.command_handlers,
+            self.expansion_handlers
+        )
+        self.apply_initializers(context)
+
+    def run_statement(
+        self,
+        statement: t.Union[str, ast.Tokenizer],
+        context: t.Optional[state.InterpreterContext] = None,
+    ) -&gt; state.InterpreterContext:
+        &#34;&#34;&#34;Run a single Scrolls statement.
+
+        Args:
+            statement: The statement to run. Must be either a string, or a tokenizer populated with a valid Scrolls
+                statement.
+            context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
+                automatically. Otherwise, the passed context object will be used.
+
+        Returns:
+            The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
+            it will be the automatically created `scrolls.interpreter.state.InterpreterContext` instance.
+        &#34;&#34;&#34;
+        # Set up parsing and parse statement
+        if isinstance(statement, str):
+            tokenizer = ast.Tokenizer(statement)
+        else:
+            tokenizer = statement
+
+        statement_node = ast.parse_statement(tokenizer)
+
+        # Interpret statement
+        if context is None:
+            context = self.context_cls(statement_node)
+
+        self.init_context(context)
+        self.interpret_statement(context, statement_node)
+
+        return context
+
+    def repl(
+        self,
+        on_error: t.Optional[t.Callable[[base_errors.ScrollError], None]] = None,
+        prelude: t.Optional[str] = None
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Drop into a REPL (read eval print loop).
+
+        Args:
+            on_error: A function to call when an error occurs. If `None`,
+                      errors will stop the REPL.
+            prelude: A scrolls script that will run before the repl starts.
+        &#34;&#34;&#34;
+        stream = ast.REPLStream()
+        tokenizer = ast.Tokenizer(stream)
+
+        if prelude is not None:
+            logger.debug(&#34;repl: Running prelude.&#34;)
+            context = self.run(prelude)
+            logger.debug(&#34;repl: Prelude complete.&#34;)
+        else:
+            logger.debug(&#34;repl: Running without prelude.&#34;)
+            context = self.context_cls()
+            self.init_context(context)
+
+        while True:
+            try:
+                statement_node = ast.parse_statement(tokenizer)
+                stream.set_statement()
+
+                self.interpret_statement(context, statement_node)
+            except interpreter_errors.InterpreterStop:
+                return
+            except interpreter_errors.InterpreterReturn:
+                e = interpreter_errors.InterpreterError(
+                    context,
+                    f&#34;returning only allowed in functions&#34;
+                )
+                if on_error is not None:
+                    on_error(e)
+                    stream.set_statement()
+                    stream.next_line()
+                else:
+                    raise e
+            except KeyboardInterrupt:
+                print(&#34;Keyboard interrupt.&#34;)
+                return
+            except base_errors.ScrollError as e:
+                if on_error is not None:
+                    on_error(e)
+                    stream.set_statement()
+                    stream.next_line()
+                else:
+                    raise
+
+    @staticmethod
+    def test_parse(
+        script: str,
+        consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({})
+    ) -&gt; str:
+        &#34;&#34;&#34;
+        Returns a JSON-formatted string showing the full `scrolls.ast.syntax.ASTNode` structure of a parsed script, including
+        `consume_rest_triggers`.
+
+        .. WARNING::
+            For debugging and demonstration purposes only.
+        &#34;&#34;&#34;
+        tokenizer = ast.Tokenizer(script, consume_rest_triggers)
+        tree = ast.parse_scroll(tokenizer)
+        return tree.prettify()
+
+    def interpret_ast(
+        self,
+        tree: ast.AST,
+        context: t.Optional[state.InterpreterContext] = None
+    ) -&gt; state.InterpreterContext:
+        &#34;&#34;&#34;
+        Interprets a full AST structure.
+
+        Args:
+            tree: The AST to interpret.
+            context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
+                automatically. Otherwise, the passed context object will be used.
+
+        Returns:
+            The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
+            it will be the automatically created `scrolls.interpreter.state.InterpreterContext` instance.
+        &#34;&#34;&#34;
+        if context is None:
+            context = self.context_cls(tree.root)
+
+        self.init_context(context)
+
+        try:
+            self.interpret_root(context, tree.root)
+        except interpreter_errors.InterpreterStop:
+            logger.debug(&#34;Interpreter stop raised.&#34;)
+            pass
+        except interpreter_errors.InterpreterReturn:
+            raise interpreter_errors.InterpreterError(
+                context,
+                f&#34;returning only allowed in functions&#34;
+            )
+
+        return context
+
+    def interpret_root(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.ROOT`.&#34;&#34;&#34;
+        self.interpret_block(context, node)
+
+    def interpret_call(
+        self,
+        call_handler_container: callhandler.CallHandlerContainer[T_co],
+        context: state.InterpreterContext,
+        node: ast.ASTNode,
+        expected_node_type: ast.ASTNodeType,
+        pass_control_node: bool = False
+    ) -&gt; T_co:
+        &#34;&#34;&#34;
+        Generic function for interpreting call nodes.
+
+        Args:
+            call_handler_container: The call handler container to check for call handlers.
+            context: The interpreter context.
+            node: The AST node to interpret.
+            expected_node_type: The type of AST node to be expected.
+            pass_control_node: Whether to pass `node.children[2]` into the control parameter of a call. Currently,
+                this only applies to control calls. See `scrolls.interpreter.state.InterpreterContext.control_node`.
+
+        Returns:
+            The result of the call, if any.
+
+        Related:
+            `Interpreter.interpret_command` `Interpreter.interpret_control` `Interpreter.interpret_expansion_call`
+        &#34;&#34;&#34;
+
+        if node.type != expected_node_type:
+            raise interpreter_errors.InternalInterpreterError(
+                context,
+                f&#34;interpret_call: name: Expected {expected_node_type.name}, got {node.type.name}&#34;
+            )
+
+        name_node = node.children[0]
+        args_node = node.children[1]
+        arg_node_map: struct.ArgSourceMap[ast.ASTNode] = struct.ArgSourceMap()
+
+        raw_call = list(self.interpret_string_or_expansion(context, name_node))
+
+        if not raw_call:
+            raise interpreter_errors.InterpreterError(
+                context,
+                f&#34;Call name must not expand to empty string.&#34;
+            )
+
+        arg_node_map.add_args(raw_call[1:], name_node)
+
+        for arg_node in args_node.children:
+            new_args = self.interpret_string_or_expansion(context, arg_node)
+            arg_node_map.add_args(new_args, arg_node)
+
+            raw_call += new_args
+
+        logger.debug(f&#34;interpret_call: raw {raw_call}&#34;)
+        call_name = raw_call[0]
+        call_args: t.Sequence[str] = raw_call[1:]
+
+        context.current_node = node
+        control_node: t.Optional[ast.ASTNode]
+
+        if pass_control_node:
+            control_node = node.children[2]
+        else:
+            control_node = None
+
+        context.push_call()
+        if self.over_call_depth_limit(context):
+            raise interpreter_errors.InterpreterError(
+                context,
+                f&#34;Maximum call stack depth ({self.call_depth_limit}) exceeded.&#34;
+            )
+
+        context.set_call(call_name, call_args, arg_node_map, control_node=control_node)
+
+        try:
+            handler = call_handler_container.get_for_call(call_name)
+        except KeyError:
+            context.current_node = name_node
+            raise interpreter_errors.MissingCallError(context, expected_node_type.name, call_name)
+
+        try:
+            result: T_co = handler.handle_call(context)
+        except interpreter_errors.InterpreterReturn:
+            # Ensure call stack is properly changed even on returns
+            context.pop_call()
+
+            raise
+
+        context.pop_call()
+
+        return result
+
+    def interpret_control(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.CONTROL_CALL`.&#34;&#34;&#34;
+        self.interpret_call(
+            self.control_handlers,
+            context,
+            node,
+            ast.ASTNodeType.CONTROL_CALL,
+            pass_control_node=True
+        )
+
+    def interpret_command(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.COMMAND_CALL`.&#34;&#34;&#34;
+        self.interpret_call(
+            context.all_commands,
+            context,
+            node,
+            ast.ASTNodeType.COMMAND_CALL
+        )
+
+    def interpret_variable_reference(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; str:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_VAR`.&#34;&#34;&#34;
+        context.current_node = node
+
+        var_name = &#34; &#34;.join(self.interpret_string_or_expansion(context, node.children[0]))
+        try:
+            return context.get_var(var_name)
+        except KeyError:
+            raise interpreter_errors.InterpreterError(
+                context, f&#34;No such variable {var_name}.&#34;
+            )
+
+    def interpret_expansion_call(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; str:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_CALL`.&#34;&#34;&#34;
+        result = self.interpret_call(
+            context.all_expansions,
+            context,
+            node,
+            ast.ASTNodeType.EXPANSION_CALL
+        )
+        assert result is not None
+        return result
+
+    def interpret_sub_expansion(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; str:
+        &#34;&#34;&#34;Utility. Interprets an expansion child node, which may be either
+        `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_VAR` or
+        `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_CALL`.
+        &#34;&#34;&#34;
+        context.current_node = node
+
+        if node.type == ast.ASTNodeType.EXPANSION_VAR:
+            return self.interpret_variable_reference(context, node)
+        elif node.type == ast.ASTNodeType.EXPANSION_CALL:
+            return self.interpret_expansion_call(context, node)
+        else:
+            raise interpreter_errors.InternalInterpreterError(
+                context,
+                f&#34;Bad expansion node type {node.type.name}&#34;
+            )
+
+    def interpret_expansion(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; t.Sequence[str]:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.EXPANSION`.&#34;&#34;&#34;
+        context.current_node = node
+
+        multi_node, expansion_node = node.children
+
+        if multi_node.type == ast.ASTNodeType.EXPANSION_SPREAD:
+            multi = True
+        elif multi_node.type == ast.ASTNodeType.EXPANSION_SINGLE:
+            multi = False
+        else:
+            raise interpreter_errors.InternalInterpreterError(
+                context,
+                f&#34;Bad expansion multi_node type {multi_node.type.name}&#34;
+            )
+
+        string = self.interpret_sub_expansion(context, expansion_node)
+        if multi:
+            return [s.strip() for s in string.split()]
+        else:
+            return [string]
+
+    def interpret_string_or_expansion(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; t.Sequence[str]:
+        &#34;&#34;&#34;Utility. Interprets call names and arguments, which may be either
+        `scrolls.ast.ast_constants.ASTNodeType.STRING` or
+        `scrolls.ast.ast_constants.ASTNodeType.EXPANSION`
+        &#34;&#34;&#34;
+
+        context.current_node = node
+
+        if node.type == ast.ASTNodeType.STRING:
+            return [node.str_content()]
+        elif node.type == ast.ASTNodeType.EXPANSION:
+            return self.interpret_expansion(context, node)
+        else:
+            raise interpreter_errors.InternalInterpreterError(
+                context, f&#34;Bad node type for string_or_expansion: {node.type.name}&#34;
+            )
+
+    def interpret_block(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.BLOCK`.&#34;&#34;&#34;
+        context.current_node = node
+
+        for sub_statement in context.current_node.children:
+            self.interpret_statement(context, sub_statement)
+
+    def interpret_statement(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+        &#34;&#34;&#34;Utility. Interprets Scrolls statements, which may be `scrolls.ast.ast_constants.ASTNodeType.CONTROL_CALL`,
+        `scrolls.ast.ast_constants.ASTNodeType.COMMAND_CALL`, or `scrolls.ast.ast_constants.ASTNodeType.BLOCK`.
+
+        More often than not, this is the function that control calls will use to run the statement passed to
+        `scrolls.interpreter.state.InterpreterContext.control_node`. See `scrolls.builtins.BuiltinControlHandler` for examples.
+        &#34;&#34;&#34;
+        context.current_node = node
+
+        node_type = context.current_node.type
+
+        if node_type == ast.ASTNodeType.CONTROL_CALL:
+            self.interpret_control(context, context.current_node)
+        elif node_type == ast.ASTNodeType.COMMAND_CALL:
+            self.interpret_command(context, context.current_node)
+        elif node_type == ast.ASTNodeType.BLOCK:
+            self.interpret_block(context, context.current_node)
+        else:
+            raise interpreter_errors.InternalInterpreterError(
+                context, f&#34;Bad statement type {node_type.name}&#34;
+            )
+
+        context.statement_count += 1
+        if self.over_statement_limit(context):
+            raise interpreter_errors.InterpreterError(
+                context,
+                f&#34;Exceeded maximum statement limit of {self.statement_limit}.&#34;
+            )</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="scrolls.interpreter.run.Interpreter"><code class="flex name class">
+<span>class <span class="ident">Interpreter</span></span>
+<span>(</span><span>context_cls: Type[<a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>] = scrolls.interpreter.state.InterpreterContext, statement_limit: int = 0, call_depth_limit: int = 200)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The interpreter implementation for Scrolls. Configure through the <code>*_handlers</code> properties. Or, for a more organized
+configuration, see <code><a title="scrolls.containers.DecoratorInterpreterConfig" href="../containers.html#scrolls.containers.DecoratorInterpreterConfig">DecoratorInterpreterConfig</a></code>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>context_cls</code></strong></dt>
+<dd>The <code><a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></code> class to use when automatically instantiating new context objects.
+Must be <code><a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></code> or a subclass of it.</dd>
+<dt><strong><code>statement_limit</code></strong></dt>
+<dd>The number of statements allowed while executing a script. This is counted in the
+<code><a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></code> object for a given run. If the number of executed statements exceeds this, an
+<code><a title="scrolls.interpreter.interpreter_errors.InterpreterError" href="interpreter_errors.html#scrolls.interpreter.interpreter_errors.InterpreterError">InterpreterError</a></code> will be raised. If set to zero, then there is no statement limit.</dd>
+<dt><strong><code>call_depth_limit</code></strong></dt>
+<dd>The number of levels deep the call stack is allowed to go. This is used to prevent
+denial of service through infinite recursion. If zero, then call depth is unlimited.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Interpreter:
+    &#34;&#34;&#34;
+    The interpreter implementation for Scrolls. Configure through the `*_handlers` properties. Or, for a more organized
+    configuration, see `scrolls.containers.DecoratorInterpreterConfig`.
+
+    Args:
+        context_cls: The `scrolls.interpreter.state.InterpreterContext` class to use when automatically instantiating new context objects.
+            Must be `scrolls.interpreter.state.InterpreterContext` or a subclass of it.
+
+        statement_limit: The number of statements allowed while executing a script. This is counted in the
+            `scrolls.interpreter.state.InterpreterContext` object for a given run. If the number of executed statements exceeds this, an
+            `scrolls.interpreter.interpreter_errors.InterpreterError` will be raised. If set to zero, then there is no statement limit.
+
+        call_depth_limit: The number of levels deep the call stack is allowed to go. This is used to prevent
+            denial of service through infinite recursion. If zero, then call depth is unlimited.
+    &#34;&#34;&#34;
+    def __init__(
+        self,
+        context_cls: t.Type[state.InterpreterContext] = state.InterpreterContext,
+        statement_limit: int = 0,
+        call_depth_limit: int = 200
+    ):
+        self._command_handlers: callhandler.BaseCallHandlerContainer[None] = callhandler.BaseCallHandlerContainer()
+        self._control_handlers: callhandler.BaseCallHandlerContainer[None] = callhandler.BaseCallHandlerContainer()
+        self._expansion_handlers: callhandler.BaseCallHandlerContainer[str] = callhandler.BaseCallHandlerContainer()
+        self._initializers: callhandler.BaseCallHandlerContainer[None] = callhandler.BaseCallHandlerContainer()
+
+        self.context_cls = context_cls
+        &#34;&#34;&#34;
+        The `scrolls.interpreter.state.InterpreterContext` class to use when automatically instantiating new context objects.
+        Must be `scrolls.interpreter.state.InterpreterContext` or a subclass of it.
+        &#34;&#34;&#34;
+
+        self.statement_limit = statement_limit
+        self.call_depth_limit = call_depth_limit
+
+    def over_statement_limit(self, context: state.InterpreterContext) -&gt; bool:
+        &#34;&#34;&#34;
+        Utility function. Checks whether the passed context has exceeded the statement limit set for this interpreter.
+        &#34;&#34;&#34;
+        if self.statement_limit == 0:
+            return False
+        else:
+            return context.statement_count &gt; self.statement_limit
+
+    def over_call_depth_limit(self, context: state.InterpreterContext) -&gt; bool:
+        &#34;&#34;&#34;
+        Utility function. Checks whether the passed context has exceeded the call stack depth limit set for this
+        interpreter.
+        &#34;&#34;&#34;
+        if self.call_depth_limit == 0:
+            return False
+        else:
+            return len(context.call_stack) &gt; self.call_depth_limit
+
+    @property
+    def command_handlers(self) -&gt; callhandler.BaseCallHandlerContainer[None]:
+        &#34;&#34;&#34;The container of command handlers for this interpreter.&#34;&#34;&#34;
+        return self._command_handlers
+
+    @property
+    def control_handlers(self) -&gt; callhandler.BaseCallHandlerContainer[None]:
+        &#34;&#34;&#34;The container of control handlers for this interpreter.&#34;&#34;&#34;
+        return self._control_handlers
+
+    @property
+    def expansion_handlers(self) -&gt; callhandler.BaseCallHandlerContainer[str]:
+        &#34;&#34;&#34;The container of expansion handlers for this interpreter.&#34;&#34;&#34;
+        return self._expansion_handlers
+
+    @property
+    def initializers(self) -&gt; callhandler.BaseCallHandlerContainer[None]:
+        &#34;&#34;&#34;The container of `scrolls.interpreter.callhandler.Initializer` instances for this interpreter.&#34;&#34;&#34;
+        return self._initializers
+
+    def apply_initializers(self, context: state.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;Apply this interpreter&#39;s context initializers to the given context object.&#34;&#34;&#34;
+        for init in self.initializers:
+            init.handle_call(context)
+
+    def run(
+        self,
+        script: str,
+        context: t.Optional[state.InterpreterContext] = None,
+        consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({})
+    ) -&gt; state.InterpreterContext:
+        &#34;&#34;&#34;Run a Scrolls script.
+
+        Args:
+            script: The script to run.
+            context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
+                automatically. Otherwise, the passed context object will be used.
+            consume_rest_triggers: A mapping of triggers for the CONSUME_REST parsing feature.
+
+        Returns:
+            The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
+            it will be the automatically created `scrolls.interpreter.state.InterpreterContext` instance.
+        &#34;&#34;&#34;
+        tokenizer = ast.Tokenizer(script, consume_rest_triggers)
+        tree = ast.parse_scroll(tokenizer)
+        return self.interpret_ast(tree, context)
+
+    def init_context(self, context: state.InterpreterContext) -&gt; None:
+        &#34;&#34;&#34;
+        Initialize a context for this interpreter.
+        &#34;&#34;&#34;
+        context.interpreter = self
+        context.set_base_call()
+        context.init_handlers(
+            self.command_handlers,
+            self.expansion_handlers
+        )
+        self.apply_initializers(context)
+
+    def run_statement(
+        self,
+        statement: t.Union[str, ast.Tokenizer],
+        context: t.Optional[state.InterpreterContext] = None,
+    ) -&gt; state.InterpreterContext:
+        &#34;&#34;&#34;Run a single Scrolls statement.
+
+        Args:
+            statement: The statement to run. Must be either a string, or a tokenizer populated with a valid Scrolls
+                statement.
+            context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
+                automatically. Otherwise, the passed context object will be used.
+
+        Returns:
+            The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
+            it will be the automatically created `scrolls.interpreter.state.InterpreterContext` instance.
+        &#34;&#34;&#34;
+        # Set up parsing and parse statement
+        if isinstance(statement, str):
+            tokenizer = ast.Tokenizer(statement)
+        else:
+            tokenizer = statement
+
+        statement_node = ast.parse_statement(tokenizer)
+
+        # Interpret statement
+        if context is None:
+            context = self.context_cls(statement_node)
+
+        self.init_context(context)
+        self.interpret_statement(context, statement_node)
+
+        return context
+
+    def repl(
+        self,
+        on_error: t.Optional[t.Callable[[base_errors.ScrollError], None]] = None,
+        prelude: t.Optional[str] = None
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Drop into a REPL (read eval print loop).
+
+        Args:
+            on_error: A function to call when an error occurs. If `None`,
+                      errors will stop the REPL.
+            prelude: A scrolls script that will run before the repl starts.
+        &#34;&#34;&#34;
+        stream = ast.REPLStream()
+        tokenizer = ast.Tokenizer(stream)
+
+        if prelude is not None:
+            logger.debug(&#34;repl: Running prelude.&#34;)
+            context = self.run(prelude)
+            logger.debug(&#34;repl: Prelude complete.&#34;)
+        else:
+            logger.debug(&#34;repl: Running without prelude.&#34;)
+            context = self.context_cls()
+            self.init_context(context)
+
+        while True:
+            try:
+                statement_node = ast.parse_statement(tokenizer)
+                stream.set_statement()
+
+                self.interpret_statement(context, statement_node)
+            except interpreter_errors.InterpreterStop:
+                return
+            except interpreter_errors.InterpreterReturn:
+                e = interpreter_errors.InterpreterError(
+                    context,
+                    f&#34;returning only allowed in functions&#34;
+                )
+                if on_error is not None:
+                    on_error(e)
+                    stream.set_statement()
+                    stream.next_line()
+                else:
+                    raise e
+            except KeyboardInterrupt:
+                print(&#34;Keyboard interrupt.&#34;)
+                return
+            except base_errors.ScrollError as e:
+                if on_error is not None:
+                    on_error(e)
+                    stream.set_statement()
+                    stream.next_line()
+                else:
+                    raise
+
+    @staticmethod
+    def test_parse(
+        script: str,
+        consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({})
+    ) -&gt; str:
+        &#34;&#34;&#34;
+        Returns a JSON-formatted string showing the full `scrolls.ast.syntax.ASTNode` structure of a parsed script, including
+        `consume_rest_triggers`.
+
+        .. WARNING::
+            For debugging and demonstration purposes only.
+        &#34;&#34;&#34;
+        tokenizer = ast.Tokenizer(script, consume_rest_triggers)
+        tree = ast.parse_scroll(tokenizer)
+        return tree.prettify()
+
+    def interpret_ast(
+        self,
+        tree: ast.AST,
+        context: t.Optional[state.InterpreterContext] = None
+    ) -&gt; state.InterpreterContext:
+        &#34;&#34;&#34;
+        Interprets a full AST structure.
+
+        Args:
+            tree: The AST to interpret.
+            context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
+                automatically. Otherwise, the passed context object will be used.
+
+        Returns:
+            The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
+            it will be the automatically created `scrolls.interpreter.state.InterpreterContext` instance.
+        &#34;&#34;&#34;
+        if context is None:
+            context = self.context_cls(tree.root)
+
+        self.init_context(context)
+
+        try:
+            self.interpret_root(context, tree.root)
+        except interpreter_errors.InterpreterStop:
+            logger.debug(&#34;Interpreter stop raised.&#34;)
+            pass
+        except interpreter_errors.InterpreterReturn:
+            raise interpreter_errors.InterpreterError(
+                context,
+                f&#34;returning only allowed in functions&#34;
+            )
+
+        return context
+
+    def interpret_root(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.ROOT`.&#34;&#34;&#34;
+        self.interpret_block(context, node)
+
+    def interpret_call(
+        self,
+        call_handler_container: callhandler.CallHandlerContainer[T_co],
+        context: state.InterpreterContext,
+        node: ast.ASTNode,
+        expected_node_type: ast.ASTNodeType,
+        pass_control_node: bool = False
+    ) -&gt; T_co:
+        &#34;&#34;&#34;
+        Generic function for interpreting call nodes.
+
+        Args:
+            call_handler_container: The call handler container to check for call handlers.
+            context: The interpreter context.
+            node: The AST node to interpret.
+            expected_node_type: The type of AST node to be expected.
+            pass_control_node: Whether to pass `node.children[2]` into the control parameter of a call. Currently,
+                this only applies to control calls. See `scrolls.interpreter.state.InterpreterContext.control_node`.
+
+        Returns:
+            The result of the call, if any.
+
+        Related:
+            `Interpreter.interpret_command` `Interpreter.interpret_control` `Interpreter.interpret_expansion_call`
+        &#34;&#34;&#34;
+
+        if node.type != expected_node_type:
+            raise interpreter_errors.InternalInterpreterError(
+                context,
+                f&#34;interpret_call: name: Expected {expected_node_type.name}, got {node.type.name}&#34;
+            )
+
+        name_node = node.children[0]
+        args_node = node.children[1]
+        arg_node_map: struct.ArgSourceMap[ast.ASTNode] = struct.ArgSourceMap()
+
+        raw_call = list(self.interpret_string_or_expansion(context, name_node))
+
+        if not raw_call:
+            raise interpreter_errors.InterpreterError(
+                context,
+                f&#34;Call name must not expand to empty string.&#34;
+            )
+
+        arg_node_map.add_args(raw_call[1:], name_node)
+
+        for arg_node in args_node.children:
+            new_args = self.interpret_string_or_expansion(context, arg_node)
+            arg_node_map.add_args(new_args, arg_node)
+
+            raw_call += new_args
+
+        logger.debug(f&#34;interpret_call: raw {raw_call}&#34;)
+        call_name = raw_call[0]
+        call_args: t.Sequence[str] = raw_call[1:]
+
+        context.current_node = node
+        control_node: t.Optional[ast.ASTNode]
+
+        if pass_control_node:
+            control_node = node.children[2]
+        else:
+            control_node = None
+
+        context.push_call()
+        if self.over_call_depth_limit(context):
+            raise interpreter_errors.InterpreterError(
+                context,
+                f&#34;Maximum call stack depth ({self.call_depth_limit}) exceeded.&#34;
+            )
+
+        context.set_call(call_name, call_args, arg_node_map, control_node=control_node)
+
+        try:
+            handler = call_handler_container.get_for_call(call_name)
+        except KeyError:
+            context.current_node = name_node
+            raise interpreter_errors.MissingCallError(context, expected_node_type.name, call_name)
+
+        try:
+            result: T_co = handler.handle_call(context)
+        except interpreter_errors.InterpreterReturn:
+            # Ensure call stack is properly changed even on returns
+            context.pop_call()
+
+            raise
+
+        context.pop_call()
+
+        return result
+
+    def interpret_control(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.CONTROL_CALL`.&#34;&#34;&#34;
+        self.interpret_call(
+            self.control_handlers,
+            context,
+            node,
+            ast.ASTNodeType.CONTROL_CALL,
+            pass_control_node=True
+        )
+
+    def interpret_command(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.COMMAND_CALL`.&#34;&#34;&#34;
+        self.interpret_call(
+            context.all_commands,
+            context,
+            node,
+            ast.ASTNodeType.COMMAND_CALL
+        )
+
+    def interpret_variable_reference(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; str:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_VAR`.&#34;&#34;&#34;
+        context.current_node = node
+
+        var_name = &#34; &#34;.join(self.interpret_string_or_expansion(context, node.children[0]))
+        try:
+            return context.get_var(var_name)
+        except KeyError:
+            raise interpreter_errors.InterpreterError(
+                context, f&#34;No such variable {var_name}.&#34;
+            )
+
+    def interpret_expansion_call(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; str:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_CALL`.&#34;&#34;&#34;
+        result = self.interpret_call(
+            context.all_expansions,
+            context,
+            node,
+            ast.ASTNodeType.EXPANSION_CALL
+        )
+        assert result is not None
+        return result
+
+    def interpret_sub_expansion(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; str:
+        &#34;&#34;&#34;Utility. Interprets an expansion child node, which may be either
+        `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_VAR` or
+        `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_CALL`.
+        &#34;&#34;&#34;
+        context.current_node = node
+
+        if node.type == ast.ASTNodeType.EXPANSION_VAR:
+            return self.interpret_variable_reference(context, node)
+        elif node.type == ast.ASTNodeType.EXPANSION_CALL:
+            return self.interpret_expansion_call(context, node)
+        else:
+            raise interpreter_errors.InternalInterpreterError(
+                context,
+                f&#34;Bad expansion node type {node.type.name}&#34;
+            )
+
+    def interpret_expansion(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; t.Sequence[str]:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.EXPANSION`.&#34;&#34;&#34;
+        context.current_node = node
+
+        multi_node, expansion_node = node.children
+
+        if multi_node.type == ast.ASTNodeType.EXPANSION_SPREAD:
+            multi = True
+        elif multi_node.type == ast.ASTNodeType.EXPANSION_SINGLE:
+            multi = False
+        else:
+            raise interpreter_errors.InternalInterpreterError(
+                context,
+                f&#34;Bad expansion multi_node type {multi_node.type.name}&#34;
+            )
+
+        string = self.interpret_sub_expansion(context, expansion_node)
+        if multi:
+            return [s.strip() for s in string.split()]
+        else:
+            return [string]
+
+    def interpret_string_or_expansion(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; t.Sequence[str]:
+        &#34;&#34;&#34;Utility. Interprets call names and arguments, which may be either
+        `scrolls.ast.ast_constants.ASTNodeType.STRING` or
+        `scrolls.ast.ast_constants.ASTNodeType.EXPANSION`
+        &#34;&#34;&#34;
+
+        context.current_node = node
+
+        if node.type == ast.ASTNodeType.STRING:
+            return [node.str_content()]
+        elif node.type == ast.ASTNodeType.EXPANSION:
+            return self.interpret_expansion(context, node)
+        else:
+            raise interpreter_errors.InternalInterpreterError(
+                context, f&#34;Bad node type for string_or_expansion: {node.type.name}&#34;
+            )
+
+    def interpret_block(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+        &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.BLOCK`.&#34;&#34;&#34;
+        context.current_node = node
+
+        for sub_statement in context.current_node.children:
+            self.interpret_statement(context, sub_statement)
+
+    def interpret_statement(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+        &#34;&#34;&#34;Utility. Interprets Scrolls statements, which may be `scrolls.ast.ast_constants.ASTNodeType.CONTROL_CALL`,
+        `scrolls.ast.ast_constants.ASTNodeType.COMMAND_CALL`, or `scrolls.ast.ast_constants.ASTNodeType.BLOCK`.
+
+        More often than not, this is the function that control calls will use to run the statement passed to
+        `scrolls.interpreter.state.InterpreterContext.control_node`. See `scrolls.builtins.BuiltinControlHandler` for examples.
+        &#34;&#34;&#34;
+        context.current_node = node
+
+        node_type = context.current_node.type
+
+        if node_type == ast.ASTNodeType.CONTROL_CALL:
+            self.interpret_control(context, context.current_node)
+        elif node_type == ast.ASTNodeType.COMMAND_CALL:
+            self.interpret_command(context, context.current_node)
+        elif node_type == ast.ASTNodeType.BLOCK:
+            self.interpret_block(context, context.current_node)
+        else:
+            raise interpreter_errors.InternalInterpreterError(
+                context, f&#34;Bad statement type {node_type.name}&#34;
+            )
+
+        context.statement_count += 1
+        if self.over_statement_limit(context):
+            raise interpreter_errors.InterpreterError(
+                context,
+                f&#34;Exceeded maximum statement limit of {self.statement_limit}.&#34;
+            )</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="scrolls.interpreter.run.Interpreter.test_parse"><code class="name flex">
+<span>def <span class="ident">test_parse</span></span>(<span>script: str, consume_rest_triggers: Mapping[str, int] = mappingproxy({})) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a JSON-formatted string showing the full <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> structure of a parsed script, including
+<code>consume_rest_triggers</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For debugging and demonstration purposes only.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def test_parse(
+    script: str,
+    consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({})
+) -&gt; str:
+    &#34;&#34;&#34;
+    Returns a JSON-formatted string showing the full `scrolls.ast.syntax.ASTNode` structure of a parsed script, including
+    `consume_rest_triggers`.
+
+    .. WARNING::
+        For debugging and demonstration purposes only.
+    &#34;&#34;&#34;
+    tokenizer = ast.Tokenizer(script, consume_rest_triggers)
+    tree = ast.parse_scroll(tokenizer)
+    return tree.prettify()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="scrolls.interpreter.run.Interpreter.command_handlers"><code class="name">var <span class="ident">command_handlers</span> : <a title="scrolls.interpreter.callhandler.BaseCallHandlerContainer" href="callhandler.html#scrolls.interpreter.callhandler.BaseCallHandlerContainer">BaseCallHandlerContainer</a>[None]</code></dt>
+<dd>
+<div class="desc"><p>The container of command handlers for this interpreter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def command_handlers(self) -&gt; callhandler.BaseCallHandlerContainer[None]:
+    &#34;&#34;&#34;The container of command handlers for this interpreter.&#34;&#34;&#34;
+    return self._command_handlers</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.context_cls"><code class="name">var <span class="ident">context_cls</span></code></dt>
+<dd>
+<div class="desc"><p>The <code><a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></code> class to use when automatically instantiating new context objects.
+Must be <code><a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></code> or a subclass of it.</p></div>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.control_handlers"><code class="name">var <span class="ident">control_handlers</span> : <a title="scrolls.interpreter.callhandler.BaseCallHandlerContainer" href="callhandler.html#scrolls.interpreter.callhandler.BaseCallHandlerContainer">BaseCallHandlerContainer</a>[None]</code></dt>
+<dd>
+<div class="desc"><p>The container of control handlers for this interpreter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def control_handlers(self) -&gt; callhandler.BaseCallHandlerContainer[None]:
+    &#34;&#34;&#34;The container of control handlers for this interpreter.&#34;&#34;&#34;
+    return self._control_handlers</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.expansion_handlers"><code class="name">var <span class="ident">expansion_handlers</span> : <a title="scrolls.interpreter.callhandler.BaseCallHandlerContainer" href="callhandler.html#scrolls.interpreter.callhandler.BaseCallHandlerContainer">BaseCallHandlerContainer</a>[str]</code></dt>
+<dd>
+<div class="desc"><p>The container of expansion handlers for this interpreter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def expansion_handlers(self) -&gt; callhandler.BaseCallHandlerContainer[str]:
+    &#34;&#34;&#34;The container of expansion handlers for this interpreter.&#34;&#34;&#34;
+    return self._expansion_handlers</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.initializers"><code class="name">var <span class="ident">initializers</span> : <a title="scrolls.interpreter.callhandler.BaseCallHandlerContainer" href="callhandler.html#scrolls.interpreter.callhandler.BaseCallHandlerContainer">BaseCallHandlerContainer</a>[None]</code></dt>
+<dd>
+<div class="desc"><p>The container of <code><a title="scrolls.interpreter.callhandler.Initializer" href="callhandler.html#scrolls.interpreter.callhandler.Initializer">Initializer</a></code> instances for this interpreter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def initializers(self) -&gt; callhandler.BaseCallHandlerContainer[None]:
+    &#34;&#34;&#34;The container of `scrolls.interpreter.callhandler.Initializer` instances for this interpreter.&#34;&#34;&#34;
+    return self._initializers</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="scrolls.interpreter.run.Interpreter.apply_initializers"><code class="name flex">
+<span>def <span class="ident">apply_initializers</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Apply this interpreter's context initializers to the given context object.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_initializers(self, context: state.InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;Apply this interpreter&#39;s context initializers to the given context object.&#34;&#34;&#34;
+    for init in self.initializers:
+        init.handle_call(context)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.init_context"><code class="name flex">
+<span>def <span class="ident">init_context</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Initialize a context for this interpreter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_context(self, context: state.InterpreterContext) -&gt; None:
+    &#34;&#34;&#34;
+    Initialize a context for this interpreter.
+    &#34;&#34;&#34;
+    context.interpreter = self
+    context.set_base_call()
+    context.init_handlers(
+        self.command_handlers,
+        self.expansion_handlers
+    )
+    self.apply_initializers(context)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_ast"><code class="name flex">
+<span>def <span class="ident">interpret_ast</span></span>(<span>self, tree: <a title="scrolls.ast.syntax.AST" href="../ast/syntax.html#scrolls.ast.syntax.AST">AST</a>, context: Optional[<a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>] = None) ‑> <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interprets a full AST structure.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tree</code></strong></dt>
+<dd>The AST to interpret.</dd>
+<dt><strong><code>context</code></strong></dt>
+<dd>Optional. If no context is specified, then an instance of <code><a title="scrolls.interpreter.run.Interpreter.context_cls" href="#scrolls.interpreter.run.Interpreter.context_cls">Interpreter.context_cls</a></code> is created
+automatically. Otherwise, the passed context object will be used.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>The context used to execute the script. If <code>context</code> was not None, <code>context</code> will be returned. Otherwise,
+it will be the automatically created <code><a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></code> instance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_ast(
+    self,
+    tree: ast.AST,
+    context: t.Optional[state.InterpreterContext] = None
+) -&gt; state.InterpreterContext:
+    &#34;&#34;&#34;
+    Interprets a full AST structure.
+
+    Args:
+        tree: The AST to interpret.
+        context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
+            automatically. Otherwise, the passed context object will be used.
+
+    Returns:
+        The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
+        it will be the automatically created `scrolls.interpreter.state.InterpreterContext` instance.
+    &#34;&#34;&#34;
+    if context is None:
+        context = self.context_cls(tree.root)
+
+    self.init_context(context)
+
+    try:
+        self.interpret_root(context, tree.root)
+    except interpreter_errors.InterpreterStop:
+        logger.debug(&#34;Interpreter stop raised.&#34;)
+        pass
+    except interpreter_errors.InterpreterReturn:
+        raise interpreter_errors.InterpreterError(
+            context,
+            f&#34;returning only allowed in functions&#34;
+        )
+
+    return context</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_block"><code class="name flex">
+<span>def <span class="ident">interpret_block</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interpret an <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> of type <code><a title="scrolls.ast.ast_constants.ASTNodeType.BLOCK" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.BLOCK">ASTNodeType.BLOCK</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_block(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+    &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.BLOCK`.&#34;&#34;&#34;
+    context.current_node = node
+
+    for sub_statement in context.current_node.children:
+        self.interpret_statement(context, sub_statement)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_call"><code class="name flex">
+<span>def <span class="ident">interpret_call</span></span>(<span>self, call_handler_container: <a title="scrolls.interpreter.callhandler.CallHandlerContainer" href="callhandler.html#scrolls.interpreter.callhandler.CallHandlerContainer">CallHandlerContainer</a>[+T_co], context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>, expected_node_type: <a title="scrolls.ast.ast_constants.ASTNodeType" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType">ASTNodeType</a>, pass_control_node: bool = False) ‑> +T_co</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generic function for interpreting call nodes.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>call_handler_container</code></strong></dt>
+<dd>The call handler container to check for call handlers.</dd>
+<dt><strong><code>context</code></strong></dt>
+<dd>The interpreter context.</dd>
+<dt><strong><code>node</code></strong></dt>
+<dd>The AST node to interpret.</dd>
+<dt><strong><code>expected_node_type</code></strong></dt>
+<dd>The type of AST node to be expected.</dd>
+<dt><strong><code>pass_control_node</code></strong></dt>
+<dd>Whether to pass <code>node.children[2]</code> into the control parameter of a call. Currently,
+this only applies to control calls. See <code><a title="scrolls.interpreter.state.InterpreterContext.control_node" href="state.html#scrolls.interpreter.state.InterpreterContext.control_node">InterpreterContext.control_node</a></code>.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>The result of the call, if any.</p>
+<h2 id="related">Related</h2>
+<p><code><a title="scrolls.interpreter.run.Interpreter.interpret_command" href="#scrolls.interpreter.run.Interpreter.interpret_command">Interpreter.interpret_command()</a></code> <code><a title="scrolls.interpreter.run.Interpreter.interpret_control" href="#scrolls.interpreter.run.Interpreter.interpret_control">Interpreter.interpret_control()</a></code> <code><a title="scrolls.interpreter.run.Interpreter.interpret_expansion_call" href="#scrolls.interpreter.run.Interpreter.interpret_expansion_call">Interpreter.interpret_expansion_call()</a></code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_call(
+    self,
+    call_handler_container: callhandler.CallHandlerContainer[T_co],
+    context: state.InterpreterContext,
+    node: ast.ASTNode,
+    expected_node_type: ast.ASTNodeType,
+    pass_control_node: bool = False
+) -&gt; T_co:
+    &#34;&#34;&#34;
+    Generic function for interpreting call nodes.
+
+    Args:
+        call_handler_container: The call handler container to check for call handlers.
+        context: The interpreter context.
+        node: The AST node to interpret.
+        expected_node_type: The type of AST node to be expected.
+        pass_control_node: Whether to pass `node.children[2]` into the control parameter of a call. Currently,
+            this only applies to control calls. See `scrolls.interpreter.state.InterpreterContext.control_node`.
+
+    Returns:
+        The result of the call, if any.
+
+    Related:
+        `Interpreter.interpret_command` `Interpreter.interpret_control` `Interpreter.interpret_expansion_call`
+    &#34;&#34;&#34;
+
+    if node.type != expected_node_type:
+        raise interpreter_errors.InternalInterpreterError(
+            context,
+            f&#34;interpret_call: name: Expected {expected_node_type.name}, got {node.type.name}&#34;
+        )
+
+    name_node = node.children[0]
+    args_node = node.children[1]
+    arg_node_map: struct.ArgSourceMap[ast.ASTNode] = struct.ArgSourceMap()
+
+    raw_call = list(self.interpret_string_or_expansion(context, name_node))
+
+    if not raw_call:
+        raise interpreter_errors.InterpreterError(
+            context,
+            f&#34;Call name must not expand to empty string.&#34;
+        )
+
+    arg_node_map.add_args(raw_call[1:], name_node)
+
+    for arg_node in args_node.children:
+        new_args = self.interpret_string_or_expansion(context, arg_node)
+        arg_node_map.add_args(new_args, arg_node)
+
+        raw_call += new_args
+
+    logger.debug(f&#34;interpret_call: raw {raw_call}&#34;)
+    call_name = raw_call[0]
+    call_args: t.Sequence[str] = raw_call[1:]
+
+    context.current_node = node
+    control_node: t.Optional[ast.ASTNode]
+
+    if pass_control_node:
+        control_node = node.children[2]
+    else:
+        control_node = None
+
+    context.push_call()
+    if self.over_call_depth_limit(context):
+        raise interpreter_errors.InterpreterError(
+            context,
+            f&#34;Maximum call stack depth ({self.call_depth_limit}) exceeded.&#34;
+        )
+
+    context.set_call(call_name, call_args, arg_node_map, control_node=control_node)
+
+    try:
+        handler = call_handler_container.get_for_call(call_name)
+    except KeyError:
+        context.current_node = name_node
+        raise interpreter_errors.MissingCallError(context, expected_node_type.name, call_name)
+
+    try:
+        result: T_co = handler.handle_call(context)
+    except interpreter_errors.InterpreterReturn:
+        # Ensure call stack is properly changed even on returns
+        context.pop_call()
+
+        raise
+
+    context.pop_call()
+
+    return result</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_command"><code class="name flex">
+<span>def <span class="ident">interpret_command</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interpret an <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> of type <code><a title="scrolls.ast.ast_constants.ASTNodeType.COMMAND_CALL" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.COMMAND_CALL">ASTNodeType.COMMAND_CALL</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_command(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+    &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.COMMAND_CALL`.&#34;&#34;&#34;
+    self.interpret_call(
+        context.all_commands,
+        context,
+        node,
+        ast.ASTNodeType.COMMAND_CALL
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_control"><code class="name flex">
+<span>def <span class="ident">interpret_control</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interpret an <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> of type <code><a title="scrolls.ast.ast_constants.ASTNodeType.CONTROL_CALL" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.CONTROL_CALL">ASTNodeType.CONTROL_CALL</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_control(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+    &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.CONTROL_CALL`.&#34;&#34;&#34;
+    self.interpret_call(
+        self.control_handlers,
+        context,
+        node,
+        ast.ASTNodeType.CONTROL_CALL,
+        pass_control_node=True
+    )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_expansion"><code class="name flex">
+<span>def <span class="ident">interpret_expansion</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> Sequence[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interpret an <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> of type <code><a title="scrolls.ast.ast_constants.ASTNodeType.EXPANSION" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.EXPANSION">ASTNodeType.EXPANSION</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_expansion(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; t.Sequence[str]:
+    &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.EXPANSION`.&#34;&#34;&#34;
+    context.current_node = node
+
+    multi_node, expansion_node = node.children
+
+    if multi_node.type == ast.ASTNodeType.EXPANSION_SPREAD:
+        multi = True
+    elif multi_node.type == ast.ASTNodeType.EXPANSION_SINGLE:
+        multi = False
+    else:
+        raise interpreter_errors.InternalInterpreterError(
+            context,
+            f&#34;Bad expansion multi_node type {multi_node.type.name}&#34;
+        )
+
+    string = self.interpret_sub_expansion(context, expansion_node)
+    if multi:
+        return [s.strip() for s in string.split()]
+    else:
+        return [string]</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_expansion_call"><code class="name flex">
+<span>def <span class="ident">interpret_expansion_call</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interpret an <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> of type <code><a title="scrolls.ast.ast_constants.ASTNodeType.EXPANSION_CALL" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.EXPANSION_CALL">ASTNodeType.EXPANSION_CALL</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_expansion_call(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; str:
+    &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_CALL`.&#34;&#34;&#34;
+    result = self.interpret_call(
+        context.all_expansions,
+        context,
+        node,
+        ast.ASTNodeType.EXPANSION_CALL
+    )
+    assert result is not None
+    return result</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_root"><code class="name flex">
+<span>def <span class="ident">interpret_root</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interpret an <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> of type <code><a title="scrolls.ast.ast_constants.ASTNodeType.ROOT" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.ROOT">ASTNodeType.ROOT</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_root(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+    &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.ROOT`.&#34;&#34;&#34;
+    self.interpret_block(context, node)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_statement"><code class="name flex">
+<span>def <span class="ident">interpret_statement</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Utility. Interprets Scrolls statements, which may be <code><a title="scrolls.ast.ast_constants.ASTNodeType.CONTROL_CALL" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.CONTROL_CALL">ASTNodeType.CONTROL_CALL</a></code>,
+<code><a title="scrolls.ast.ast_constants.ASTNodeType.COMMAND_CALL" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.COMMAND_CALL">ASTNodeType.COMMAND_CALL</a></code>, or <code><a title="scrolls.ast.ast_constants.ASTNodeType.BLOCK" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.BLOCK">ASTNodeType.BLOCK</a></code>.</p>
+<p>More often than not, this is the function that control calls will use to run the statement passed to
+<code><a title="scrolls.interpreter.state.InterpreterContext.control_node" href="state.html#scrolls.interpreter.state.InterpreterContext.control_node">InterpreterContext.control_node</a></code>. See <code><a title="scrolls.builtins.BuiltinControlHandler" href="../builtins.html#scrolls.builtins.BuiltinControlHandler">BuiltinControlHandler</a></code> for examples.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_statement(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; None:
+    &#34;&#34;&#34;Utility. Interprets Scrolls statements, which may be `scrolls.ast.ast_constants.ASTNodeType.CONTROL_CALL`,
+    `scrolls.ast.ast_constants.ASTNodeType.COMMAND_CALL`, or `scrolls.ast.ast_constants.ASTNodeType.BLOCK`.
+
+    More often than not, this is the function that control calls will use to run the statement passed to
+    `scrolls.interpreter.state.InterpreterContext.control_node`. See `scrolls.builtins.BuiltinControlHandler` for examples.
+    &#34;&#34;&#34;
+    context.current_node = node
+
+    node_type = context.current_node.type
+
+    if node_type == ast.ASTNodeType.CONTROL_CALL:
+        self.interpret_control(context, context.current_node)
+    elif node_type == ast.ASTNodeType.COMMAND_CALL:
+        self.interpret_command(context, context.current_node)
+    elif node_type == ast.ASTNodeType.BLOCK:
+        self.interpret_block(context, context.current_node)
+    else:
+        raise interpreter_errors.InternalInterpreterError(
+            context, f&#34;Bad statement type {node_type.name}&#34;
+        )
+
+    context.statement_count += 1
+    if self.over_statement_limit(context):
+        raise interpreter_errors.InterpreterError(
+            context,
+            f&#34;Exceeded maximum statement limit of {self.statement_limit}.&#34;
+        )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_string_or_expansion"><code class="name flex">
+<span>def <span class="ident">interpret_string_or_expansion</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> Sequence[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Utility. Interprets call names and arguments, which may be either
+<code><a title="scrolls.ast.ast_constants.ASTNodeType.STRING" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.STRING">ASTNodeType.STRING</a></code> or
+<code><a title="scrolls.ast.ast_constants.ASTNodeType.EXPANSION" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.EXPANSION">ASTNodeType.EXPANSION</a></code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_string_or_expansion(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; t.Sequence[str]:
+    &#34;&#34;&#34;Utility. Interprets call names and arguments, which may be either
+    `scrolls.ast.ast_constants.ASTNodeType.STRING` or
+    `scrolls.ast.ast_constants.ASTNodeType.EXPANSION`
+    &#34;&#34;&#34;
+
+    context.current_node = node
+
+    if node.type == ast.ASTNodeType.STRING:
+        return [node.str_content()]
+    elif node.type == ast.ASTNodeType.EXPANSION:
+        return self.interpret_expansion(context, node)
+    else:
+        raise interpreter_errors.InternalInterpreterError(
+            context, f&#34;Bad node type for string_or_expansion: {node.type.name}&#34;
+        )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_sub_expansion"><code class="name flex">
+<span>def <span class="ident">interpret_sub_expansion</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Utility. Interprets an expansion child node, which may be either
+<code><a title="scrolls.ast.ast_constants.ASTNodeType.EXPANSION_VAR" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.EXPANSION_VAR">ASTNodeType.EXPANSION_VAR</a></code> or
+<code><a title="scrolls.ast.ast_constants.ASTNodeType.EXPANSION_CALL" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.EXPANSION_CALL">ASTNodeType.EXPANSION_CALL</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_sub_expansion(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; str:
+    &#34;&#34;&#34;Utility. Interprets an expansion child node, which may be either
+    `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_VAR` or
+    `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_CALL`.
+    &#34;&#34;&#34;
+    context.current_node = node
+
+    if node.type == ast.ASTNodeType.EXPANSION_VAR:
+        return self.interpret_variable_reference(context, node)
+    elif node.type == ast.ASTNodeType.EXPANSION_CALL:
+        return self.interpret_expansion_call(context, node)
+    else:
+        raise interpreter_errors.InternalInterpreterError(
+            context,
+            f&#34;Bad expansion node type {node.type.name}&#34;
+        )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.interpret_variable_reference"><code class="name flex">
+<span>def <span class="ident">interpret_variable_reference</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>, node: <a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interpret an <code><a title="scrolls.ast.syntax.ASTNode" href="../ast/syntax.html#scrolls.ast.syntax.ASTNode">ASTNode</a></code> of type <code><a title="scrolls.ast.ast_constants.ASTNodeType.EXPANSION_VAR" href="../ast/ast_constants.html#scrolls.ast.ast_constants.ASTNodeType.EXPANSION_VAR">ASTNodeType.EXPANSION_VAR</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret_variable_reference(self, context: state.InterpreterContext, node: ast.ASTNode) -&gt; str:
+    &#34;&#34;&#34;Interpret an `scrolls.ast.syntax.ASTNode` of type `scrolls.ast.ast_constants.ASTNodeType.EXPANSION_VAR`.&#34;&#34;&#34;
+    context.current_node = node
+
+    var_name = &#34; &#34;.join(self.interpret_string_or_expansion(context, node.children[0]))
+    try:
+        return context.get_var(var_name)
+    except KeyError:
+        raise interpreter_errors.InterpreterError(
+            context, f&#34;No such variable {var_name}.&#34;
+        )</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.over_call_depth_limit"><code class="name flex">
+<span>def <span class="ident">over_call_depth_limit</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Utility function. Checks whether the passed context has exceeded the call stack depth limit set for this
+interpreter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def over_call_depth_limit(self, context: state.InterpreterContext) -&gt; bool:
+    &#34;&#34;&#34;
+    Utility function. Checks whether the passed context has exceeded the call stack depth limit set for this
+    interpreter.
+    &#34;&#34;&#34;
+    if self.call_depth_limit == 0:
+        return False
+    else:
+        return len(context.call_stack) &gt; self.call_depth_limit</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.over_statement_limit"><code class="name flex">
+<span>def <span class="ident">over_statement_limit</span></span>(<span>self, context: <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Utility function. Checks whether the passed context has exceeded the statement limit set for this interpreter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def over_statement_limit(self, context: state.InterpreterContext) -&gt; bool:
+    &#34;&#34;&#34;
+    Utility function. Checks whether the passed context has exceeded the statement limit set for this interpreter.
+    &#34;&#34;&#34;
+    if self.statement_limit == 0:
+        return False
+    else:
+        return context.statement_count &gt; self.statement_limit</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.repl"><code class="name flex">
+<span>def <span class="ident">repl</span></span>(<span>self, on_error: Optional[Callable[[<a title="scrolls.errors.ScrollError" href="../errors.html#scrolls.errors.ScrollError">ScrollError</a>], None]] = None, prelude: Optional[str] = None) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Drop into a REPL (read eval print loop).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>on_error</code></strong></dt>
+<dd>A function to call when an error occurs. If <code>None</code>,
+errors will stop the REPL.</dd>
+<dt><strong><code>prelude</code></strong></dt>
+<dd>A scrolls script that will run before the repl starts.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def repl(
+    self,
+    on_error: t.Optional[t.Callable[[base_errors.ScrollError], None]] = None,
+    prelude: t.Optional[str] = None
+) -&gt; None:
+    &#34;&#34;&#34;
+    Drop into a REPL (read eval print loop).
+
+    Args:
+        on_error: A function to call when an error occurs. If `None`,
+                  errors will stop the REPL.
+        prelude: A scrolls script that will run before the repl starts.
+    &#34;&#34;&#34;
+    stream = ast.REPLStream()
+    tokenizer = ast.Tokenizer(stream)
+
+    if prelude is not None:
+        logger.debug(&#34;repl: Running prelude.&#34;)
+        context = self.run(prelude)
+        logger.debug(&#34;repl: Prelude complete.&#34;)
+    else:
+        logger.debug(&#34;repl: Running without prelude.&#34;)
+        context = self.context_cls()
+        self.init_context(context)
+
+    while True:
+        try:
+            statement_node = ast.parse_statement(tokenizer)
+            stream.set_statement()
+
+            self.interpret_statement(context, statement_node)
+        except interpreter_errors.InterpreterStop:
+            return
+        except interpreter_errors.InterpreterReturn:
+            e = interpreter_errors.InterpreterError(
+                context,
+                f&#34;returning only allowed in functions&#34;
+            )
+            if on_error is not None:
+                on_error(e)
+                stream.set_statement()
+                stream.next_line()
+            else:
+                raise e
+        except KeyboardInterrupt:
+            print(&#34;Keyboard interrupt.&#34;)
+            return
+        except base_errors.ScrollError as e:
+            if on_error is not None:
+                on_error(e)
+                stream.set_statement()
+                stream.next_line()
+            else:
+                raise</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>self, script: str, context: Optional[<a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>] = None, consume_rest_triggers: Mapping[str, int] = mappingproxy({})) ‑> <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Run a Scrolls script.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>script</code></strong></dt>
+<dd>The script to run.</dd>
+<dt><strong><code>context</code></strong></dt>
+<dd>Optional. If no context is specified, then an instance of <code><a title="scrolls.interpreter.run.Interpreter.context_cls" href="#scrolls.interpreter.run.Interpreter.context_cls">Interpreter.context_cls</a></code> is created
+automatically. Otherwise, the passed context object will be used.</dd>
+<dt><strong><code>consume_rest_triggers</code></strong></dt>
+<dd>A mapping of triggers for the CONSUME_REST parsing feature.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>The context used to execute the script. If <code>context</code> was not None, <code>context</code> will be returned. Otherwise,
+it will be the automatically created <code><a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></code> instance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run(
+    self,
+    script: str,
+    context: t.Optional[state.InterpreterContext] = None,
+    consume_rest_triggers: t.Mapping[str, int] = types.MappingProxyType({})
+) -&gt; state.InterpreterContext:
+    &#34;&#34;&#34;Run a Scrolls script.
+
+    Args:
+        script: The script to run.
+        context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
+            automatically. Otherwise, the passed context object will be used.
+        consume_rest_triggers: A mapping of triggers for the CONSUME_REST parsing feature.
+
+    Returns:
+        The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
+        it will be the automatically created `scrolls.interpreter.state.InterpreterContext` instance.
+    &#34;&#34;&#34;
+    tokenizer = ast.Tokenizer(script, consume_rest_triggers)
+    tree = ast.parse_scroll(tokenizer)
+    return self.interpret_ast(tree, context)</code></pre>
+</details>
+</dd>
+<dt id="scrolls.interpreter.run.Interpreter.run_statement"><code class="name flex">
+<span>def <span class="ident">run_statement</span></span>(<span>self, statement: Union[str, <a title="scrolls.ast.tokenizer.Tokenizer" href="../ast/tokenizer.html#scrolls.ast.tokenizer.Tokenizer">Tokenizer</a>], context: Optional[<a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a>] = None) ‑> <a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Run a single Scrolls statement.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>statement</code></strong></dt>
+<dd>The statement to run. Must be either a string, or a tokenizer populated with a valid Scrolls
+statement.</dd>
+<dt><strong><code>context</code></strong></dt>
+<dd>Optional. If no context is specified, then an instance of <code><a title="scrolls.interpreter.run.Interpreter.context_cls" href="#scrolls.interpreter.run.Interpreter.context_cls">Interpreter.context_cls</a></code> is created
+automatically. Otherwise, the passed context object will be used.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>The context used to execute the script. If <code>context</code> was not None, <code>context</code> will be returned. Otherwise,
+it will be the automatically created <code><a title="scrolls.interpreter.state.InterpreterContext" href="state.html#scrolls.interpreter.state.InterpreterContext">InterpreterContext</a></code> instance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_statement(
+    self,
+    statement: t.Union[str, ast.Tokenizer],
+    context: t.Optional[state.InterpreterContext] = None,
+) -&gt; state.InterpreterContext:
+    &#34;&#34;&#34;Run a single Scrolls statement.
+
+    Args:
+        statement: The statement to run. Must be either a string, or a tokenizer populated with a valid Scrolls
+            statement.
+        context: Optional. If no context is specified, then an instance of `Interpreter.context_cls` is created
+            automatically. Otherwise, the passed context object will be used.
+
+    Returns:
+        The context used to execute the script. If `context` was not None, `context` will be returned. Otherwise,
+        it will be the automatically created `scrolls.interpreter.state.InterpreterContext` instance.
+    &#34;&#34;&#34;
+    # Set up parsing and parse statement
+    if isinstance(statement, str):
+        tokenizer = ast.Tokenizer(statement)
+    else:
+        tokenizer = statement
+
+    statement_node = ast.parse_statement(tokenizer)
+
+    # Interpret statement
+    if context is None:
+        context = self.context_cls(statement_node)
+
+    self.init_context(context)
+    self.interpret_statement(context, statement_node)
+
+    return context</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scrolls.interpreter" href="index.html">scrolls.interpreter</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="scrolls.interpreter.run.Interpreter" href="#scrolls.interpreter.run.Interpreter">Interpreter</a></code></h4>
+<ul class="">
+<li><code><a title="scrolls.interpreter.run.Interpreter.apply_initializers" href="#scrolls.interpreter.run.Interpreter.apply_initializers">apply_initializers</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.command_handlers" href="#scrolls.interpreter.run.Interpreter.command_handlers">command_handlers</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.context_cls" href="#scrolls.interpreter.run.Interpreter.context_cls">context_cls</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.control_handlers" href="#scrolls.interpreter.run.Interpreter.control_handlers">control_handlers</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.expansion_handlers" href="#scrolls.interpreter.run.Interpreter.expansion_handlers">expansion_handlers</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.init_context" href="#scrolls.interpreter.run.Interpreter.init_context">init_context</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.initializers" href="#scrolls.interpreter.run.Interpreter.initializers">initializers</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_ast" href="#scrolls.interpreter.run.Interpreter.interpret_ast">interpret_ast</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_block" href="#scrolls.interpreter.run.Interpreter.interpret_block">interpret_block</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_call" href="#scrolls.interpreter.run.Interpreter.interpret_call">interpret_call</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_command" href="#scrolls.interpreter.run.Interpreter.interpret_command">interpret_command</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_control" href="#scrolls.interpreter.run.Interpreter.interpret_control">interpret_control</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_expansion" href="#scrolls.interpreter.run.Interpreter.interpret_expansion">interpret_expansion</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_expansion_call" href="#scrolls.interpreter.run.Interpreter.interpret_expansion_call">interpret_expansion_call</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_root" href="#scrolls.interpreter.run.Interpreter.interpret_root">interpret_root</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_statement" href="#scrolls.interpreter.run.Interpreter.interpret_statement">interpret_statement</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_string_or_expansion" href="#scrolls.interpreter.run.Interpreter.interpret_string_or_expansion">interpret_string_or_expansion</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_sub_expansion" href="#scrolls.interpreter.run.Interpreter.interpret_sub_expansion">interpret_sub_expansion</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.interpret_variable_reference" href="#scrolls.interpreter.run.Interpreter.interpret_variable_reference">interpret_variable_reference</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.over_call_depth_limit" href="#scrolls.interpreter.run.Interpreter.over_call_depth_limit">over_call_depth_limit</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.over_statement_limit" href="#scrolls.interpreter.run.Interpreter.over_statement_limit">over_statement_limit</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.repl" href="#scrolls.interpreter.run.Interpreter.repl">repl</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.run" href="#scrolls.interpreter.run.Interpreter.run">run</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.run_statement" href="#scrolls.interpreter.run.Interpreter.run_statement">run_statement</a></code></li>
+<li><code><a title="scrolls.interpreter.run.Interpreter.test_parse" href="#scrolls.interpreter.run.Interpreter.test_parse">test_parse</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
